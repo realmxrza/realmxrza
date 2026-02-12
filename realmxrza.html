@@ -3,261 +3,238 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>realmxrza — profile</title>
+    <title>realmxrza@wired ~</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap');
 
         :root {
-            /* Pixel Cursor: Classic Windows 95 style */
-            --cursor: url('https://cur.cursors-4u.net/games/gam-4/gam372.cur'), auto;
+            --cursor: url('http://www.rw-designer.com/cursor-extern.php?id=181440'), auto;
+            --bg: #0d0d0f;
+            --win-bg: #121214;
+            --accent: #ff3e3e;
+            --border: #1a1a1c;
+            --text: #c0caf5;
         }
 
         body { 
-            background-color: #030303; 
-            color: #fff; 
-            overflow: hidden; 
-            font-family: 'Inter', sans-serif; 
+            background-color: var(--bg); 
+            color: var(--text); 
+            font-family: 'JetBrains Mono', monospace; 
             height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            perspective: 1200px;
+            overflow: hidden;
             cursor: var(--cursor);
+            display: flex;
+            flex-direction: column;
         }
 
-        /* --- INTENSE VHS ANIMATION --- */
-        .vhs-container {
-            position: fixed; inset: 0; pointer-events: none; z-index: 100;
-            overflow: hidden; opacity: 0.15;
+        /* --- CRT & VHS FX --- */
+        .crt::before {
+            content: " "; display: block; position: absolute; top: 0; left: 0; bottom: 0; right: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+            z-index: 100; background-size: 100% 2px, 3px 100%; pointer-events: none;
         }
 
-        /* The "Noise" overlay */
-        .vhs-container::before {
-            content: "";
-            position: absolute; inset: -100%;
-            background-image: url('https://replicate.delivery/mgxm/7836859e-4b71-419b-9860-2646d6d8778f/out-0.png');
-            opacity: 0.5;
-            animation: noise 0.2s infinite;
+        /* --- TWM TOP BAR --- */
+        .bar {
+            height: 30px; background: #000; border-bottom: 2px solid var(--border);
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 0 15px; font-size: 12px; z-index: 50;
         }
 
-        /* Static Scanline Jitter */
-        .vhs-overlay {
-            position: fixed; inset: 0; pointer-events: none; z-index: 101;
-            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.2) 50%), 
-                        linear-gradient(90deg, rgba(255, 0, 0, 0.05), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.05));
-            background-size: 100% 3px, 3px 100%;
-            animation: vhs-jitter 0.15s infinite;
-        }
-
-        /* Moving Tape Distortion Bar */
-        .vhs-bar {
-            position: fixed; width: 100%; height: 5px; background: rgba(255,255,255,0.05);
-            top: 0; z-index: 102; opacity: 0.3;
-            filter: blur(2px);
-            animation: tape-bar 4s linear infinite;
-        }
-
-        @keyframes noise {
-            0% { transform: translate(0,0); }
-            10% { transform: translate(-5%,-5%); }
-            20% { transform: translate(-10%,5%); }
-            30% { transform: translate(5%,-10%); }
-            50% { transform: translate(-5%,5%); }
-            70% { transform: translate(10%,10%); }
-            90% { transform: translate(5%,-5%); }
-            100% { transform: translate(0,0); }
-        }
-
-        @keyframes vhs-jitter {
-            0% { transform: translate(0,0); }
-            50% { transform: translate(1px, 0.5px); }
-            100% { transform: translate(-1px, -0.5px); }
-        }
-
-        @keyframes tape-bar {
-            0% { top: -10%; }
-            100% { top: 110%; }
-        }
-
-        /* --- INTERACTIVE CARDS --- */
-        #interactive-wrapper {
-            width: 100%; max-width: 480px;
+        /* --- WINDOWS --- */
+        .window {
+            background: var(--win-bg);
+            border: 2px solid var(--border);
+            display: flex; flex-direction: column;
             transition: transform 0.1s ease-out;
             transform-style: preserve-3d;
-            z-index: 10;
+            box-shadow: 8px 8px 0px rgba(0,0,0,0.5);
+        }
+        .win-header {
+            background: #1a1a1c; padding: 6px 12px;
+            border-bottom: 2px solid var(--border);
+            font-size: 11px; display: flex; justify-content: space-between;
+            color: #565f89;
         }
 
-        .glass { 
-            background: rgba(15, 15, 15, 0.8); 
-            backdrop-filter: blur(8px); 
-            border: 1px solid rgba(255,255,255,0.1); 
-            position: relative;
-            transform-style: preserve-3d;
-        }
-
-        .glass::after {
-            content: ""; position: absolute; inset: 0;
-            background: radial-gradient(400px circle at var(--mouse-x) var(--mouse-y), rgba(255,255,255,0.06), transparent 50%);
-            z-index: 1; pointer-events: none;
-        }
-
-        .social-icon { transition: 0.2s; cursor: var(--cursor); }
-        .social-icon:hover { transform: translateZ(30px) scale(1.2); color: #fff; }
-
+        /* --- NEOFETCH & ASCII --- */
+        .ascii { color: var(--accent); line-height: 1.1; font-weight: bold; }
+        .fetch-info b { color: var(--accent); }
+        
         #entry-overlay {
-            position: fixed; inset: 0; z-index: 200;
-            background: #000; display: flex; align-items: center; justify-content: center;
-            cursor: var(--cursor); transition: 1.5s ease;
+            position: fixed; inset: 0; z-index: 1000; background: #000;
+            display: flex; align-items: center; justify-content: center;
+            cursor: var(--cursor); transition: 1.5s cubic-bezier(0.19, 1, 0.22, 1);
         }
-        .unblurred { opacity: 0; pointer-events: none; }
+        .unblurred { opacity: 0; pointer-events: none; transform: scale(1.1); }
 
-        .mono { font-family: 'JetBrains Mono', monospace; }
+        /* --- AVATAR DECO --- */
+        .avatar-container { position: relative; width: 100px; height: 100px; }
+        .deco { position: absolute; inset: -15%; width: 130%; height: 130%; pointer-events: none; }
 
-        /* Custom Hover for links to keep pixel cursor */
         a, button { cursor: var(--cursor) !important; }
     </style>
 </head>
-<body>
-
-    <div class="vhs-container"></div>
-    <div class="vhs-overlay"></div>
-    <div class="vhs-bar"></div>
+<body class="crt">
 
     <audio id="bg-music" loop>
         <source src="https://files.catbox.moe/0v2p6p.mp3" type="audio/mpeg">
     </audio>
 
     <div id="entry-overlay" onclick="enterSite()">
-        <div class="text-center">
-            <p class="text-white text-xs mono tracking-[0.4em] animate-pulse">PLAY ►</p>
+        <p class="animate-pulse tracking-[0.6em] text-xs">PRESENT DAY... PRESENT TIME...</p>
+    </div>
+
+    <div class="bar">
+        <div class="flex gap-4 items-center">
+            <span class="text-white font-bold">LAIN</span>
+            <span class="px-2 bg-red-900/30 border border-red-500 text-red-400">01:wired</span>
+            <span class="text-zinc-600">02:sys</span>
+        </div>
+        <div class="flex gap-6 items-center">
+            <span id="spotify-mini" class="text-xs text-zinc-500"></span>
+            <span id="clock" class="text-white font-bold">00:00:00</span>
         </div>
     </div>
 
-    <div id="interactive-wrapper" class="space-y-4 px-4">
+    <main class="flex-grow p-8 grid grid-cols-12 gap-8 overflow-hidden">
         
-        <div class="glass rounded-xl p-6 shadow-2xl">
-            <div class="flex items-center gap-6" style="transform: translateZ(40px);">
-                <div class="relative">
-                    <img id="avatar" src="" class="w-24 h-24 rounded-full border-2 border-zinc-800">
-                    <img id="decoration" src="" class="absolute inset-0 w-full h-full scale-[1.2] pointer-events-none">
-                    <div id="status-dot" class="absolute bottom-1 right-1 w-5 h-5 rounded-full border-4 border-zinc-900 bg-zinc-600"></div>
-                </div>
-                <div>
-                    <h1 class="text-3xl font-bold tracking-tighter">realmxrza</h1>
-                    <p id="custom-status" class="text-zinc-500 text-xs mono mt-1">...</p>
-                    <div class="flex gap-5 mt-4">
-                        <a href="https://github.com/realmxrza" target="_blank" class="social-icon text-xl opacity-60 hover:opacity-100"><i class="fab fa-github"></i></a>
-                        <a href="https://roblox.com/users/598266018/profile" target="_blank" class="social-icon text-xl opacity-60 hover:opacity-100"><i class="fas fa-gamepad"></i></a>
-                        <a href="https://www.youtube.com/channel/UCBrEON5CKRLOpphz0dXokqw" target="_blank" class="social-icon text-xl opacity-60 hover:opacity-100"><i class="fab fa-youtube"></i></a>
+        <div id="win-profile" class="window col-span-12 lg:col-span-7">
+            <div class="win-header">
+                <span>neofetch — /home/realmxrza</span>
+                <div class="flex gap-2"><span>_</span><span>□</span><span>×</span></div>
+            </div>
+            <div class="p-8 flex flex-col md:flex-row gap-8">
+                <pre class="ascii text-[10px] md:text-xs">
+          .---.
+         /     \
+        | () () |
+         \  ^  /
+          |||||
+          |||||
+   _________________
+  /                /|
+ /                / |
+/________________/ /
+|________________|/
+
+   L A I N . B O T
+                </pre>
+                <div class="fetch-info text-sm space-y-2">
+                    <div class="avatar-container mb-4">
+                        <img id="avatar" src="" class="w-full h-full rounded-full border-2 border-zinc-800">
+                        <img id="decoration" src="" class="deco">
+                        <div id="status-dot" class="absolute bottom-1 right-1 w-4 h-4 rounded-full border-4 border-[#121214]"></div>
+                    </div>
+                    <p><b>user</b>@<span>realmxrza</span></p>
+                    <p><b>status</b>: <span id="custom-status">Initializing...</span></p>
+                    <p><b>wired</b>: <span id="sys-status">layer_01</span></p>
+                    <p><b>links</b>: 
+                        <a href="https://github.com/realmxrza" class="hover:underline">[git]</a>
+                        <a href="https://roblox.com" class="hover:underline">[rblx]</a>
+                    </p>
+                    <div class="flex gap-2 pt-4">
+                        <div class="w-6 h-2 bg-red-500"></div>
+                        <div class="w-6 h-2 bg-green-500"></div>
+                        <div class="w-6 h-2 bg-blue-500"></div>
+                        <div class="w-6 h-2 bg-yellow-500"></div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div id="spotify-card" class="glass rounded-xl p-4 opacity-40 transition-opacity duration-500">
-                <div style="transform: translateZ(20px);" class="flex flex-col items-center">
-                    <p class="text-[9px] uppercase tracking-[0.2em] text-zinc-500 mb-2 font-bold mono">Spotify</p>
-                    <img id="spotify-album" src="" class="w-16 h-16 rounded shadow-lg mb-2 hidden">
-                    <p id="spotify-track" class="font-bold text-[11px] truncate w-full text-center">Not listening</p>
-                    <p id="spotify-artist" class="text-[9px] text-zinc-500 truncate w-full text-center">...</p>
+        <div class="col-span-12 lg:col-span-5 space-y-8">
+            <div id="win-music" class="window">
+                <div class="win-header"><span>ncmpcpp</span></div>
+                <div class="p-6 flex gap-6 items-center">
+                    <img id="spotify-art" src="" class="w-20 h-20 border border-zinc-800 hidden">
+                    <div class="text-xs">
+                        <p id="song-title" class="font-bold text-white mb-1">Not Listening</p>
+                        <p id="song-artist" class="text-zinc-500 mb-2">System Idle</p>
+                        <div class="w-full h-1 bg-zinc-900 overflow-hidden">
+                            <div id="song-progress" class="h-full bg-red-600 transition-all duration-1000" style="width: 0%"></div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            <div id="game-card" class="glass rounded-xl p-4 opacity-40 transition-opacity duration-500">
-                <div style="transform: translateZ(20px);" class="flex flex-col items-center">
-                    <p class="text-[9px] uppercase tracking-[0.2em] text-zinc-500 mb-2 font-bold mono">Activity</p>
-                    <img id="game-icon" src="" class="w-16 h-16 rounded mb-2 hidden">
-                    <p id="game-name" class="font-bold text-[11px]">Chilling</p>
-                    <p id="game-detail" class="text-[9px] text-zinc-500">Idle</p>
+            <div id="win-logs" class="window h-40">
+                <div class="win-header"><span>journalctl -f</span></div>
+                <div id="log-content" class="p-4 text-[10px] text-zinc-600 space-y-1 overflow-hidden font-mono">
+                    <p>> [ OK ] Started Wired Environment.</p>
+                    <p>> [ OK ] Connection established via Lanyard.</p>
+                    <p id="activity-log">> Searching for active processes...</p>
                 </div>
             </div>
         </div>
-
-        <div class="glass rounded-xl p-6">
-            <div style="transform: translateZ(10px);">
-                <h2 class="text-[10px] uppercase tracking-[0.3em] text-zinc-600 font-bold mb-2 mono">Info.log</h2>
-                <p class="text-zinc-400 text-xs leading-relaxed mono">
-                    Dev / UI Designer. Exploring the void.
-                    <br><br>
-                    <span class="text-zinc-700 text-[9px]">REC [●] 00:00:32</span>
-                </p>
-            </div>
-        </div>
-    </div>
+    </main>
 
     <script>
         const DISCORD_ID = "693703872937590826";
-        const wrapper = document.getElementById('interactive-wrapper');
-        const glasses = document.querySelectorAll('.glass');
+        const windows = document.querySelectorAll('.window');
 
         function enterSite() {
             document.getElementById('entry-overlay').classList.add('unblurred');
             document.getElementById('bg-music').play();
         }
 
-        // Tilt Logic
-        document.addEventListener('mousemove', (e) => {
-            const { clientX: x, clientY: y } = e;
-            const rotateX = (window.innerHeight / 2 - y) / 25;
-            const rotateY = (x - window.innerWidth / 2) / 25;
-
-            wrapper.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
-
-            glasses.forEach(glass => {
-                const rect = glass.getBoundingClientRect();
-                glass.style.setProperty('--mouse-x', `${x - rect.left}px`);
-                glass.style.setProperty('--mouse-y', `${y - rect.top}px`);
+        // --- 3D INTERACTION ---
+        document.addEventListener('mousemove', e => {
+            const rotX = (window.innerHeight / 2 - e.clientY) / 60;
+            const rotY = (e.clientX - window.innerWidth / 2) / 60;
+            windows.forEach(w => {
+                w.style.transform = `rotateX(${rotX}deg) rotateY(${rotY}deg)`;
             });
         });
 
-        // Lanyard Integration
+        // --- CLOCK & LOGS ---
+        function updateClock() {
+            document.getElementById('clock').innerText = new Date().toLocaleTimeString('en-GB');
+        }
+        setInterval(updateClock, 1000);
+        updateClock();
+
+        // --- LANYARD API ---
         async function updateLanyard() {
             try {
                 const res = await fetch(`https://api.lanyard.rest/v1/users/${DISCORD_ID}`);
                 const { data } = await res.json();
 
+                // Profile
                 document.getElementById('avatar').src = `https://cdn.discordapp.com/avatars/${DISCORD_ID}/${data.discord_user.avatar}.webp?size=256`;
-                
                 if(data.discord_user.avatar_decoration_data) {
                     document.getElementById('decoration').src = `https://cdn.discordapp.com/avatar-decoration-presets/${data.discord_user.avatar_decoration_data.asset}.png`;
+                } else {
+                    document.getElementById('decoration').style.display = 'none';
                 }
 
                 const colors = { online: '#22c55e', idle: '#eab308', dnd: '#ef4444', offline: '#3f3f46' };
                 document.getElementById('status-dot').style.backgroundColor = colors[data.discord_status];
                 
                 const custom = data.activities.find(a => a.type === 4);
-                document.getElementById('custom-status').innerText = custom ? custom.state : 'OFFLINE';
+                document.getElementById('custom-status').innerText = custom ? custom.state : 'No Status';
+                document.getElementById('sys-status').innerText = `layer_${data.discord_status.toUpperCase()}`;
 
+                // Music
                 if (data.listening_to_spotify) {
-                    document.getElementById('spotify-card').classList.remove('opacity-40');
-                    document.getElementById('spotify-album').src = data.spotify.album_art_url;
-                    document.getElementById('spotify-album').classList.remove('hidden');
-                    document.getElementById('spotify-track').innerText = data.spotify.track;
-                    document.getElementById('spotify-artist').innerText = data.spotify.artist;
+                    document.getElementById('spotify-mini').innerText = `  ${data.spotify.track}`;
+                    document.getElementById('song-title').innerText = data.spotify.track;
+                    document.getElementById('song-artist').innerText = data.spotify.artist;
+                    document.getElementById('spotify-art').src = data.spotify.album_art_url;
+                    document.getElementById('spotify-art').classList.remove('hidden');
                 } else {
-                    document.getElementById('spotify-card').classList.add('opacity-40');
-                    document.getElementById('spotify-album').classList.add('hidden');
+                    document.getElementById('spotify-mini').innerText = '';
+                    document.getElementById('song-title').innerText = 'System Idle';
+                    document.getElementById('spotify-art').classList.add('hidden');
                 }
 
-                const activity = data.activities.find(a => a.type === 0);
-                if (activity) {
-                    document.getElementById('game-card').classList.remove('opacity-40');
-                    document.getElementById('game-name').innerText = activity.name;
-                    document.getElementById('game-detail').innerText = activity.details || "Active";
-                    if (activity.assets && activity.assets.large_image) {
-                        const img = document.getElementById('game-icon');
-                        img.classList.remove('hidden');
-                        const assetId = activity.assets.large_image;
-                        img.src = assetId.startsWith('mp:external') 
-                            ? assetId.replace(/mp:external\/.*\/https\//, 'https://')
-                            : `https://cdn.discordapp.com/app-assets/${activity.application_id}/${assetId}.png`;
-                    }
-                } else {
-                    document.getElementById('game-card').classList.add('opacity-40');
-                    document.getElementById('game-icon').classList.add('hidden');
+                // Logs
+                const act = data.activities.find(a => a.type === 0);
+                if (act) {
+                    document.getElementById('activity-log').innerText = `> [ PROCESS ] Running: ${act.name}`;
+                    document.getElementById('activity-log').style.color = '#50fa7b';
                 }
             } catch (e) {}
         }
