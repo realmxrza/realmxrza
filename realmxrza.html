@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>realmxrza — profile</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono&display=swap');
+
+        :root {
+            /* Pixel Cursor: Classic Windows 95 style */
+            --cursor: url('https://cur.cursors-4u.net/games/gam-4/gam372.cur'), auto;
+        }
+
+        body { 
+            background-color: #030303; 
+            color: #fff; 
+            overflow: hidden; 
+            font-family: 'Inter', sans-serif; 
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            perspective: 1200px;
+            cursor: var(--cursor);
+        }
+
+        /* --- INTENSE VHS ANIMATION --- */
+        .vhs-container {
+            position: fixed; inset: 0; pointer-events: none; z-index: 100;
+            overflow: hidden; opacity: 0.15;
+        }
+
+        /* The "Noise" overlay */
+        .vhs-container::before {
+            content: "";
+            position: absolute; inset: -100%;
+            background-image: url('https://replicate.delivery/mgxm/7836859e-4b71-419b-9860-2646d6d8778f/out-0.png');
+            opacity: 0.5;
+            animation: noise 0.2s infinite;
+        }
+
+        /* Static Scanline Jitter */
+        .vhs-overlay {
+            position: fixed; inset: 0; pointer-events: none; z-index: 101;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.2) 50%), 
+                        linear-gradient(90deg, rgba(255, 0, 0, 0.05), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.05));
+            background-size: 100% 3px, 3px 100%;
+            animation: vhs-jitter 0.15s infinite;
+        }
+
+        /* Moving Tape Distortion Bar */
+        .vhs-bar {
+            position: fixed; width: 100%; height: 5px; background: rgba(255,255,255,0.05);
+            top: 0; z-index: 102; opacity: 0.3;
+            filter: blur(2px);
+            animation: tape-bar 4s linear infinite;
+        }
+
+        @keyframes noise {
+            0% { transform: translate(0,0); }
+            10% { transform: translate(-5%,-5%); }
+            20% { transform: translate(-10%,5%); }
+            30% { transform: translate(5%,-10%); }
+            50% { transform: translate(-5%,5%); }
+            70% { transform: translate(10%,10%); }
+            90% { transform: translate(5%,-5%); }
+            100% { transform: translate(0,0); }
+        }
+
+        @keyframes vhs-jitter {
+            0% { transform: translate(0,0); }
+            50% { transform: translate(1px, 0.5px); }
+            100% { transform: translate(-1px, -0.5px); }
+        }
+
+        @keyframes tape-bar {
+            0% { top: -10%; }
+            100% { top: 110%; }
+        }
+
+        /* --- INTERACTIVE CARDS --- */
+        #interactive-wrapper {
+            width: 100%; max-width: 480px;
+            transition: transform 0.1s ease-out;
+            transform-style: preserve-3d;
+            z-index: 10;
+        }
+
+        .glass { 
+            background: rgba(15, 15, 15, 0.8); 
+            backdrop-filter: blur(8px); 
+            border: 1px solid rgba(255,255,255,0.1); 
+            position: relative;
+            transform-style: preserve-3d;
+        }
+
+        .glass::after {
+            content: ""; position: absolute; inset: 0;
+            background: radial-gradient(400px circle at var(--mouse-x) var(--mouse-y), rgba(255,255,255,0.06), transparent 50%);
+            z-index: 1; pointer-events: none;
+        }
+
+        .social-icon { transition: 0.2s; cursor: var(--cursor); }
+        .social-icon:hover { transform: translateZ(30px) scale(1.2); color: #fff; }
+
+        #entry-overlay {
+            position: fixed; inset: 0; z-index: 200;
+            background: #000; display: flex; align-items: center; justify-content: center;
+            cursor: var(--cursor); transition: 1.5s ease;
+        }
+        .unblurred { opacity: 0; pointer-events: none; }
+
+        .mono { font-family: 'JetBrains Mono', monospace; }
+
+        /* Custom Hover for links to keep pixel cursor */
+        a, button { cursor: var(--cursor) !important; }
+    </style>
+</head>
+<body>
+
+    <div class="vhs-container"></div>
+    <div class="vhs-overlay"></div>
+    <div class="vhs-bar"></div>
+
+    <audio id="bg-music" loop>
+        <source src="https://files.catbox.moe/0v2p6p.mp3" type="audio/mpeg">
+    </audio>
+
+    <div id="entry-overlay" onclick="enterSite()">
+        <div class="text-center">
+            <p class="text-white text-xs mono tracking-[0.4em] animate-pulse">PLAY ►</p>
+        </div>
+    </div>
+
+    <div id="interactive-wrapper" class="space-y-4 px-4">
+        
+        <div class="glass rounded-xl p-6 shadow-2xl">
+            <div class="flex items-center gap-6" style="transform: translateZ(40px);">
+                <div class="relative">
+                    <img id="avatar" src="" class="w-24 h-24 rounded-full border-2 border-zinc-800">
+                    <img id="decoration" src="" class="absolute inset-0 w-full h-full scale-[1.2] pointer-events-none">
+                    <div id="status-dot" class="absolute bottom-1 right-1 w-5 h-5 rounded-full border-4 border-zinc-900 bg-zinc-600"></div>
+                </div>
+                <div>
+                    <h1 class="text-3xl font-bold tracking-tighter">realmxrza</h1>
+                    <p id="custom-status" class="text-zinc-500 text-xs mono mt-1">...</p>
+                    <div class="flex gap-5 mt-4">
+                        <a href="https://github.com/realmxrza" target="_blank" class="social-icon text-xl opacity-60 hover:opacity-100"><i class="fab fa-github"></i></a>
+                        <a href="https://roblox.com/users/598266018/profile" target="_blank" class="social-icon text-xl opacity-60 hover:opacity-100"><i class="fas fa-gamepad"></i></a>
+                        <a href="https://www.youtube.com/channel/UCBrEON5CKRLOpphz0dXokqw" target="_blank" class="social-icon text-xl opacity-60 hover:opacity-100"><i class="fab fa-youtube"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div id="spotify-card" class="glass rounded-xl p-4 opacity-40 transition-opacity duration-500">
+                <div style="transform: translateZ(20px);" class="flex flex-col items-center">
+                    <p class="text-[9px] uppercase tracking-[0.2em] text-zinc-500 mb-2 font-bold mono">Spotify</p>
+                    <img id="spotify-album" src="" class="w-16 h-16 rounded shadow-lg mb-2 hidden">
+                    <p id="spotify-track" class="font-bold text-[11px] truncate w-full text-center">Not listening</p>
+                    <p id="spotify-artist" class="text-[9px] text-zinc-500 truncate w-full text-center">...</p>
+                </div>
+            </div>
+
+            <div id="game-card" class="glass rounded-xl p-4 opacity-40 transition-opacity duration-500">
+                <div style="transform: translateZ(20px);" class="flex flex-col items-center">
+                    <p class="text-[9px] uppercase tracking-[0.2em] text-zinc-500 mb-2 font-bold mono">Activity</p>
+                    <img id="game-icon" src="" class="w-16 h-16 rounded mb-2 hidden">
+                    <p id="game-name" class="font-bold text-[11px]">Chilling</p>
+                    <p id="game-detail" class="text-[9px] text-zinc-500">Idle</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="glass rounded-xl p-6">
+            <div style="transform: translateZ(10px);">
+                <h2 class="text-[10px] uppercase tracking-[0.3em] text-zinc-600 font-bold mb-2 mono">Info.log</h2>
+                <p class="text-zinc-400 text-xs leading-relaxed mono">
+                    Dev / UI Designer. Exploring the void.
+                    <br><br>
+                    <span class="text-zinc-700 text-[9px]">REC [●] 00:00:32</span>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const DISCORD_ID = "693703872937590826";
+        const wrapper = document.getElementById('interactive-wrapper');
+        const glasses = document.querySelectorAll('.glass');
+
+        function enterSite() {
+            document.getElementById('entry-overlay').classList.add('unblurred');
+            document.getElementById('bg-music').play();
+        }
+
+        // Tilt Logic
+        document.addEventListener('mousemove', (e) => {
+            const { clientX: x, clientY: y } = e;
+            const rotateX = (window.innerHeight / 2 - y) / 25;
+            const rotateY = (x - window.innerWidth / 2) / 25;
+
+            wrapper.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+
+            glasses.forEach(glass => {
+                const rect = glass.getBoundingClientRect();
+                glass.style.setProperty('--mouse-x', `${x - rect.left}px`);
+                glass.style.setProperty('--mouse-y', `${y - rect.top}px`);
+            });
+        });
+
+        // Lanyard Integration
+        async function updateLanyard() {
+            try {
+                const res = await fetch(`https://api.lanyard.rest/v1/users/${DISCORD_ID}`);
+                const { data } = await res.json();
+
+                document.getElementById('avatar').src = `https://cdn.discordapp.com/avatars/${DISCORD_ID}/${data.discord_user.avatar}.webp?size=256`;
+                
+                if(data.discord_user.avatar_decoration_data) {
+                    document.getElementById('decoration').src = `https://cdn.discordapp.com/avatar-decoration-presets/${data.discord_user.avatar_decoration_data.asset}.png`;
+                }
+
+                const colors = { online: '#22c55e', idle: '#eab308', dnd: '#ef4444', offline: '#3f3f46' };
+                document.getElementById('status-dot').style.backgroundColor = colors[data.discord_status];
+                
+                const custom = data.activities.find(a => a.type === 4);
+                document.getElementById('custom-status').innerText = custom ? custom.state : 'OFFLINE';
+
+                if (data.listening_to_spotify) {
+                    document.getElementById('spotify-card').classList.remove('opacity-40');
+                    document.getElementById('spotify-album').src = data.spotify.album_art_url;
+                    document.getElementById('spotify-album').classList.remove('hidden');
+                    document.getElementById('spotify-track').innerText = data.spotify.track;
+                    document.getElementById('spotify-artist').innerText = data.spotify.artist;
+                } else {
+                    document.getElementById('spotify-card').classList.add('opacity-40');
+                    document.getElementById('spotify-album').classList.add('hidden');
+                }
+
+                const activity = data.activities.find(a => a.type === 0);
+                if (activity) {
+                    document.getElementById('game-card').classList.remove('opacity-40');
+                    document.getElementById('game-name').innerText = activity.name;
+                    document.getElementById('game-detail').innerText = activity.details || "Active";
+                    if (activity.assets && activity.assets.large_image) {
+                        const img = document.getElementById('game-icon');
+                        img.classList.remove('hidden');
+                        const assetId = activity.assets.large_image;
+                        img.src = assetId.startsWith('mp:external') 
+                            ? assetId.replace(/mp:external\/.*\/https\//, 'https://')
+                            : `https://cdn.discordapp.com/app-assets/${activity.application_id}/${assetId}.png`;
+                    }
+                } else {
+                    document.getElementById('game-card').classList.add('opacity-40');
+                    document.getElementById('game-icon').classList.add('hidden');
+                }
+            } catch (e) {}
+        }
+
+        setInterval(updateLanyard, 5000);
+        updateLanyard();
+    </script>
+</body>
+</html>
