@@ -471,24 +471,29 @@ setInterval(updateClock,1000);updateClock();
 /* WEATHER */
 async function fetchWeather() {
     try {
-        const url = "https://api.open-meteo.com/v1/forecast?latitude=3.14&longitude=101.69&current_weather=true&relative_humidity_2m=true";
+
+        const url = "https://api.open-meteo.com/v1/forecast?latitude=3.1390&longitude=101.6869&current=temperature_2m,relative_humidity_2m,wind_speed_10m&forecast_days=1";
         
         const r = await fetch(url);
-        if (!r.ok) throw new Error("Network response was not ok");
+        if (!r.ok) throw new Error("API Limit or Network Error");
         
         const d = await r.json();
-        const cur = d.current_weather;
         
-        document.getElementById("w-temp").textContent = Math.round(cur.temperature) + "°C";
-        document.getElementById("w-wind").textContent = "Wind: " + cur.windspeed + " km/h";
+        const cur = d.current;
+        
+        document.getElementById("w-temp").textContent = Math.round(cur.temperature_2m) + "°C";
+        document.getElementById("w-humidity").textContent = "Humidity: " + cur.relative_humidity_2m + "%";
+        document.getElementById("w-wind").textContent = "Wind: " + cur.wind_speed_10m + " km/h";
         
     } catch (e) {
-        console.log("Weather err:", e);
+        console.error("Weather error:", e);
         document.getElementById("w-temp").textContent = "--°C";
+        document.getElementById("w-humidity").textContent = "Humidity: --%";
     }
 }
 
 fetchWeather();
+
 setInterval(fetchWeather, 600000);
 /* UPTIME */
 const pLoad=Date.now();
