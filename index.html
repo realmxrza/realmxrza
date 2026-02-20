@@ -469,17 +469,27 @@ function updateClock(){const now=new Date();const utc=now.getTime()+now.getTimez
 setInterval(updateClock,1000);updateClock();
 
 /* WEATHER */
-async function fetchWeather(){
-    try{
-        const r=await fetch("https://wttr.in/Kuala+Lumpur?format=j1");const d=await r.json();
-        const cur=d.current_condition[0];
-        document.getElementById("w-temp").textContent=cur.temp_C+"°C";
-        document.getElementById("w-humidity").textContent="Humidity: "+cur.humidity+"%";
-        document.getElementById("w-wind").textContent="Wind: "+cur.windspeedKmph+" km/h";
-    }catch(e){console.log("Weather err:",e);}
+async function fetchWeather() {
+    try {
+        const url = "https://api.open-meteo.com/v1/forecast?latitude=3.14&longitude=101.69&current_weather=true&relative_humidity_2m=true";
+        
+        const r = await fetch(url);
+        if (!r.ok) throw new Error("Network response was not ok");
+        
+        const d = await r.json();
+        const cur = d.current_weather;
+        
+        document.getElementById("w-temp").textContent = Math.round(cur.temperature) + "°C";
+        document.getElementById("w-wind").textContent = "Wind: " + cur.windspeed + " km/h";
+        
+    } catch (e) {
+        console.log("Weather err:", e);
+        document.getElementById("w-temp").textContent = "--°C";
+    }
 }
-setInterval(fetchWeather,600000);
 
+fetchWeather();
+setInterval(fetchWeather, 600000);
 /* UPTIME */
 const pLoad=Date.now();
 setInterval(()=>{const d=Date.now()-pLoad;document.getElementById("uptime-value").textContent=`${Math.floor(d/3600000)}h ${Math.floor((d%3600000)/60000)}m ${Math.floor((d%60000)/1000)}s`;},1000);
