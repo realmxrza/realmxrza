@@ -2,12 +2,11 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <title>realmxrza</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><text y='14' font-size='14'>連</text></svg>">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&family=Share+Tech+Mono&display=swap');
-
         :root {
             --bg: #0a0008;
             --terminal-bg: rgba(10, 2, 10, 0.32);
@@ -24,863 +23,313 @@
             --text-dim: #9a6b80;
             --text-muted: #5a3a4c;
         }
-
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-
+        * { margin:0; padding:0; box-sizing:border-box; }
         html, body {
-            height: 100%;
-            overflow: hidden;
+            height:100%; overflow:hidden;
             cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='20' viewBox='0 0 16 20'%3E%3Cpolygon points='0,0 0,18 4.5,13.5 8,20 10.5,19 7,12.5 13,12.5' fill='%23ff6b9d' stroke='%23cc2266' stroke-width='0.8'/%3E%3C/svg%3E") 0 0, auto;
         }
-
-        body {
-            background: var(--bg);
-            color: var(--text);
-            font-family: 'JetBrains Mono', monospace;
-        }
-
+        body { background:var(--bg); color:var(--text); font-family:'JetBrains Mono',monospace; }
         a, button, input[type="range"] {
             cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='20' viewBox='0 0 16 20'%3E%3Cpolygon points='0,0 0,18 4.5,13.5 8,20 10.5,19 7,12.5 13,12.5' fill='%23ff79c6' stroke='%23ff6b9d' stroke-width='0.8'/%3E%3C/svg%3E") 0 0, pointer;
         }
-
-        /* ==================== BACKGROUND ==================== */
         .bg-image {
-            position: fixed;
-            top: 0; right: 0;
-            width: 100%; height: 100%;
-            background: url('https://raw.githubusercontent.com/realmxrza/realmxrza/ccc6bbab8e68c7dfcaf02483f39fba14e787f77c/assets/just-a-thoughtful-Lain.png') no-repeat right center;
-            background-size: cover;
-            z-index: 0;
-            opacity: 1;
-            filter: saturate(1) brightness(1);
+            position:fixed; top:0; right:0; width:100%; height:100%;
+            background:url('https://raw.githubusercontent.com/realmxrza/realmxrza/ccc6bbab8e68c7dfcaf02483f39fba14e787f77c/assets/just-a-thoughtful-Lain.png') no-repeat right center;
+            background-size:cover; z-index:0; opacity:1; filter:saturate(1) brightness(1);
         }
-
         .bg-overlay {
-            position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            background: linear-gradient(135deg, rgba(10,0,8,0.7) 0%, rgba(10,0,8,0.15) 50%, rgba(10,0,8,0.45) 100%);
-            z-index: 0;
+            position:fixed; top:0; left:0; width:100%; height:100%;
+            background:linear-gradient(135deg, rgba(10,0,8,0.7) 0%, rgba(10,0,8,0.15) 50%, rgba(10,0,8,0.45) 100%);
+            z-index:0;
         }
-
-        /* ==================== BOOT SCREEN ==================== */
-        #boot-screen {
-            position: fixed;
-            top: 0; left: 0;
-            width: 100vw; height: 100vh;
-            background: #000;
-            z-index: 10000;
-            display: flex;
-            flex-direction: column;
-            padding: 20px 30px;
-            overflow: hidden;
-            font-family: 'Share Tech Mono', monospace;
-        }
-
-        #boot-screen.fade-out { animation: bootFade 0.8s ease forwards; }
-        @keyframes bootFade { to { opacity: 0; pointer-events: none; } }
-
-        #boot-lines {
-            font-size: 12px;
-            line-height: 1.5;
-            color: #aaa;
-            white-space: pre;
-            overflow: hidden;
-            flex: 1;
-        }
-        #boot-lines .ok { color: var(--green); }
-        #boot-lines .fail { color: var(--red); }
-        #boot-lines .info { color: var(--cyan); }
-        #boot-lines .warn { color: var(--yellow); }
-        #boot-lines .accent { color: var(--accent); }
-
-        #boot-progress-container { margin-top: 12px; width: 100%; max-width: 400px; display: none; }
-        #boot-progress-label { font-size: 11px; color: var(--text-dim); margin-bottom: 4px; }
-        #boot-progress-bar { width: 100%; height: 2px; background: #111; border-radius: 1px; overflow: hidden; }
-        #boot-progress-fill { height: 100%; width: 0%; background: var(--accent); transition: width 0.15s linear; box-shadow: 0 0 8px var(--accent-glow); }
-
-        /* ==================== CLICK TO ENTER ==================== */
-        #click-screen {
-            position: fixed;
-            top: 0; left: 0;
-            width: 100vw; height: 100vh;
-            background: #000;
-            z-index: 10001;
-            display: none;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            font-family: 'Share Tech Mono', monospace;
-        }
-        #click-screen.show { display: flex; }
-
-        .click-lain-text {
-            font-size: 14px;
-            color: var(--accent);
-            letter-spacing: 4px;
-            text-transform: uppercase;
-            margin-bottom: 8px;
-            animation: pulse 2s ease-in-out infinite;
-        }
-        .click-subtitle { font-size: 11px; color: var(--text-muted); letter-spacing: 2px; }
-
-        .click-border {
-            border: 1px solid rgba(255, 107, 157, 0.3);
-            padding: 30px 60px;
-            text-align: center;
-            transition: all 0.3s ease;
-        }
-        .click-border:hover { border-color: var(--accent); box-shadow: 0 0 30px rgba(255, 107, 157, 0.15); }
-
-        .lain-ascii-small {
-            font-size: 8px;
-            line-height: 1.1;
-            color: var(--accent);
-            opacity: 0.4;
-            white-space: pre;
-            margin-bottom: 20px;
-        }
-
-        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
-
-        /* ==================== MAIN CONTENT ==================== */
-        #main-content {
-            display: none;
-            opacity: 0;
-            transition: opacity 0.6s ease;
-            height: 100vh;
-            position: relative;
-            z-index: 1;
-        }
-        #main-content.visible { display: flex; opacity: 1; }
-
-        /* ==================== LAYOUT ==================== */
+        /* BOOT */
+        #boot-screen { position:fixed; top:0; left:0; width:100vw; height:100vh; background:#000; z-index:10000; display:flex; flex-direction:column; padding:20px 30px; overflow:hidden; font-family:'Share Tech Mono',monospace; }
+        #boot-screen.fade-out { animation:bootFade 0.8s ease forwards; }
+        @keyframes bootFade { to { opacity:0; pointer-events:none; } }
+        #boot-lines { font-size:12px; line-height:1.5; color:#aaa; white-space:pre; overflow:hidden; flex:1; }
+        #boot-lines .ok { color:var(--green); } #boot-lines .info { color:var(--cyan); } #boot-lines .warn { color:var(--yellow); } #boot-lines .accent { color:var(--accent); }
+        #boot-progress-container { margin-top:12px; width:100%; max-width:400px; display:none; }
+        #boot-progress-label { font-size:11px; color:var(--text-dim); margin-bottom:4px; }
+        #boot-progress-bar { width:100%; height:2px; background:#111; border-radius:1px; overflow:hidden; }
+        #boot-progress-fill { height:100%; width:0%; background:var(--accent); transition:width 0.15s linear; box-shadow:0 0 8px var(--accent-glow); }
+        /* CLICK */
+        #click-screen { position:fixed; top:0; left:0; width:100vw; height:100vh; background:#000; z-index:10001; display:none; flex-direction:column; align-items:center; justify-content:center; font-family:'Share Tech Mono',monospace; }
+        #click-screen.show { display:flex; }
+        .click-lain-text { font-size:14px; color:var(--accent); letter-spacing:4px; text-transform:uppercase; margin-bottom:8px; animation:pulse 2s ease-in-out infinite; }
+        .click-subtitle { font-size:11px; color:var(--text-muted); letter-spacing:2px; }
+        .click-border { border:1px solid rgba(255,107,157,0.3); padding:30px 60px; text-align:center; transition:all 0.3s ease; }
+        .click-border:hover { border-color:var(--accent); box-shadow:0 0 30px rgba(255,107,157,0.15); }
+        .lain-ascii-small { font-size:8px; line-height:1.1; color:var(--accent); opacity:0.4; white-space:pre; margin-bottom:20px; }
+        @keyframes pulse { 0%,100%{opacity:1;} 50%{opacity:0.5;} }
+        /* MAIN */
+        #main-content { display:none; opacity:0; transition:opacity 0.6s ease; height:100vh; position:relative; z-index:1; }
+        #main-content.visible { display:flex; opacity:1; }
+        /* LAYOUT */
         .layout {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            grid-template-rows: auto 1fr auto;
-            gap: 8px;
-            padding: 8px;
-            height: 100vh;
-            width: 100%;
-            max-width: 1200px;
-            margin: 0 auto;
-            min-height: 0;
+            display:grid; grid-template-columns:1fr 1fr; grid-template-rows:auto 1fr auto;
+            gap:6px; padding:6px; height:100vh; width:100%; max-width:1200px; margin:0 auto; min-height:0;
         }
-
-        /* ==================== TILE HOVER + TILT ==================== */
-        .tilt-tile {
-            transition: transform 0.25s ease, box-shadow 0.3s ease, border-color 0.3s ease;
-            transform-style: preserve-3d;
-            perspective: 800px;
-            position: relative;
+        /* TILES */
+        .tilt-tile { transition:transform 0.25s ease, box-shadow 0.3s ease, border-color 0.3s ease; transform-style:preserve-3d; perspective:800px; position:relative; }
+        .tilt-tile::before { content:''; position:absolute; inset:0; border-radius:inherit; opacity:0; transition:opacity 0.4s ease; background:radial-gradient(600px circle at var(--mouse-x,50%) var(--mouse-y,50%),rgba(255,107,157,0.06),transparent 40%); pointer-events:none; z-index:0; }
+        .tilt-tile:hover::before { opacity:1; }
+        .tilt-tile:hover { border-color:rgba(255,107,157,0.4)!important; box-shadow:0 0 18px rgba(255,107,157,0.08),inset 0 0 18px rgba(255,107,157,0.03); }
+        /* CLOCK */
+        .clock-widget { grid-column:1; grid-row:1; background:var(--terminal-bg); border:1px solid var(--border); border-radius:6px; padding:8px 12px; animation:fadeSlideUp 0.6s ease both 0.1s; display:flex; align-items:center; gap:12px; }
+        .clock-left { text-align:center; flex-shrink:0; }
+        .clock-time { font-family:'Share Tech Mono',monospace; font-size:32px; font-weight:700; color:var(--accent); text-shadow:0 0 20px var(--accent-glow); letter-spacing:3px; animation:glowPulse 3s ease-in-out infinite; }
+        @keyframes glowPulse { 0%,100%{text-shadow:0 0 20px var(--accent-glow);} 50%{text-shadow:0 0 30px var(--accent-glow),0 0 60px rgba(255,107,157,0.2);} }
+        .clock-date { font-size:10px; color:var(--accent); opacity:0.7; margin-top:1px; }
+        .clock-tz { font-size:8px; color:var(--text-muted); }
+        .weather-info { font-size:9px; color:var(--text-dim); line-height:1.5; border-left:1px solid var(--border); padding-left:12px; }
+        .weather-info .weather-temp { font-size:16px; font-weight:700; color:var(--accent); }
+        .weather-info .weather-label { color:var(--text-muted); font-size:8px; }
+        /* PROFILE */
+        .profile-widget { grid-column:2; grid-row:1; background:var(--terminal-bg); border:1px solid var(--border); border-radius:6px; padding:8px 12px; display:flex; align-items:center; gap:10px; animation:fadeSlideUp 0.6s ease both 0.2s; position:relative; z-index:500; }
+        .avatar-wrapper { position:relative; flex-shrink:0; }
+        .avatar-container { position:relative; width:50px; height:50px; }
+        .avatar { width:50px; height:50px; border-radius:50%; border:2px solid var(--border); object-fit:cover; transition:border-color 0.3s ease; }
+        .avatar:hover { border-color:var(--accent); }
+        .avatar-decoration { position:absolute; top:-6px; left:-6px; width:62px; height:62px; pointer-events:none; z-index:2; }
+        .status-dot { position:absolute; bottom:0; right:0; width:12px; height:12px; border-radius:50%; border:2px solid rgba(10,0,8,0.9); background:#747f8d; z-index:3; }
+        .status-dot.online { background:#43b581; } .status-dot.idle { background:#faa61a; } .status-dot.dnd { background:#f04747; }
+        .profile-center { flex:1; min-width:0; }
+        .profile-info h1 { font-size:15px; font-weight:700; }
+        #display-name { color:#fff; text-shadow:0 0 8px rgba(255,255,255,0.5),0 0 20px rgba(255,255,255,0.25); animation:nameGlow 3s ease-in-out infinite; }
+        @keyframes nameGlow { 0%,100%{text-shadow:0 0 8px rgba(255,255,255,0.5),0 0 20px rgba(255,255,255,0.25);} 50%{text-shadow:0 0 14px rgba(255,255,255,0.7),0 0 30px rgba(255,255,255,0.35);} }
+        .profile-info .tag { font-size:10px; color:var(--text-dim); font-weight:400; }
+        .profile-info .status-text { font-size:9px; color:var(--text-dim); margin-top:1px; display:flex; align-items:center; gap:3px; }
+        .discord-badge { display:inline-flex; align-items:center; gap:3px; margin-top:2px; padding:1px 6px; background:rgba(255,107,157,0.1); border:1px solid rgba(255,107,157,0.2); border-radius:10px; font-size:8px; color:var(--accent); }
+        .discord-badge .dot { width:4px; height:4px; border-radius:50%; background:var(--accent); animation:blink 2s step-end infinite; }
+        @keyframes blink { 0%,100%{opacity:1;} 50%{opacity:0;} }
+        /* ABOUT */
+        .about-toggle { position:absolute; top:6px; right:8px; background:rgba(255,107,157,0.08); border:1px solid rgba(255,107,157,0.2); color:var(--accent); width:20px; height:20px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:10px; font-family:'JetBrains Mono',monospace; font-weight:700; transition:all 0.3s ease; z-index:9999; }
+        .about-toggle:hover { background:rgba(255,107,157,0.2); border-color:var(--accent); box-shadow:0 0 10px var(--accent-glow); transform:rotate(15deg) scale(1.1); }
+        .about-dropdown { position:fixed; z-index:99999; width:300px; background:rgba(10,2,10,0.96); border:1px solid rgba(255,107,157,0.35); border-radius:8px; display:none; backdrop-filter:blur(12px); box-shadow:0 8px 40px rgba(0,0,0,0.6),0 0 20px rgba(255,107,157,0.1); }
+        .about-dropdown.show { display:block; animation:aboutDrop 0.3s ease both; }
+        @keyframes aboutDrop { from{opacity:0;transform:translateY(-6px) scale(0.97);} to{opacity:1;transform:translateY(0) scale(1);} }
+        .about-dropdown-bar { display:flex; align-items:center; padding:5px 10px; border-bottom:1px solid var(--border); border-radius:8px 8px 0 0; background:rgba(15,5,15,0.9); }
+        .about-dropdown-bar span { flex:1; font-size:9px; color:var(--text-dim); }
+        .about-dropdown-close { background:none; border:none; color:var(--accent); font-size:13px; line-height:1; padding:0; font-family:'JetBrains Mono',monospace; }
+        .about-dropdown-close:hover { color:var(--red); }
+        .about-dropdown-body { padding:10px; font-size:9.5px; line-height:1.6; color:var(--text-dim); }
+        .about-dropdown-body .hl { color:var(--accent); }
+        /* TERMINAL */
+        .terminal { grid-column:1; grid-row:2; background:var(--terminal-bg); border:1px solid var(--border); border-radius:6px; overflow:hidden; display:flex; flex-direction:column; animation:fadeSlideUp 0.6s ease both 0.3s; min-height:0; }
+        .terminal-bar { display:flex; align-items:center; gap:5px; padding:5px 8px; background:rgba(15,5,15,0.45); border-bottom:1px solid var(--border); flex-shrink:0; }
+        .terminal-btn { width:8px; height:8px; border-radius:50%; transition:transform 0.2s; }
+        .terminal-btn:hover { transform:scale(1.3); }
+        .terminal-btn.close { background:#ff5f57; } .terminal-btn.min { background:#febc2e; } .terminal-btn.max { background:#28c840; }
+        .terminal-title { flex:1; text-align:center; font-size:8px; color:var(--text-dim); }
+        .terminal-body { padding:8px; font-size:10px; line-height:1.5; overflow-y:auto; flex:1; min-height:0; }
+        .terminal-body::-webkit-scrollbar { width:3px; } .terminal-body::-webkit-scrollbar-thumb { background:var(--accent-dim); border-radius:2px; }
+        .terminal-prompt { color:var(--accent); margin-right:5px; white-space:nowrap; }
+        .terminal-prompt .user { color:var(--pink); } .terminal-prompt .at { color:var(--text-dim); } .terminal-prompt .host { color:var(--accent); } .terminal-prompt .symbol { color:var(--pink); }
+        .neofetch-container { display:flex; gap:8px; align-items:flex-start; }
+        .neofetch-ascii { color:var(--accent); font-size:3.2px; line-height:1.02; white-space:pre; flex-shrink:0; text-shadow:0 0 4px var(--accent-glow); opacity:0.8; }
+        .neofetch-info { flex:1; min-width:0; }
+        .neofetch-info .line { margin-bottom:0px; font-size:10px; }
+        .neofetch-separator { color:var(--text-muted); }
+        .key { color:var(--accent); display:inline-block; min-width:70px; }
+        .value { color:var(--text); }
+        .color-blocks { display:flex; gap:2px; margin-top:3px; }
+        .color-block { width:12px; height:6px; border-radius:1px; }
+        .terminal-cursor { display:inline-block; width:6px; height:11px; background:var(--accent); animation:blink 1s step-end infinite; vertical-align:middle; margin-left:2px; }
+        /* LAST.FM */
+        .lastfm-section { margin-top:6px; padding-top:6px; border-top:1px solid var(--border); }
+        .lastfm-title { font-size:8px; text-transform:uppercase; letter-spacing:1px; color:var(--text-dim); margin-bottom:4px; }
+        .lastfm-tracks { display:flex; flex-direction:column; gap:3px; }
+        .lastfm-track { display:flex; align-items:center; gap:6px; padding:3px 4px; border-radius:4px; transition:background 0.2s; font-size:9px; }
+        .lastfm-track:hover { background:rgba(255,107,157,0.05); }
+        .lastfm-cover { width:28px; height:28px; border-radius:3px; object-fit:cover; flex-shrink:0; background:var(--bg); transition:transform 0.2s, box-shadow 0.2s; }
+        .lastfm-cover:hover { transform:scale(1.1); box-shadow:0 0 10px var(--accent-glow); }
+        .lastfm-track-info { flex:1; min-width:0; }
+        .lastfm-track-name { color:var(--text); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; font-size:9px; }
+        .lastfm-track-artist { color:var(--text-dim); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; font-size:8px; }
+        .lastfm-now { color:var(--green); font-size:7px; }
+        /* RIGHT PANEL */
+        .right-panel { grid-column:2; grid-row:2; display:flex; flex-direction:column; gap:6px; min-height:0; overflow:hidden; }
+        /* ACTIVITY */
+        .activity-card { background:var(--terminal-bg); border:1px solid var(--border); border-radius:6px; padding:8px; animation:fadeSlideUp 0.6s ease both 0.4s; flex-shrink:0; max-height:150px; display:flex; flex-direction:column; }
+        .activity-card h3 { font-size:8px; text-transform:uppercase; letter-spacing:1.5px; color:var(--text-dim); margin-bottom:6px; flex-shrink:0; }
+        #activity-container { overflow-y:auto; flex:1; min-height:0; }
+        #activity-container::-webkit-scrollbar { width:3px; } #activity-container::-webkit-scrollbar-thumb { background:var(--accent-dim); border-radius:2px; }
+        .activity-item { display:flex; align-items:center; gap:7px; padding:5px; background:rgba(255,255,255,0.02); border-radius:4px; border:1px solid rgba(255,255,255,0.02); transition:border-color 0.3s; }
+        .activity-item:hover { border-color:var(--border); }
+        .activity-item+.activity-item { margin-top:4px; }
+        .activity-item.spotify-clickable { cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='20' viewBox='0 0 16 20'%3E%3Cpolygon points='0,0 0,18 4.5,13.5 8,20 10.5,19 7,12.5 13,12.5' fill='%23ff79c6' stroke='%23ff6b9d' stroke-width='0.8'/%3E%3C/svg%3E") 0 0, pointer; }
+        .activity-img { width:36px; height:36px; border-radius:4px; object-fit:cover; flex-shrink:0; background:var(--bg); transition:transform 0.2s, box-shadow 0.2s; }
+        .activity-img.clickable:hover { transform:scale(1.1); box-shadow:0 0 12px var(--accent-glow); }
+        .activity-details { flex:1; min-width:0; }
+        .activity-name { font-size:9px; font-weight:600; color:var(--text); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+        .activity-state,.activity-detail { font-size:8px; color:var(--text-dim); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; margin-top:0px; }
+        .activity-time { font-size:7px; color:var(--text-muted); margin-top:1px; }
+        .no-activity { color:var(--text-muted); font-size:9px; font-style:italic; text-align:center; padding:8px; }
+        /* SOCIALS */
+        .social-section { background:var(--terminal-bg); border:1px solid var(--border); border-radius:6px; padding:8px; animation:fadeSlideUp 0.6s ease both 0.5s; flex-shrink:0; }
+        .social-section h3 { font-size:8px; text-transform:uppercase; letter-spacing:1.5px; color:var(--text-dim); margin-bottom:6px; }
+        .social-links { display:flex; gap:5px; flex-wrap:wrap; }
+        .social-link { display:flex; align-items:center; justify-content:center; width:30px; height:30px; background:rgba(255,107,157,0.04); border:1px solid var(--border); border-radius:6px; color:var(--text-dim); text-decoration:none; transition:all 0.3s cubic-bezier(0.4,0,0.2,1); position:relative; }
+        .social-link svg { width:14px; height:14px; transition:all 0.3s ease; position:relative; z-index:1; }
+        .social-link:hover { transform:translateY(-3px) scale(1.08); box-shadow:0 4px 14px rgba(255,107,157,0.15); }
+        .social-link.github:hover { border-color:#e6edf3; color:#e6edf3; } .social-link.roblox:hover { border-color:#e2231a; color:#e2231a; } .social-link.spotify:hover { border-color:#1db954; color:#1db954; } .social-link.youtube:hover { border-color:#ff0000; color:#ff0000; } .social-link.discord-link:hover { border-color:#5865f2; color:#5865f2; } .social-link.steam:hover { border-color:#66c0f4; color:#66c0f4; } .social-link.instagram:hover { border-color:#e4405f; color:#e4405f; } .social-link.lastfm:hover { border-color:#d51007; color:#d51007; }
+        .social-link:hover svg { color:inherit; filter:drop-shadow(0 0 6px currentColor); }
+        .social-tooltip { position:absolute; bottom:calc(100% + 5px); left:50%; transform:translateX(-50%) translateY(4px); background:rgba(15,5,15,0.95); border:1px solid var(--border); color:var(--text); font-size:7px; padding:2px 6px; border-radius:3px; white-space:nowrap; opacity:0; pointer-events:none; transition:all 0.2s ease; }
+        .social-link:hover .social-tooltip { opacity:1; transform:translateX(-50%) translateY(0); }
+        .copy-toast { position:fixed; top:50%; left:50%; transform:translate(-50%,-50%) scale(0.8); background:rgba(10,2,10,0.95); border:1px solid var(--accent); color:var(--accent); padding:8px 18px; border-radius:6px; font-size:11px; font-family:'JetBrains Mono',monospace; z-index:100000; opacity:0; pointer-events:none; transition:all 0.3s ease; box-shadow:0 0 20px var(--accent-glow); }
+        .copy-toast.show { opacity:1; transform:translate(-50%,-50%) scale(1); }
+        /* CMATRIX */
+        .cmatrix-section { background:rgba(10,2,10,0.35); border:1px solid var(--border); border-radius:6px; overflow:hidden; animation:fadeSlideUp 0.6s ease both 0.6s; flex:1; min-height:0; display:flex; flex-direction:column; }
+        .cmatrix-bar { display:flex; align-items:center; gap:5px; padding:3px 7px; background:rgba(15,5,15,0.45); border-bottom:1px solid var(--border); flex-shrink:0; }
+        .cmatrix-bar .terminal-btn { width:6px; height:6px; }
+        .cmatrix-bar span { flex:1; text-align:center; font-size:7px; color:var(--text-dim); }
+        .cmatrix-canvas { width:100%; flex:1; display:block; min-height:0; }
+        /* MUSIC */
+        .music-player { grid-column:1/-1; grid-row:3; background:var(--terminal-bg); border:1px solid var(--border); border-radius:6px; padding:5px 10px; display:flex; align-items:center; gap:8px; animation:fadeSlideUp 0.6s ease both 0.7s; flex-shrink:0; }
+        .player-controls { display:flex; align-items:center; flex-shrink:0; }
+        .player-btn { background:none; border:1px solid var(--border); color:var(--accent); width:26px; height:26px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:10px; transition:all 0.2s ease; }
+        .player-btn:hover { background:rgba(255,107,157,0.15); border-color:var(--accent); box-shadow:0 0 10px var(--accent-glow); transform:scale(1.1); }
+        .player-info { flex-shrink:0; }
+        .player-title { font-size:9px; color:var(--text); font-weight:600; }
+        .player-artist { font-size:7px; color:var(--text-dim); }
+        .player-progress { flex:1; display:flex; align-items:center; gap:5px; min-width:0; }
+        .player-time { font-size:8px; color:var(--text-muted); font-family:'Share Tech Mono',monospace; white-space:nowrap; min-width:24px; }
+        .progress-bar-container { flex:1; height:16px; display:flex; align-items:center; position:relative; min-width:0; }
+        .progress-bar { width:100%; height:3px; background:rgba(255,107,157,0.12); border-radius:2px; overflow:hidden; }
+        .progress-fill { height:100%; background:linear-gradient(90deg,var(--accent-dim),var(--accent)); border-radius:2px; width:0%; transition:width 0.2s linear; box-shadow:0 0 6px var(--accent-glow); }
+        .progress-bar-container input[type="range"] { position:absolute; top:0; left:0; width:100%; height:100%; opacity:0; margin:0; }
+        .visualizer { display:flex; align-items:end; gap:1.5px; height:20px; flex-shrink:0; }
+        .vis-bar { width:2px; background:var(--accent); border-radius:1px 1px 0 0; transition:height 0.08s ease; opacity:0.7; min-height:2px; }
+        .vis-bar:nth-child(even) { opacity:0.5; }
+        .volume-control { display:flex; align-items:center; gap:3px; flex-shrink:0; }
+        .volume-icon { color:var(--text-dim); font-size:10px; }
+        .volume-slider { -webkit-appearance:none; appearance:none; width:40px; height:3px; background:rgba(255,107,157,0.15); border-radius:2px; outline:none; }
+        .volume-slider::-webkit-slider-thumb { -webkit-appearance:none; width:8px; height:8px; background:var(--accent); border-radius:50%; box-shadow:0 0 4px var(--accent-glow); }
+        /* LIGHTBOX */
+        .lightbox { position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:200000; display:none; align-items:center; justify-content:center; backdrop-filter:blur(8px); }
+        .lightbox.show { display:flex; }
+        .lightbox img { max-width:80vw; max-height:80vh; border-radius:10px; border:2px solid var(--border); box-shadow:0 0 40px rgba(255,107,157,0.2); }
+        .lightbox-close { position:absolute; top:20px; right:20px; background:none; border:1px solid var(--border); color:var(--accent); width:30px; height:30px; border-radius:50%; font-size:16px; display:flex; align-items:center; justify-content:center; font-family:'JetBrains Mono',monospace; }
+        .lightbox-close:hover { background:rgba(255,107,157,0.2); border-color:var(--accent); }
+        .lightbox-info { position:absolute; bottom:30px; text-align:center; color:var(--text); font-size:12px; }
+        .lightbox-info .lb-title { font-weight:700; } .lightbox-info .lb-artist { color:var(--text-dim); font-size:10px; }
+        /* ANIM */
+        @keyframes fadeSlideUp { from{opacity:0;transform:translateY(15px);} to{opacity:1;transform:translateY(0);} }
+        .float-particle { position:fixed; width:2px; height:2px; background:var(--accent); border-radius:50%; pointer-events:none; z-index:0; opacity:0; animation:floatUp linear infinite; }
+        @keyframes floatUp { 0%{opacity:0;transform:translateY(100vh) scale(0);} 10%{opacity:0.4;} 90%{opacity:0.2;} 100%{opacity:0;transform:translateY(-10vh) scale(1);} }
+        .shimmer-border { position:relative; }
+        .shimmer-border::after { content:''; position:absolute; inset:0; border-radius:inherit; border:1px solid transparent; background:linear-gradient(90deg,transparent,rgba(255,107,157,0.12),transparent) border-box; background-size:200% 100%; -webkit-mask:linear-gradient(#fff 0 0) padding-box,linear-gradient(#fff 0 0); -webkit-mask-composite:destination-out; mask-composite:exclude; animation:shimmer 4s linear infinite; pointer-events:none; }
+        @keyframes shimmer { 0%{background-position:-200% 0;} 100%{background-position:200% 0;} }
+        /* MOBILE */
+        @media (max-width:768px) {
+            html, body { overflow-y:auto; overflow-x:hidden; height:auto; }
+            .layout { grid-template-columns:1fr; grid-template-rows:auto auto auto auto auto; height:auto; min-height:100vh; gap:6px; padding:6px; }
+            .clock-widget { grid-column:1; grid-row:1; flex-direction:column; text-align:center; gap:6px; }
+            .weather-info { border-left:none; border-top:1px solid var(--border); padding-left:0; padding-top:6px; text-align:center; }
+            .profile-widget { grid-column:1; grid-row:2; }
+            .terminal { grid-column:1; grid-row:3; max-height:350px; }
+            .right-panel { grid-column:1; grid-row:4; overflow:visible; }
+            .music-player { grid-column:1; grid-row:5; flex-wrap:wrap; gap:6px; }
+            .neofetch-ascii { font-size:2.5px; }
+            .clock-time { font-size:28px; }
+            .about-dropdown { width:calc(100vw - 24px); right:12px!important; }
+            .player-progress { min-width:0; flex-basis:100%; order:10; }
+            .visualizer { display:none; }
+            .volume-control { display:none; }
+            .cmatrix-section { min-height:100px; }
+            .activity-card { max-height:180px; }
         }
-
-        .tilt-tile::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            border-radius: inherit;
-            opacity: 0;
-            transition: opacity 0.4s ease;
-            background: radial-gradient(600px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(255,107,157,0.06), transparent 40%);
-            pointer-events: none;
-            z-index: 0;
-        }
-
-        .tilt-tile:hover::before { opacity: 1; }
-
-        .tilt-tile:hover {
-            border-color: rgba(255, 107, 157, 0.4) !important;
-            box-shadow: 0 0 18px rgba(255, 107, 157, 0.08), inset 0 0 18px rgba(255, 107, 157, 0.03);
-        }
-
-        /* ==================== CLOCK WIDGET ==================== */
-        .clock-widget {
-            grid-column: 1;
-            grid-row: 1;
-            background: var(--terminal-bg);
-            border: 1px solid var(--border);
-            border-radius: 6px;
-            padding: 10px 16px;
-            text-align: center;
-            animation: fadeSlideUp 0.6s ease both 0.1s;
-        }
-
-        .clock-time {
-            font-family: 'Share Tech Mono', monospace;
-            font-size: 40px;
-            font-weight: 700;
-            color: var(--accent);
-            text-shadow: 0 0 20px var(--accent-glow), 0 0 40px rgba(255,107,157,0.15);
-            letter-spacing: 4px;
-            animation: glowPulse 3s ease-in-out infinite;
-        }
-
-        @keyframes glowPulse {
-            0%, 100% { text-shadow: 0 0 20px var(--accent-glow), 0 0 40px rgba(255,107,157,0.15); }
-            50% { text-shadow: 0 0 30px var(--accent-glow), 0 0 60px rgba(255,107,157,0.25); }
-        }
-
-        .clock-date { font-size: 11px; color: var(--accent); opacity: 0.7; margin-top: 2px; }
-        .clock-tz { font-size: 9px; color: var(--text-muted); margin-top: 1px; }
-
-        /* ==================== PROFILE WIDGET ==================== */
-        .profile-widget {
-            grid-column: 2;
-            grid-row: 1;
-            background: var(--terminal-bg);
-            border: 1px solid var(--border);
-            border-radius: 6px;
-            padding: 10px 14px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            animation: fadeSlideUp 0.6s ease both 0.2s;
-            position: relative;
-            z-index: 500;
-        }
-
-        .avatar-wrapper { position: relative; flex-shrink: 0; }
-        .avatar-container { position: relative; width: 56px; height: 56px; }
-
-        .avatar {
-            width: 56px; height: 56px;
-            border-radius: 50%;
-            border: 2px solid var(--border);
-            object-fit: cover;
-            transition: border-color 0.3s ease, box-shadow 0.3s ease;
-        }
-        .avatar:hover { border-color: var(--accent); box-shadow: 0 0 12px var(--accent-glow); }
-
-        .avatar-decoration {
-            position: absolute;
-            top: -7px; left: -7px;
-            width: 70px; height: 70px;
-            pointer-events: none;
-            z-index: 2;
-        }
-
-        .status-dot {
-            position: absolute;
-            bottom: 0; right: 0;
-            width: 14px; height: 14px;
-            border-radius: 50%;
-            border: 2px solid rgba(10, 0, 8, 0.9);
-            background: #747f8d;
-            z-index: 3;
-            transition: background 0.3s ease;
-        }
-        .status-dot.online { background: #43b581; box-shadow: 0 0 6px rgba(67,181,129,0.4); }
-        .status-dot.idle { background: #faa61a; }
-        .status-dot.dnd { background: #f04747; }
-        .status-dot.offline { background: #747f8d; }
-
-        .profile-center { flex: 1; min-width: 0; }
-
-        .profile-info h1 { font-size: 17px; font-weight: 700; color: var(--text); }
-
-        #display-name {
-            color: #fff;
-            text-shadow: 0 0 8px rgba(255,255,255,0.5), 0 0 20px rgba(255,255,255,0.25), 0 0 40px rgba(255,255,255,0.1);
-            animation: nameGlow 3s ease-in-out infinite;
-        }
-
-        @keyframes nameGlow {
-            0%, 100% { text-shadow: 0 0 8px rgba(255,255,255,0.5), 0 0 20px rgba(255,255,255,0.25); }
-            50% { text-shadow: 0 0 14px rgba(255,255,255,0.7), 0 0 30px rgba(255,255,255,0.35), 0 0 50px rgba(255,255,255,0.1); }
-        }
-
-        .profile-info .tag { font-size: 11px; color: var(--text-dim); font-weight: 400; }
-        .profile-info .status-text { font-size: 10px; color: var(--text-dim); margin-top: 2px; display: flex; align-items: center; gap: 4px; }
-
-        .discord-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-            margin-top: 3px;
-            padding: 2px 8px;
-            background: rgba(255, 107, 157, 0.1);
-            border: 1px solid rgba(255, 107, 157, 0.2);
-            border-radius: 12px;
-            font-size: 9px;
-            color: var(--accent);
-        }
-        .discord-badge .dot { width: 5px; height: 5px; border-radius: 50%; background: var(--accent); animation: blink 2s step-end infinite; }
-
-        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
-
-        /* ==================== ABOUT ME (inside profile) ==================== */
-        .about-toggle {
-            position: absolute;
-            top: 8px;
-            right: 10px;
-            background: rgba(255, 107, 157, 0.08);
-            border: 1px solid rgba(255, 107, 157, 0.2);
-            color: var(--accent);
-            width: 22px; height: 22px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 11px;
-            font-family: 'JetBrains Mono', monospace;
-            font-weight: 700;
-            transition: all 0.3s ease;
-            z-index: 9999;
-        }
-
-        .about-toggle:hover {
-            background: rgba(255, 107, 157, 0.2);
-            border-color: var(--accent);
-            box-shadow: 0 0 10px var(--accent-glow);
-            transform: rotate(15deg) scale(1.1);
-        }
-
-        .about-dropdown {
-            position: fixed;
-            z-index: 99999;
-            width: 320px;
-            background: rgba(10, 2, 10, 0.96);
-            border: 1px solid rgba(255, 107, 157, 0.35);
-            border-radius: 8px;
-            display: none;
-            backdrop-filter: blur(12px);
-            box-shadow: 0 8px 40px rgba(0,0,0,0.6), 0 0 20px rgba(255,107,157,0.1);
-        }
-
-        .about-dropdown.show { display: block; animation: aboutDrop 0.3s ease both; }
-
-        @keyframes aboutDrop {
-            from { opacity: 0; transform: translateY(-6px) scale(0.97); }
-            to { opacity: 1; transform: translateY(0) scale(1); }
-        }
-
-        .about-dropdown-bar {
-            display: flex;
-            align-items: center;
-            padding: 6px 10px;
-            border-bottom: 1px solid var(--border);
-            border-radius: 8px 8px 0 0;
-            background: rgba(15, 5, 15, 0.9);
-        }
-
-        .about-dropdown-bar span { flex: 1; font-size: 9px; color: var(--text-dim); }
-
-        .about-dropdown-close {
-            background: none;
-            border: none;
-            color: var(--accent);
-            font-size: 14px;
-            line-height: 1;
-            padding: 0;
-            font-family: 'JetBrains Mono', monospace;
-        }
-        .about-dropdown-close:hover { color: var(--red); }
-
-        .about-dropdown-body {
-            padding: 12px;
-            font-size: 10px;
-            line-height: 1.65;
-            color: var(--text-dim);
-        }
-        .about-dropdown-body .hl { color: var(--accent); }
-
-        /* ==================== TERMINAL ==================== */
-        .terminal {
-            grid-column: 1;
-            grid-row: 2;
-            background: var(--terminal-bg);
-            border: 1px solid var(--border);
-            border-radius: 6px;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            animation: fadeSlideUp 0.6s ease both 0.3s;
-            min-height: 0;
-        }
-
-        .terminal-bar {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            padding: 6px 10px;
-            background: rgba(15, 5, 15, 0.45);
-            border-bottom: 1px solid var(--border);
-            flex-shrink: 0;
-        }
-
-        .terminal-btn { width: 9px; height: 9px; border-radius: 50%; transition: transform 0.2s; }
-        .terminal-btn:hover { transform: scale(1.3); }
-        .terminal-btn.close { background: #ff5f57; }
-        .terminal-btn.min { background: #febc2e; }
-        .terminal-btn.max { background: #28c840; }
-
-        .terminal-title { flex: 1; text-align: center; font-size: 9px; color: var(--text-dim); }
-
-        .terminal-body {
-            padding: 10px;
-            font-size: 10.5px;
-            line-height: 1.55;
-            overflow-y: auto;
-            flex: 1;
-            min-height: 0;
-        }
-        .terminal-body::-webkit-scrollbar { width: 3px; }
-        .terminal-body::-webkit-scrollbar-track { background: transparent; }
-        .terminal-body::-webkit-scrollbar-thumb { background: var(--accent-dim); border-radius: 2px; }
-
-        .terminal-prompt { color: var(--accent); margin-right: 6px; white-space: nowrap; }
-        .terminal-prompt .user { color: var(--pink); }
-        .terminal-prompt .at { color: var(--text-dim); }
-        .terminal-prompt .host { color: var(--accent); }
-        .terminal-prompt .symbol { color: var(--pink); }
-
-        .neofetch-container { display: flex; gap: 10px; align-items: flex-start; }
-
-        .neofetch-ascii {
-            color: var(--accent);
-            font-size: 3.8px;
-            line-height: 1.03;
-            white-space: pre;
-            flex-shrink: 0;
-            text-shadow: 0 0 5px var(--accent-glow);
-            opacity: 0.85;
-        }
-
-        .neofetch-info { flex: 1; min-width: 0; }
-        .neofetch-info .line { margin-bottom: 1px; font-size: 10.5px; }
-        .neofetch-separator { color: var(--text-muted); }
-        .key { color: var(--accent); display: inline-block; min-width: 80px; }
-        .value { color: var(--text); }
-
-        .color-blocks { display: flex; gap: 2px; margin-top: 4px; }
-        .color-block { width: 14px; height: 7px; border-radius: 1px; }
-
-        .terminal-cursor {
-            display: inline-block;
-            width: 7px; height: 12px;
-            background: var(--accent);
-            animation: blink 1s step-end infinite;
-            vertical-align: middle;
-            margin-left: 2px;
-        }
-
-        .terminal-socials { display: flex; gap: 6px; margin-top: 3px; flex-wrap: wrap; }
-
-        .terminal-social-link {
-            color: var(--text-dim);
-            text-decoration: none;
-            display: flex;
-            align-items: center;
-            gap: 3px;
-            font-size: 9px;
-            padding: 1px 5px;
-            border: 1px solid rgba(255, 107, 157, 0.1);
-            border-radius: 3px;
-            transition: all 0.2s ease;
-        }
-        .terminal-social-link:hover {
-            color: var(--accent);
-            border-color: var(--accent);
-            background: rgba(255, 107, 157, 0.05);
-            transform: translateY(-1px);
-        }
-        .terminal-social-link svg { width: 10px; height: 10px; fill: currentColor; }
-
-        /* ==================== RIGHT PANEL ==================== */
-        .right-panel {
-            grid-column: 2;
-            grid-row: 2;
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            min-height: 0;
-            overflow: hidden;
-        }
-
-        /* ==================== ACTIVITY (fixed-size, scrollable) ==================== */
-        .activity-card {
-            background: var(--terminal-bg);
-            border: 1px solid var(--border);
-            border-radius: 6px;
-            padding: 10px;
-            animation: fadeSlideUp 0.6s ease both 0.4s;
-            flex-shrink: 0;
-            max-height: 160px;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .activity-card h3 {
-            font-size: 9px;
-            text-transform: uppercase;
-            letter-spacing: 1.5px;
-            color: var(--text-dim);
-            margin-bottom: 8px;
-            flex-shrink: 0;
-        }
-
-        #activity-container {
-            overflow-y: auto;
-            flex: 1;
-            min-height: 0;
-        }
-
-        #activity-container::-webkit-scrollbar { width: 3px; }
-        #activity-container::-webkit-scrollbar-track { background: transparent; }
-        #activity-container::-webkit-scrollbar-thumb { background: var(--accent-dim); border-radius: 2px; }
-
-        .activity-item {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            padding: 7px;
-            background: rgba(255, 255, 255, 0.02);
-            border-radius: 5px;
-            border: 1px solid rgba(255,255,255,0.02);
-            transition: border-color 0.3s ease;
-        }
-        .activity-item:hover { border-color: var(--border); }
-        .activity-item + .activity-item { margin-top: 5px; }
-
-        .activity-img {
-            width: 40px; height: 40px;
-            border-radius: 5px;
-            object-fit: cover;
-            flex-shrink: 0;
-            background: var(--bg);
-        }
-        .activity-details { flex: 1; min-width: 0; }
-        .activity-name { font-size: 10px; font-weight: 600; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .activity-state, .activity-detail { font-size: 9px; color: var(--text-dim); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 1px; }
-        .activity-time { font-size: 8px; color: var(--text-muted); margin-top: 2px; }
-        .no-activity { color: var(--text-muted); font-size: 10px; font-style: italic; text-align: center; padding: 10px; }
-
-        /* ==================== SOCIAL LINKS ==================== */
-        .social-section {
-            background: var(--terminal-bg);
-            border: 1px solid var(--border);
-            border-radius: 6px;
-            padding: 10px;
-            animation: fadeSlideUp 0.6s ease both 0.5s;
-            flex-shrink: 0;
-        }
-        .social-section h3 { font-size: 9px; text-transform: uppercase; letter-spacing: 1.5px; color: var(--text-dim); margin-bottom: 8px; }
-        .social-links { display: flex; gap: 6px; flex-wrap: wrap; }
-
-        .social-link {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 34px; height: 34px;
-            background: rgba(255, 107, 157, 0.04);
-            border: 1px solid var(--border);
-            border-radius: 7px;
-            color: var(--text-dim);
-            text-decoration: none;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            position: relative;
-        }
-        .social-link svg { width: 16px; height: 16px; transition: all 0.3s ease; position: relative; z-index: 1; }
-        .social-link:hover { transform: translateY(-3px) scale(1.08); box-shadow: 0 6px 18px rgba(255, 107, 157, 0.15); }
-        .social-link.github:hover { border-color: #e6edf3; color: #e6edf3; }
-        .social-link.roblox:hover { border-color: #e2231a; color: #e2231a; }
-        .social-link.spotify:hover { border-color: #1db954; color: #1db954; }
-        .social-link.youtube:hover { border-color: #ff0000; color: #ff0000; }
-        .social-link.discord-link:hover { border-color: #5865f2; color: #5865f2; }
-        .social-link.steam:hover { border-color: #66c0f4; color: #66c0f4; }
-        .social-link.instagram:hover { border-color: #e4405f; color: #e4405f; }
-        .social-link:hover svg { color: inherit; filter: drop-shadow(0 0 6px currentColor); }
-
-        .social-tooltip {
-            position: absolute;
-            bottom: calc(100% + 6px);
-            left: 50%;
-            transform: translateX(-50%) translateY(4px);
-            background: rgba(15, 5, 15, 0.95);
-            border: 1px solid var(--border);
-            color: var(--text);
-            font-size: 8px;
-            padding: 2px 7px;
-            border-radius: 4px;
-            white-space: nowrap;
-            opacity: 0;
-            pointer-events: none;
-            transition: all 0.2s ease;
-        }
-        .social-link:hover .social-tooltip { opacity: 1; transform: translateX(-50%) translateY(0); }
-
-        .copy-toast {
-            position: fixed;
-            top: 50%; left: 50%;
-            transform: translate(-50%, -50%) scale(0.8);
-            background: rgba(10, 2, 10, 0.95);
-            border: 1px solid var(--accent);
-            color: var(--accent);
-            padding: 8px 18px;
-            border-radius: 6px;
-            font-size: 11px;
-            font-family: 'JetBrains Mono', monospace;
-            z-index: 100000;
-            opacity: 0;
-            pointer-events: none;
-            transition: all 0.3s ease;
-            box-shadow: 0 0 20px var(--accent-glow);
-        }
-        .copy-toast.show { opacity: 1; transform: translate(-50%, -50%) scale(1); }
-
-        /* ==================== CMATRIX ==================== */
-        .cmatrix-section {
-            background: rgba(10, 2, 10, 0.35);
-            border: 1px solid var(--border);
-            border-radius: 6px;
-            overflow: hidden;
-            animation: fadeSlideUp 0.6s ease both 0.6s;
-            flex: 1;
-            min-height: 0;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .cmatrix-bar {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            padding: 4px 8px;
-            background: rgba(15, 5, 15, 0.45);
-            border-bottom: 1px solid var(--border);
-            flex-shrink: 0;
-        }
-        .cmatrix-bar .terminal-btn { width: 7px; height: 7px; }
-        .cmatrix-bar span { flex: 1; text-align: center; font-size: 8px; color: var(--text-dim); }
-        .cmatrix-canvas { width: 100%; flex: 1; display: block; min-height: 0; }
-
-        /* ==================== MUSIC PLAYER ==================== */
-        .music-player {
-            grid-column: 1 / -1;
-            grid-row: 3;
-            background: var(--terminal-bg);
-            border: 1px solid var(--border);
-            border-radius: 6px;
-            padding: 6px 12px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            animation: fadeSlideUp 0.6s ease both 0.7s;
-            flex-shrink: 0;
-        }
-
-        .player-controls { display: flex; align-items: center; flex-shrink: 0; }
-
-        .player-btn {
-            background: none;
-            border: 1px solid var(--border);
-            color: var(--accent);
-            width: 28px; height: 28px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 11px;
-            transition: all 0.2s ease;
-        }
-        .player-btn:hover {
-            background: rgba(255, 107, 157, 0.15);
-            border-color: var(--accent);
-            box-shadow: 0 0 10px var(--accent-glow);
-            transform: scale(1.1);
-        }
-
-        .player-info { flex-shrink: 0; }
-        .player-title { font-size: 10px; color: var(--text); font-weight: 600; }
-        .player-artist { font-size: 8px; color: var(--text-dim); }
-
-        .player-progress { flex: 1; display: flex; align-items: center; gap: 6px; min-width: 0; }
-        .player-time { font-size: 9px; color: var(--text-muted); font-family: 'Share Tech Mono', monospace; white-space: nowrap; min-width: 28px; }
-
-        .progress-bar-container { flex: 1; height: 18px; display: flex; align-items: center; position: relative; min-width: 0; }
-        .progress-bar { width: 100%; height: 3px; background: rgba(255, 107, 157, 0.12); border-radius: 2px; overflow: hidden; }
-        .progress-fill { height: 100%; background: linear-gradient(90deg, var(--accent-dim), var(--accent)); border-radius: 2px; width: 0%; transition: width 0.2s linear; box-shadow: 0 0 6px var(--accent-glow); }
-        .progress-bar-container input[type="range"] { position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; margin: 0; }
-
-        .visualizer { display: flex; align-items: end; gap: 1.5px; height: 22px; flex-shrink: 0; }
-        .vis-bar { width: 2.5px; background: var(--accent); border-radius: 1px 1px 0 0; transition: height 0.08s ease; opacity: 0.7; min-height: 2px; }
-        .vis-bar:nth-child(even) { opacity: 0.5; }
-
-        .volume-control { display: flex; align-items: center; gap: 3px; flex-shrink: 0; }
-        .volume-icon { color: var(--text-dim); font-size: 11px; }
-
-        .volume-slider {
-            -webkit-appearance: none;
-            appearance: none;
-            width: 50px; height: 3px;
-            background: rgba(255, 107, 157, 0.15);
-            border-radius: 2px;
-            outline: none;
-        }
-        .volume-slider::-webkit-slider-thumb { -webkit-appearance: none; width: 9px; height: 9px; background: var(--accent); border-radius: 50%; box-shadow: 0 0 4px var(--accent-glow); }
-        .volume-slider::-moz-range-thumb { width: 9px; height: 9px; background: var(--accent); border-radius: 50%; border: none; }
-
-        /* ==================== ANIMATIONS ==================== */
-        @keyframes fadeSlideUp {
-            from { opacity: 0; transform: translateY(15px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .float-particle {
-            position: fixed;
-            width: 2px; height: 2px;
-            background: var(--accent);
-            border-radius: 50%;
-            pointer-events: none;
-            z-index: 0;
-            opacity: 0;
-            animation: floatUp linear infinite;
-        }
-
-        @keyframes floatUp {
-            0% { opacity: 0; transform: translateY(100vh) scale(0); }
-            10% { opacity: 0.4; }
-            90% { opacity: 0.2; }
-            100% { opacity: 0; transform: translateY(-10vh) scale(1); }
-        }
-
-        .shimmer-border { position: relative; }
-        .shimmer-border::after {
-            content: '';
-            position: absolute;
-            inset: 0;
-            border-radius: inherit;
-            border: 1px solid transparent;
-            background: linear-gradient(90deg, transparent, rgba(255,107,157,0.12), transparent) border-box;
-            background-size: 200% 100%;
-            -webkit-mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
-            -webkit-mask-composite: destination-out;
-            mask-composite: exclude;
-            animation: shimmer 4s linear infinite;
-            pointer-events: none;
-        }
-        @keyframes shimmer { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }
-
-        /* ==================== RESPONSIVE ==================== */
-        @media (max-width: 768px) {
-            .layout {
-                grid-template-columns: 1fr;
-                grid-template-rows: auto auto 1fr auto auto;
-                height: auto; min-height: 100vh;
-                overflow-y: auto;
-            }
-            .clock-widget { grid-column: 1; grid-row: 1; }
-            .profile-widget { grid-column: 1; grid-row: 2; }
-            .terminal { grid-column: 1; grid-row: 3; max-height: 280px; }
-            .right-panel { grid-column: 1; grid-row: 4; }
-            .music-player { grid-column: 1; grid-row: 5; }
-            .neofetch-ascii { font-size: 3px; }
-            .clock-time { font-size: 26px; }
-            .about-dropdown { width: 260px; }
+        @media (max-width:400px) {
+            .clock-time { font-size:22px; letter-spacing:2px; }
+            .neofetch-ascii { display:none; }
         }
     </style>
 </head>
 <body>
-    <div id="particles"></div>
-
-    <div id="click-screen" class="show" onclick="startExperience()">
-        <div class="lain-ascii-small">
+<div id="particles"></div>
+<div id="click-screen" class="show" onclick="startExperience()">
+    <div class="lain-ascii-small">
   ██       █████  ██ ███    ██
   ██      ██   ██ ██ ████   ██
   ██      ███████ ██ ██ ██  ██
   ██      ██   ██ ██ ██  ██ ██
   ███████ ██   ██ ██ ██   ████
-        </div>
-        <div class="click-border">
-            <div class="click-lain-text">Click to Continue...</div>
-            <div class="click-subtitle">the wired</div>
-        </div>
     </div>
-
-    <div id="boot-screen" style="display:none;">
-        <div id="boot-lines"></div>
-        <div id="boot-progress-container">
-            <div id="boot-progress-label">Loading...</div>
-            <div id="boot-progress-bar"><div id="boot-progress-fill"></div></div>
-        </div>
+    <div class="click-border">
+        <div class="click-lain-text">Click to Continue...</div>
+        <div class="click-subtitle">the wired</div>
     </div>
-
-    <div class="copy-toast" id="copy-toast">Copied "realmxrza" to clipboard!</div>
-
-    <!-- About Me dropdown (FIXED position, outside grid) -->
-    <div class="about-dropdown" id="about-dropdown">
-        <div class="about-dropdown-bar">
-            <span>~/aboutme.txt</span>
-            <button class="about-dropdown-close" onclick="toggleAbout(event)">×</button>
-        </div>
-        <div class="about-dropdown-body">
-            <span class="hl">$ cat aboutme.txt</span><br /><br />
-            Hey, I'm <span class="hl">mxrza</span>. I'm 19, currently studying foundation level engineering in college. Spent most of my time infront of a computer. I do coding in my free time as a side project. My favourite color is actually purple or somewhat pink idk. For further inquiry feel free to contact me via Discord. <br /><br />
-            <span style="color:var(--text-muted);">// Let's all love Lain.</span>
-        </div>
+</div>
+<div id="boot-screen" style="display:none;">
+    <div id="boot-lines"></div>
+    <div id="boot-progress-container">
+        <div id="boot-progress-label">Loading...</div>
+        <div id="boot-progress-bar"><div id="boot-progress-fill"></div></div>
     </div>
-
-    <div id="main-content">
-        <div class="bg-image"></div>
-        <div class="bg-overlay"></div>
-
-        <div class="layout">
-            <div class="clock-widget tilt-tile shimmer-border" data-tilt>
+</div>
+<div class="copy-toast" id="copy-toast">Copied "realmxrza" to clipboard!</div>
+<div class="about-dropdown" id="about-dropdown">
+    <div class="about-dropdown-bar"><span>~/aboutme.txt</span><button class="about-dropdown-close" onclick="toggleAbout(event)">×</button></div>
+    <div class="about-dropdown-body">
+        <span class="hl">$ cat aboutme.txt</span><br/><br/>
+        Hey, I'm <span class="hl">mxrza</span>. I'm 19, currently studying foundation level engineering in college. Spent most of my time infront of a computer. I do coding in my free time as a side project. My favourite color is actually purple or somewhat pink idk. For further inquiry feel free to contact me via Discord.<br/><br/>
+        <span style="color:var(--text-muted);">// Let's all love Lain.</span>
+    </div>
+</div>
+<!-- LIGHTBOX -->
+<div class="lightbox" id="lightbox" onclick="closeLightbox()">
+    <button class="lightbox-close" onclick="closeLightbox()">×</button>
+    <img id="lightbox-img" src="" alt=""/>
+    <div class="lightbox-info"><div class="lb-title" id="lb-title"></div><div class="lb-artist" id="lb-artist"></div></div>
+</div>
+<div id="main-content">
+    <div class="bg-image"></div>
+    <div class="bg-overlay"></div>
+    <div class="layout">
+        <!-- CLOCK + WEATHER -->
+        <div class="clock-widget tilt-tile shimmer-border" data-tilt>
+            <div class="clock-left">
                 <div class="clock-time" id="clock-time">00:00:00</div>
                 <div class="clock-date" id="clock-date"></div>
                 <div class="clock-tz">GMT+8</div>
             </div>
-
-            <div class="profile-widget tilt-tile" data-tilt>
-                <button class="about-toggle" onclick="toggleAbout(event)" title="About Me">i</button>
-                <div class="avatar-wrapper">
-                    <div class="avatar-container">
-                        <img id="avatar" class="avatar" src="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 56 56'><rect fill='%230f0f1a' width='56' height='56'/></svg>" alt="avatar" />
-                        <img id="avatar-decoration" class="avatar-decoration" src="" alt="" style="display:none;" />
-                        <div id="status-dot" class="status-dot offline"></div>
-                    </div>
-                </div>
-                <div class="profile-center">
-                    <div class="profile-info">
-                        <h1>
-                            <span id="display-name">realmxrza</span>
-                            <span id="username-tag" class="tag"></span>
-                        </h1>
-                        <div id="custom-status" class="status-text" style="display: none;">
-                            <span id="status-emoji"></span>
-                            <span id="status-text-content"></span>
-                        </div>
-                        <div class="discord-badge">
-                            <span class="dot"></span>
-                            <span id="discord-status-label">Offline</span>
-                        </div>
-                    </div>
-                </div>
+            <div class="weather-info" id="weather-info">
+                <div class="weather-label">KUALA LUMPUR</div>
+                <div class="weather-temp" id="w-temp">--°C</div>
+                <div id="w-humidity">Humidity: --%</div>
+                <div id="w-wind">Wind: -- km/h</div>
             </div>
-
-            <div class="terminal tilt-tile" data-tilt>
-                <div class="terminal-bar">
-                    <div class="terminal-btn close"></div>
-                    <div class="terminal-btn min"></div>
-                    <div class="terminal-btn max"></div>
-                    <div class="terminal-title">realmxrza@lain ~ </div>
-                </div>
-                <div class="terminal-body">
-                    <div class="terminal-line">
-                        <span class="terminal-prompt"><span class="user">realmxrza</span><span class="at">@</span><span class="host">lain</span><span style="color:var(--text-dim)"> ~</span><span class="symbol"> ❯</span></span>
-                        <span style="color:var(--text)">neofetch</span>
-                    </div>
-                    <br />
-                    <div class="neofetch-container">
-                        <div class="neofetch-ascii">                                                                                                    
-                                                 :::                                                
+        </div>
+        <!-- PROFILE -->
+        <div class="profile-widget tilt-tile" data-tilt>
+            <button class="about-toggle" onclick="toggleAbout(event)" title="About Me">i</button>
+            <div class="avatar-wrapper"><div class="avatar-container">
+                <img id="avatar" class="avatar" src="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 50 50'><rect fill='%230f0f1a' width='50' height='50'/></svg>" alt="avatar"/>
+                <img id="avatar-decoration" class="avatar-decoration" src="" alt="" style="display:none;"/>
+                <div id="status-dot" class="status-dot offline"></div>
+            </div></div>
+            <div class="profile-center"><div class="profile-info">
+                <h1><span id="display-name">realmxrza</span> <span id="username-tag" class="tag"></span></h1>
+                <div id="custom-status" class="status-text" style="display:none;"><span id="status-emoji"></span><span id="status-text-content"></span></div>
+                <div class="discord-badge"><span class="dot"></span><span id="discord-status-label">Offline</span></div>
+            </div></div>
+        </div>
+        <!-- TERMINAL -->
+        <div class="terminal tilt-tile" data-tilt>
+            <div class="terminal-bar">
+                <div class="terminal-btn close"></div><div class="terminal-btn min"></div><div class="terminal-btn max"></div>
+                <div class="terminal-title">realmxrza@lain ~</div>
+            </div>
+            <div class="terminal-body">
+                <div class="terminal-line">
+                    <span class="terminal-prompt"><span class="user">realmxrza</span><span class="at">@</span><span class="host">lain</span><span style="color:var(--text-dim)"> ~</span><span class="symbol"> ❯</span></span>
+                    <span style="color:var(--text)">neofetch</span>
+                </div><br/>
+                <div class="neofetch-container">
+                    <div class="neofetch-ascii">                                                 :::                                                
                                                ::::::                                               
                                                :::::::                                              
                                                ::::::                                               
-                                                                                                    
-                                                                                                    
                                           :::::::::::::::::                                         
                                       :::::::::::::::::::::::::                                     
                       :::::::      ::::::::::::::::::::::::::::::       ::::::                      
@@ -893,7 +342,6 @@
         :::::::::         ::::::::         -:::::::::::::         ::::::::         ::::::::::       
       :::::::::           ::::::::        ::::::::::::::::         ::::::::          :::::::::      
      :::::::::           ::::::::        ::::::::::::::::::        ::::::::           :::::::::     
-     ::::::::            ::::::::        ::::::::::::::::::         :::::::            ::::::::     
      ::::::::            ::::::::        ::::::::::::::::::         :::::::            ::::::::     
      ::::::::            ::::::::        ::::::::::::::::::         :::::::            ::::::::     
      -::::::::           ::::::::         :::::::::::::::::        ::::::::           :::::::::     
@@ -910,400 +358,248 @@
                                          :::::::     :::::::                                        
                                          :::::::     ::::::                                         
                                          :::::::     ::::::                                         
-                                         :::::::     ::::::                                         
-                                         :::::::     ::::::                                         
                        :::::             :::::::     ::::::             -::::                       
                       :::::::            :::::::     :::::::           :::::::                      
                       :::::::::         :::::::      ::::::::        :::::::::                      
                        :::::::::::::::::::::::-       :::::::::::::::::::::::                       
                          ::::::::::::::::::::          ::::::::::::::::::::-                        
                            :::::::::::::::::             ::::::::::::::::                           
-                                :::::::                      -::::::                                
-                                                                                                    </div>
-                        <div class="neofetch-info">
-                            <div class="line"><span class="key" style="color:var(--pink);font-weight:700;">realmxrza</span><span class="neofetch-separator">@</span><span style="color:var(--accent);font-weight:700;">lain</span></div>
-                            <div class="line"><span class="neofetch-separator">──────────────────────</span></div>
-                            <div class="line"><span class="key">OS</span> <span class="value">Copland OS Enterprise</span></div>
-                            <div class="line"><span class="key">Host</span> <span class="value">ThinkPad T42</span></div>
-                            <div class="line"><span class="key">Kernel</span> <span class="value">6.12.10-zen1-1-zen</span></div>
-                            <div class="line"><span class="key">CPU</span> <span class="value">Intel Pentium M 1.7GHz</span></div>
-                            <div class="line"><span class="key">Shell</span> <span class="value">fish 3.7.1</span></div>
-                            <div class="line"><span class="key">DE</span> <span class="value">Hyprland</span></div>
-                            <div class="line"><span class="key">Uptime</span> <span class="value" id="uptime-value">0h 0m 0s</span></div>
-                            <div class="line"><span class="key">Discord</span> <span class="value" id="discord-status-neo">fetching...</span></div>
-                            <div class="color-blocks">
-                                <div class="color-block" style="background:#ff6b9d;"></div>
-                                <div class="color-block" style="background:#50fa7b;"></div>
-                                <div class="color-block" style="background:#f1fa8c;"></div>
-                                <div class="color-block" style="background:#ff79c6;"></div>
-                                <div class="color-block" style="background:#8be9fd;"></div>
-                                <div class="color-block" style="background:#bd93f9;"></div>
-                                <div class="color-block" style="background:#e2e2f0;"></div>
-                                <div class="color-block" style="background:#5a3a4c;"></div>
-                            </div>
-                            <div class="terminal-socials">
-                                <a href="https://github.com/realmxrza" target="_blank" class="terminal-social-link"><svg viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>git</a>
-                                <a href="https://roblox.com/users/598266018/profile" target="_blank" class="terminal-social-link"><svg viewBox="0 0 24 24"><path d="M5.164 0L0 18.627 18.836 24 24 5.373ZM10.291 14.07l-2.098-5.573 5.573 2.098z"/></svg>rblx</a>
-                                <a href="https://open.spotify.com/user/31c6evjd5lx4eg6esebruhu4a5iu" target="_blank" class="terminal-social-link"><svg viewBox="0 0 24 24"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/></svg>spot</a>
-                                <a href="https://www.youtube.com/channel/UCBrEON5CKRLOpphz0dXokqw" target="_blank" class="terminal-social-link"><svg viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>yt</a>
-                                <a href="https://www.instagram.com/realmxrza" target="_blank" class="terminal-social-link"><svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>ig</a>
-                                <a href="https://steamcommunity.com/profiles/76561199169292001" target="_blank" class="terminal-social-link"><svg viewBox="0 0 24 24"><path d="M11.979 0C5.678 0 .511 4.86.022 11.037l6.432 2.658c.545-.371 1.203-.59 1.912-.59.063 0 .125.004.188.006l2.861-4.142V8.91c0-2.495 2.028-4.524 4.524-4.524 2.494 0 4.524 2.031 4.524 4.527s-2.03 4.525-4.524 4.525h-.105l-4.076 2.911c0 .052.004.105.004.159 0 1.875-1.515 3.396-3.39 3.396-1.635 0-3.016-1.173-3.331-2.727L.436 15.27C1.862 20.307 6.486 24 11.979 24c6.627 0 11.999-5.373 11.999-12S18.605 0 11.979 0zM7.54 18.21l-1.473-.61c.262.543.714.999 1.314 1.25 1.297.539 2.793-.076 3.332-1.375.263-.63.264-1.319.005-1.949s-.75-1.121-1.377-1.383c-.624-.26-1.29-.249-1.878-.03l1.523.63c.956.4 1.409 1.5 1.009 2.455-.397.957-1.497 1.41-2.454 1.012H7.54zm11.415-9.303c0-1.662-1.353-3.015-3.015-3.015-1.665 0-3.015 1.353-3.015 3.015 0 1.665 1.35 3.015 3.015 3.015 1.663 0 3.015-1.35 3.015-3.015zm-5.273-.005c0-1.252 1.013-2.266 2.265-2.266 1.249 0 2.266 1.014 2.266 2.266 0 1.251-1.017 2.265-2.266 2.265-1.253 0-2.265-1.014-2.265-2.265z"/></svg>stm</a>
-                            </div>
+                                :::::::                      -::::::                                </div>
+                    <div class="neofetch-info">
+                        <div class="line"><span class="key" style="color:var(--pink);font-weight:700;">realmxrza</span><span class="neofetch-separator">@</span><span style="color:var(--accent);font-weight:700;">lain</span></div>
+                        <div class="line"><span class="neofetch-separator">────────────────────</span></div>
+                        <div class="line"><span class="key">OS</span> <span class="value">Copland OS Enterprise</span></div>
+                        <div class="line"><span class="key">Host</span> <span class="value">ThinkPad T42</span></div>
+                        <div class="line"><span class="key">Kernel</span> <span class="value">6.12.10-zen1-1-zen</span></div>
+                        <div class="line"><span class="key">CPU</span> <span class="value">Intel Pentium M 1.7GHz</span></div>
+                        <div class="line"><span class="key">Shell</span> <span class="value">fish 3.7.1</span></div>
+                        <div class="line"><span class="key">DE</span> <span class="value">Hyprland</span></div>
+                        <div class="line"><span class="key">Uptime</span> <span class="value" id="uptime-value">0h 0m 0s</span></div>
+                        <div class="line"><span class="key">Discord</span> <span class="value" id="discord-status-neo">fetching...</span></div>
+                        <div class="color-blocks">
+                            <div class="color-block" style="background:#ff6b9d;"></div><div class="color-block" style="background:#50fa7b;"></div><div class="color-block" style="background:#f1fa8c;"></div><div class="color-block" style="background:#ff79c6;"></div><div class="color-block" style="background:#8be9fd;"></div><div class="color-block" style="background:#bd93f9;"></div><div class="color-block" style="background:#e2e2f0;"></div><div class="color-block" style="background:#5a3a4c;"></div>
                         </div>
                     </div>
-                    <br />
-                    <div class="terminal-line">
-                        <span class="terminal-prompt"><span class="user">realmxrza</span><span class="at">@</span><span class="host">lain</span><span style="color:var(--text-dim)"> ~</span><span class="symbol"> ❯</span></span>
-                        <span id="typed-cmd" style="color:var(--text)"></span>
-                        <span class="terminal-cursor"></span>
-                    </div>
                 </div>
-            </div>
-
-            <div class="right-panel">
-                <div class="activity-card tilt-tile" data-tilt>
-                    <h3>Current Activity</h3>
-                    <div id="activity-container">
-                        <div class="no-activity">Connecting to the Wired...</div>
-                    </div>
+                <!-- LAST.FM -->
+                <div class="lastfm-section">
+                    <div class="lastfm-title">♫ Last.fm — Recent Tracks</div>
+                    <div class="lastfm-tracks" id="lastfm-tracks"><div class="no-activity">Loading...</div></div>
                 </div>
-
-                <div class="social-section tilt-tile" data-tilt>
-                    <h3>Connections</h3>
-                    <div class="social-links">
-                        <a href="https://github.com/realmxrza" target="_blank" class="social-link github"><span class="social-tooltip">GitHub</span><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg></a>
-                        <a href="https://roblox.com/users/598266018/profile" target="_blank" class="social-link roblox"><span class="social-tooltip">Roblox</span><svg viewBox="0 0 24 24" fill="currentColor"><path d="M5.164 0L0 18.627 18.836 24 24 5.373ZM10.291 14.07l-2.098-5.573 5.573 2.098z"/></svg></a>
-                        <a href="https://open.spotify.com/user/31c6evjd5lx4eg6esebruhu4a5iu" target="_blank" class="social-link spotify"><span class="social-tooltip">Spotify</span><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/></svg></a>
-                        <a href="https://www.youtube.com/channel/UCBrEON5CKRLOpphz0dXokqw" target="_blank" class="social-link youtube"><span class="social-tooltip">YouTube</span><svg viewBox="0 0 24 24" fill="currentColor"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg></a>
-                        <a href="javascript:void(0)" onclick="copyDiscord()" class="social-link discord-link"><span class="social-tooltip">Discord — Click to copy</span><svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.317 4.3698a19.7913 19.7913 0 00-4.8851-1.5152.0741.0741 0 00-.0785.0371c-.211.3753-.4447.8648-.6083 1.2495-1.8447-.2762-3.68-.2762-5.4868 0-.1636-.3933-.4058-.8742-.6177-1.2495a.077.077 0 00-.0785-.037 19.7363 19.7363 0 00-4.8852 1.515.0699.0699 0 00-.0321.0277C.5334 9.0458-.319 13.5799.0992 18.0578a.0824.0824 0 00.0312.0561c2.0528 1.5076 4.0413 2.4228 5.9929 3.0294a.0777.0777 0 00.0842-.0276c.4616-.6304.8731-1.2952 1.226-1.9942a.076.076 0 00-.0416-.1057c-.6528-.2476-1.2743-.5495-1.8722-.8923a.077.077 0 01-.0076-.1277c.1258-.0943.2517-.1923.3718-.2914a.0743.0743 0 01.0776-.0105c3.9278 1.7933 8.18 1.7933 12.0614 0a.0739.0739 0 01.0785.0095c.1202.099.246.1981.3728.2924a.077.077 0 01-.0066.1276 12.2986 12.2986 0 01-1.873.8914.0766.0766 0 00-.0407.1067c.3604.698.7719 1.3628 1.225 1.9932a.076.076 0 00.0842.0286c1.961-.6067 3.9495-1.5219 6.0023-3.0294a.077.077 0 00.0313-.0552c.5004-5.177-.8382-9.6739-3.5485-13.6604a.061.061 0 00-.0312-.0286zM8.02 15.3312c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9555-2.4189 2.157-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.9555 2.4189-2.1569 2.4189zm7.9748 0c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9554-2.4189 2.1569-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.946 2.4189-2.1568 2.4189z"/></svg></a>
-                        <a href="https://steamcommunity.com/profiles/76561199169292001" target="_blank" class="social-link steam"><span class="social-tooltip">Steam</span><svg viewBox="0 0 24 24" fill="currentColor"><path d="M11.979 0C5.678 0 .511 4.86.022 11.037l6.432 2.658c.545-.371 1.203-.59 1.912-.59.063 0 .125.004.188.006l2.861-4.142V8.91c0-2.495 2.028-4.524 4.524-4.524 2.494 0 4.524 2.031 4.524 4.527s-2.03 4.525-4.524 4.525h-.105l-4.076 2.911c0 .052.004.105.004.159 0 1.875-1.515 3.396-3.39 3.396-1.635 0-3.016-1.173-3.331-2.727L.436 15.27C1.862 20.307 6.486 24 11.979 24c6.627 0 11.999-5.373 11.999-12S18.605 0 11.979 0zM7.54 18.21l-1.473-.61c.262.543.714.999 1.314 1.25 1.297.539 2.793-.076 3.332-1.375.263-.63.264-1.319.005-1.949s-.75-1.121-1.377-1.383c-.624-.26-1.29-.249-1.878-.03l1.523.63c.956.4 1.409 1.5 1.009 2.455-.397.957-1.497 1.41-2.454 1.012H7.54zm11.415-9.303c0-1.662-1.353-3.015-3.015-3.015-1.665 0-3.015 1.353-3.015 3.015 0 1.665 1.35 3.015 3.015 3.015 1.663 0 3.015-1.35 3.015-3.015zm-5.273-.005c0-1.252 1.013-2.266 2.265-2.266 1.249 0 2.266 1.014 2.266 2.266 0 1.251-1.017 2.265-2.266 2.265-1.253 0-2.265-1.014-2.265-2.265z"/></svg></a>
-                        <a href="https://www.instagram.com/realmxrza" target="_blank" class="social-link instagram"><span class="social-tooltip">Instagram</span><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg></a>
-                    </div>
-                </div>
-
-                <div class="cmatrix-section tilt-tile" data-tilt>
-                    <div class="cmatrix-bar">
-                        <div class="terminal-btn close"></div>
-                        <div class="terminal-btn min"></div>
-                        <div class="terminal-btn max"></div>
-                        <span>cmatrix</span>
-                    </div>
-                    <canvas id="cmatrix-canvas" class="cmatrix-canvas"></canvas>
-                </div>
-            </div>
-
-            <div class="music-player tilt-tile shimmer-border" data-tilt>
-                <div class="player-controls"><button class="player-btn" id="play-btn" onclick="togglePlay()">▶</button></div>
-                <div class="player-info"><div class="player-title">Duvet</div><div class="player-artist">Bôa</div></div>
-                <div class="player-progress">
-                    <span class="player-time" id="current-time">0:00</span>
-                    <div class="progress-bar-container">
-                        <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
-                        <input type="range" min="0" max="1000" value="0" id="seek-bar" oninput="seekAudio(this.value)" />
-                    </div>
-                    <span class="player-time" id="total-time">3:02</span>
-                </div>
-                <div class="visualizer" id="visualizer"></div>
-                <div class="volume-control">
-                    <span class="volume-icon">🔊</span>
-                    <input type="range" min="0" max="100" value="50" class="volume-slider" id="volume-slider" oninput="setVolume(this.value)" />
+                <br/>
+                <div class="terminal-line">
+                    <span class="terminal-prompt"><span class="user">realmxrza</span><span class="at">@</span><span class="host">lain</span><span style="color:var(--text-dim)"> ~</span><span class="symbol"> ❯</span></span>
+                    <span id="typed-cmd" style="color:var(--text)"></span><span class="terminal-cursor"></span>
                 </div>
             </div>
         </div>
+        <!-- RIGHT -->
+        <div class="right-panel">
+            <div class="activity-card tilt-tile" data-tilt>
+                <h3>Current Activity</h3>
+                <div id="activity-container"><div class="no-activity">Connecting to the Wired...</div></div>
+            </div>
+            <div class="social-section tilt-tile" data-tilt>
+                <h3>Connections</h3>
+                <div class="social-links">
+                    <a href="https://github.com/realmxrza" target="_blank" class="social-link github"><span class="social-tooltip">GitHub</span><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg></a>
+                    <a href="https://roblox.com/users/598266018/profile" target="_blank" class="social-link roblox"><span class="social-tooltip">Roblox</span><svg viewBox="0 0 24 24" fill="currentColor"><path d="M5.164 0L0 18.627 18.836 24 24 5.373ZM10.291 14.07l-2.098-5.573 5.573 2.098z"/></svg></a>
+                    <a href="https://open.spotify.com/user/31c6evjd5lx4eg6esebruhu4a5iu" target="_blank" class="social-link spotify"><span class="social-tooltip">Spotify</span><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/></svg></a>
+                    <a href="https://www.youtube.com/channel/UCBrEON5CKRLOpphz0dXokqw" target="_blank" class="social-link youtube"><span class="social-tooltip">YouTube</span><svg viewBox="0 0 24 24" fill="currentColor"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg></a>
+                    <a href="javascript:void(0)" onclick="copyDiscord()" class="social-link discord-link"><span class="social-tooltip">Discord — copy</span><svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.317 4.3698a19.7913 19.7913 0 00-4.8851-1.5152.0741.0741 0 00-.0785.0371c-.211.3753-.4447.8648-.6083 1.2495-1.8447-.2762-3.68-.2762-5.4868 0-.1636-.3933-.4058-.8742-.6177-1.2495a.077.077 0 00-.0785-.037 19.7363 19.7363 0 00-4.8852 1.515.0699.0699 0 00-.0321.0277C.5334 9.0458-.319 13.5799.0992 18.0578a.0824.0824 0 00.0312.0561c2.0528 1.5076 4.0413 2.4228 5.9929 3.0294a.0777.0777 0 00.0842-.0276c.4616-.6304.8731-1.2952 1.226-1.9942a.076.076 0 00-.0416-.1057c-.6528-.2476-1.2743-.5495-1.8722-.8923a.077.077 0 01-.0076-.1277c.1258-.0943.2517-.1923.3718-.2914a.0743.0743 0 01.0776-.0105c3.9278 1.7933 8.18 1.7933 12.0614 0a.0739.0739 0 01.0785.0095c.1202.099.246.1981.3728.2924a.077.077 0 01-.0066.1276 12.2986 12.2986 0 01-1.873.8914.0766.0766 0 00-.0407.1067c.3604.698.7719 1.3628 1.225 1.9932a.076.076 0 00.0842.0286c1.961-.6067 3.9495-1.5219 6.0023-3.0294a.077.077 0 00.0313-.0552c.5004-5.177-.8382-9.6739-3.5485-13.6604a.061.061 0 00-.0312-.0286zM8.02 15.3312c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9555-2.4189 2.157-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.9555 2.4189-2.1569 2.4189zm7.9748 0c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9554-2.4189 2.1569-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.946 2.4189-2.1568 2.4189z"/></svg></a>
+                    <a href="https://steamcommunity.com/profiles/76561199169292001" target="_blank" class="social-link steam"><span class="social-tooltip">Steam</span><svg viewBox="0 0 24 24" fill="currentColor"><path d="M11.979 0C5.678 0 .511 4.86.022 11.037l6.432 2.658c.545-.371 1.203-.59 1.912-.59.063 0 .125.004.188.006l2.861-4.142V8.91c0-2.495 2.028-4.524 4.524-4.524 2.494 0 4.524 2.031 4.524 4.527s-2.03 4.525-4.524 4.525h-.105l-4.076 2.911c0 .052.004.105.004.159 0 1.875-1.515 3.396-3.39 3.396-1.635 0-3.016-1.173-3.331-2.727L.436 15.27C1.862 20.307 6.486 24 11.979 24c6.627 0 11.999-5.373 11.999-12S18.605 0 11.979 0z"/></svg></a>
+                    <a href="https://www.instagram.com/realmxrza" target="_blank" class="social-link instagram"><span class="social-tooltip">Instagram</span><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg></a>
+                    <a href="https://www.last.fm/user/realmxrza" target="_blank" class="social-link lastfm"><span class="social-tooltip">Last.fm</span><svg viewBox="0 0 24 24" fill="currentColor"><path d="M10.584 17.21l-.88-2.392s-1.43 1.594-3.573 1.594c-1.897 0-3.244-1.649-3.244-4.288 0-3.381 1.704-4.591 3.381-4.591 2.422 0 3.189 1.567 3.849 3.574l.88 2.749c.88 2.666 2.529 4.81 7.284 4.81 3.409 0 5.718-1.044 5.718-3.793 0-2.227-1.265-3.381-3.627-3.933l-1.757-.385c-1.21-.275-1.567-.77-1.567-1.594 0-.935.742-1.484 1.952-1.484 1.32 0 2.034.495 2.144 1.677l2.749-.33c-.22-2.474-1.924-3.492-4.729-3.492-2.474 0-4.893.935-4.893 3.932 0 1.87.907 3.051 3.189 3.601l1.87.44c1.402.33 1.869.825 1.869 1.681 0 1.044-.99 1.484-2.859 1.484-2.776 0-3.932-1.457-4.591-3.464l-.907-2.749c-1.155-3.573-2.997-4.893-6.653-4.893C2.144 5.333 0 7.89 0 12.233c0 4.178 2.144 6.433 5.993 6.433 3.106 0 4.591-1.457 4.591-1.457z"/></svg></a>
+                </div>
+            </div>
+            <div class="cmatrix-section tilt-tile" data-tilt>
+                <div class="cmatrix-bar"><div class="terminal-btn close"></div><div class="terminal-btn min"></div><div class="terminal-btn max"></div><span>cmatrix</span></div>
+                <canvas id="cmatrix-canvas" class="cmatrix-canvas"></canvas>
+            </div>
+        </div>
+        <!-- MUSIC -->
+        <div class="music-player tilt-tile shimmer-border" data-tilt>
+            <div class="player-controls"><button class="player-btn" id="play-btn" onclick="togglePlay()">▶</button></div>
+            <div class="player-info"><div class="player-title">Duvet</div><div class="player-artist">Bôa</div></div>
+            <div class="player-progress">
+                <span class="player-time" id="current-time">0:00</span>
+                <div class="progress-bar-container"><div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div><input type="range" min="0" max="1000" value="0" id="seek-bar" oninput="seekAudio(this.value)"/></div>
+                <span class="player-time" id="total-time">4:22</span>
+            </div>
+            <div class="visualizer" id="visualizer"></div>
+            <div class="volume-control"><span class="volume-icon">🔊</span><input type="range" min="0" max="100" value="50" class="volume-slider" id="volume-slider" oninput="setVolume(this.value)"/></div>
+        </div>
     </div>
-
-   <audio id="bg-audio" loop preload="auto" crossorigin="anonymous">
-    <source src="https://raw.githubusercontent.com/realmxrza/realmxrza/9ec5fbf78451ac4dcdb9305cfc01ca7e6f641561/assets/B%C3%B4a%20-%20Duvet.mp3" type="audio/mpeg" />
+</div>
+<audio id="bg-audio" loop preload="auto" crossorigin="anonymous">
+    <source src="https://raw.githubusercontent.com/realmxrza/realmxrza/9ec5fbf78451ac4dcdb9305cfc01ca7e6f641561/assets/B%C3%B4a%20-%20Duvet.mp3" type="audio/mpeg"/>
 </audio>
+<script>
+const DISCORD_ID="693703872937590826";
+const LASTFM_KEY="1561f4157e7996b32bcdd2459b924ed8";
+const audio=document.getElementById("bg-audio");
+let audioCtx,analyser,sourceNode,dataArray,isAudioSetup=false,isPlaying=false;
+const SONG_DURATION=262;
+let currentSpotifyData=null;
 
-    <script>
-        const DISCORD_ID = "693703872937590826";
-        const audio = document.getElementById("bg-audio");
-        let audioCtx, analyser, sourceNode, dataArray, isAudioSetup = false;
-        let isPlaying = false;
-        const SONG_DURATION = 182;
+/* PARTICLES */
+(function(){const c=document.getElementById("particles");for(let i=0;i<12;i++){const p=document.createElement("div");p.className="float-particle";p.style.left=Math.random()*100+"%";p.style.animationDuration=(8+Math.random()*12)+"s";p.style.animationDelay=(Math.random()*10)+"s";p.style.width=(1+Math.random()*2)+"px";p.style.height=p.style.width;c.appendChild(p);}})();
 
-        /* PARTICLES */
-        (function(){
-            const c = document.getElementById("particles");
-            for(let i=0;i<15;i++){
-                const p=document.createElement("div");
-                p.className="float-particle";
-                p.style.left=Math.random()*100+"%";
-                p.style.animationDuration=(8+Math.random()*12)+"s";
-                p.style.animationDelay=(Math.random()*10)+"s";
-                p.style.width=(1+Math.random()*2)+"px";
-                p.style.height=p.style.width;
-                c.appendChild(p);
-            }
-        })();
+/* CLICK */
+function startExperience(){document.getElementById("click-screen").style.display="none";document.getElementById("boot-screen").style.display="flex";runBoot();}
 
-        /* CLICK TO ENTER */
-        function startExperience(){
-            document.getElementById("click-screen").style.display="none";
-            document.getElementById("boot-screen").style.display="flex";
-            runBoot();
+/* BOOT */
+const bootLines=[{text:"IBM ThinkPad T42 BIOS v3.21",delay:150,cls:"info"},{text:"Intel Pentium M 1.70GHz — 1024MB RAM OK",delay:100},{text:"",delay:40},{text:"GRUB 2.12 — Loading kernel...",delay:150,cls:"info"},{text:"[    0.000000] Linux version 6.12.10-zen1-1-zen",delay:50},{text:"[    0.014200] DMI: IBM ThinkPad T42/2373",delay:40},{text:"[    0.023411] x86/cpu: Intel Pentium M (Dothan)",delay:40},{text:"",delay:40},{text:":: running early hook [udev]",delay:60,cls:"accent"},{text:"[  OK  ] Started systemd-udevd.service",delay:50,cls:"ok"},{text:"[  OK  ] Started NetworkManager.service",delay:60,cls:"ok"},{text:"[  OK  ] Started PipeWire Audio Service",delay:50,cls:"ok"},{text:"[  OK  ] Reached target Multi-User System",delay:50,cls:"ok"},{text:"",delay:40},{text:":: Loading Hyprland compositor...",delay:120,cls:"accent"},{text:"[  OK  ] Hyprland session initialized",delay:60,cls:"ok"},{text:"[  OK  ] Connected to the Wired",delay:80,cls:"ok"},{text:"",delay:40},{text:":: Fetching presence from Lanyard API...",delay:150,cls:"accent"},{text:"[  OK  ] Discord presence loaded",delay:80,cls:"ok"},{text:"",delay:40},{text:"Welcome back, realmxrza.",delay:150,cls:"warn"},{text:"And you don't seem to understand...",delay:150,cls:"warn"}];
+const bootC=document.getElementById("boot-lines");
+
+async function runBoot(){
+    for(const l of bootLines){const e=document.createElement("div");if(l.cls)e.classList.add(l.cls);e.textContent=l.text;bootC.appendChild(e);bootC.scrollTop=bootC.scrollHeight;await sleep(l.delay);}
+    document.getElementById("boot-progress-container").style.display="block";
+    const pf=document.getElementById("boot-progress-fill");
+    for(let p=0;p<=100;p+=5){pf.style.width=p+"%";await sleep(10);}
+    await sleep(200);document.getElementById("boot-screen").classList.add("fade-out");await sleep(400);
+    document.getElementById("main-content").classList.add("visible");document.getElementById("boot-screen").style.display="none";
+    audio.volume=0.5;try{await audio.play();isPlaying=true;document.getElementById("play-btn").textContent="⏸";}catch(e){}
+    setupAudio();startTypewriter();startCmatrix();fetchLastFm();fetchWeather();
+}
+function sleep(ms){return new Promise(r=>setTimeout(r,ms));}
+
+/* CLOCK GMT+8 */
+function updateClock(){const now=new Date();const utc=now.getTime()+now.getTimezoneOffset()*60000;const g=new Date(utc+8*3600000);document.getElementById("clock-time").textContent=`${String(g.getHours()).padStart(2,"0")}:${String(g.getMinutes()).padStart(2,"0")}:${String(g.getSeconds()).padStart(2,"0")}`;document.getElementById("clock-date").textContent=`${String(g.getDate()).padStart(2,"0")}/${String(g.getMonth()+1).padStart(2,"0")}/${g.getFullYear()}`;}
+setInterval(updateClock,1000);updateClock();
+
+/* WEATHER */
+async function fetchWeather(){
+    try{
+        const r=await fetch("https://wttr.in/Kuala+Lumpur?format=j1");const d=await r.json();
+        const cur=d.current_condition[0];
+        document.getElementById("w-temp").textContent=cur.temp_C+"°C";
+        document.getElementById("w-humidity").textContent="Humidity: "+cur.humidity+"%";
+        document.getElementById("w-wind").textContent="Wind: "+cur.windspeedKmph+" km/h";
+    }catch(e){console.log("Weather err:",e);}
+}
+setInterval(fetchWeather,600000);
+
+/* UPTIME */
+const pLoad=Date.now();
+setInterval(()=>{const d=Date.now()-pLoad;document.getElementById("uptime-value").textContent=`${Math.floor(d/3600000)}h ${Math.floor((d%3600000)/60000)}m ${Math.floor((d%60000)/1000)}s`;},1000);
+
+/* TYPEWRITER */
+const cmds=["cat /etc/hostname","pacman -Syu","btop","hyprctl dispatch exec kitty","nvim ~/projects"];
+async function startTypewriter(){const e=document.getElementById("typed-cmd");while(true){for(const c of cmds){e.textContent="";for(const ch of c){e.textContent+=ch;await sleep(50+Math.random()*30);}await sleep(1800);while(e.textContent.length>0){e.textContent=e.textContent.slice(0,-1);await sleep(20);}await sleep(300);}}}
+
+/* ABOUT */
+let aboutOpen=false;
+function toggleAbout(e){if(e)e.stopPropagation();aboutOpen=!aboutOpen;const dd=document.getElementById("about-dropdown");if(aboutOpen){const btn=document.querySelector(".about-toggle");const rect=btn.getBoundingClientRect();dd.style.top=(rect.bottom+6)+"px";dd.style.right=Math.max(8,(window.innerWidth-rect.right))+"px";dd.classList.add("show");}else{dd.classList.remove("show");}}
+document.addEventListener("click",e=>{if(aboutOpen&&!e.target.closest(".about-dropdown")&&!e.target.closest(".about-toggle")){aboutOpen=false;document.getElementById("about-dropdown").classList.remove("show");}});
+
+/* COPY */
+function copyDiscord(){navigator.clipboard.writeText("realmxrza").then(()=>{const t=document.getElementById("copy-toast");t.classList.add("show");setTimeout(()=>t.classList.remove("show"),1800);});}
+
+/* LIGHTBOX */
+function openLightbox(src,title,artist){const lb=document.getElementById("lightbox");document.getElementById("lightbox-img").src=src;document.getElementById("lb-title").textContent=title||"";document.getElementById("lb-artist").textContent=artist||"";lb.classList.add("show");}
+function closeLightbox(){document.getElementById("lightbox").classList.remove("show");}
+
+/* LAST.FM */
+async function fetchLastFm(){
+    try{
+        const r=await fetch(`https://ws.audioscrobbler.com/2.0/?method=user.getrecenttracks&user=realmxrza&api_key=${LASTFM_KEY}&format=json&limit=5`);
+        const d=await r.json();const tracks=d.recenttracks.track;
+        const c=document.getElementById("lastfm-tracks");
+        if(!tracks||!tracks.length){c.innerHTML='<div class="no-activity">No recent tracks</div>';return;}
+        let h="";
+        for(const t of tracks){
+            const isNow=t["@attr"]?.nowplaying==="true";
+            const img=t.image?.find(i=>i.size==="medium")?.["#text"]||"";
+            const name=escapeHtml(t.name);const artist=escapeHtml(t.artist?.["#text"]||"");
+            const coverClick=img?`onclick="event.stopPropagation();openLightbox('${img.replace(/'/g,"\\'")}','${name.replace(/'/g,"\\'")}','${artist.replace(/'/g,"\\'")}')"`:""
+            h+=`<div class="lastfm-track">
+                ${img?`<img class="lastfm-cover clickable" src="${img}" alt="" ${coverClick}/>`:'<div class="lastfm-cover"></div>'}
+                <div class="lastfm-track-info">
+                    <div class="lastfm-track-name">${name}</div>
+                    <div class="lastfm-track-artist">${artist}</div>
+                </div>
+                ${isNow?'<div class="lastfm-now">▶ NOW</div>':''}
+            </div>`;
         }
+        c.innerHTML=h;
+    }catch(e){console.log("Last.fm err:",e);}
+}
+setInterval(fetchLastFm,60000);
 
-        /* BOOT */
-        const bootLines=[
-            {text:"IBM ThinkPad T42 BIOS v3.21",delay:200,cls:"info"},
-            {text:"Intel Pentium M 1.70GHz — 1024MB RAM OK",delay:120},
-            {text:"",delay:60},
-            {text:"GRUB 2.12 — Loading kernel...",delay:200,cls:"info"},
-            {text:"[    0.000000] Linux version 6.12.10-zen1-1-zen",delay:60},
-            {text:"[    0.014200] DMI: IBM ThinkPad T42/2373",delay:50},
-            {text:"[    0.023411] x86/cpu: Intel Pentium M (Dothan)",delay:50},
-            {text:"[    0.340821] Freeing unused kernel memory: 512K",delay:40},
-            {text:"",delay:60},
-            {text:":: running early hook [udev]",delay:80,cls:"accent"},
-            {text:"[  OK  ] Started systemd-udevd.service",delay:70,cls:"ok"},
-            {text:"[  OK  ] Mounted /boot",delay:50,cls:"ok"},
-            {text:"[  OK  ] Started NetworkManager.service",delay:80,cls:"ok"},
-            {text:"[  OK  ] Started PipeWire Audio Service",delay:60,cls:"ok"},
-            {text:"[  OK  ] Reached target Multi-User System",delay:60,cls:"ok"},
-            {text:"",delay:50},
-            {text:":: Loading Hyprland compositor...",delay:150,cls:"accent"},
-            {text:"[  OK  ] Hyprland session initialized",delay:80,cls:"ok"},
-            {text:"[  OK  ] Connected to the Wired",delay:100,cls:"ok"},
-            {text:"",delay:50},
-            {text:":: Fetching presence from Lanyard API...",delay:200,cls:"accent"},
-            {text:"[  OK  ] Discord presence loaded",delay:100,cls:"ok"},
-            {text:"",delay:60},
-            {text:"Welcome back, realmxrza.",delay:200,cls:"warn"},
-            {text:"And you don't seem to understand...",delay:200,cls:"warn"},
-        ];
-        const bootC=document.getElementById("boot-lines");
+/* AUDIO */
+function setupAudio(){if(isAudioSetup)return;try{isAudioSetup=true;audioCtx=new(window.AudioContext||window.webkitAudioContext)();analyser=audioCtx.createAnalyser();analyser.fftSize=64;sourceNode=audioCtx.createMediaElementSource(audio);sourceNode.connect(analyser);analyser.connect(audioCtx.destination);dataArray=new Uint8Array(analyser.frequencyBinCount);const v=document.getElementById("visualizer");v.innerHTML="";for(let i=0;i<16;i++){const b=document.createElement("div");b.className="vis-bar";b.style.height="2px";v.appendChild(b);}animVis();}catch(e){}}
+function animVis(){if(!analyser)return;requestAnimationFrame(animVis);analyser.getByteFrequencyData(dataArray);const bars=document.querySelectorAll(".vis-bar");const step=Math.max(1,Math.floor(dataArray.length/bars.length));bars.forEach((b,i)=>{b.style.height=Math.max(2,(dataArray[i*step]||0)/255*20)+"px";});}
+function togglePlay(){if(!isAudioSetup)setupAudio();if(audioCtx&&audioCtx.state==="suspended")audioCtx.resume();if(isPlaying){audio.pause();isPlaying=false;document.getElementById("play-btn").textContent="▶";}else{audio.play();isPlaying=true;document.getElementById("play-btn").textContent="⏸";}}
+function seekAudio(v){audio.currentTime=(v/1000)*SONG_DURATION;}
+function setVolume(v){audio.volume=v/100;document.querySelector(".volume-icon").textContent=v==0?"🔇":v<50?"🔉":"🔊";}
+setInterval(()=>{if(!audio.duration&&!audio.currentTime)return;const ct=audio.currentTime,p=(ct/SONG_DURATION)*100;document.getElementById("progress-fill").style.width=Math.min(p,100)+"%";document.getElementById("seek-bar").value=Math.min(p*10,1000);document.getElementById("current-time").textContent=formatTime(ct*1000);},200);
+function formatTime(ms){const s=Math.floor(ms/1000);return`${Math.floor(s/60)}:${(s%60).toString().padStart(2,"0")}`;}
+function escapeHtml(s){if(!s)return"";const d=document.createElement("div");d.textContent=s;return d.innerHTML;}
 
-        async function runBoot(){
-            for(const l of bootLines){const e=document.createElement("div");if(l.cls)e.classList.add(l.cls);e.textContent=l.text;bootC.appendChild(e);bootC.scrollTop=bootC.scrollHeight;await sleep(l.delay);}
-            document.getElementById("boot-progress-container").style.display="block";
-            const pf=document.getElementById("boot-progress-fill");
-            for(let p=0;p<=100;p+=4){pf.style.width=p+"%";await sleep(12);}
-            await sleep(250);
-            document.getElementById("boot-screen").classList.add("fade-out");
-            await sleep(400);
-            document.getElementById("main-content").classList.add("visible");
-            document.getElementById("boot-screen").style.display="none";
-            audio.volume=0.5;
-            try{await audio.play();isPlaying=true;document.getElementById("play-btn").textContent="⏸";}catch(e){}
-            setupAudio();
-            startTypewriter();
-            startCmatrix();
+/* CMATRIX */
+function startCmatrix(){const canvas=document.getElementById("cmatrix-canvas"),parent=canvas.parentElement,ctx=canvas.getContext("2d");function resize(){canvas.width=parent.clientWidth;canvas.height=parent.clientHeight-20;}resize();window.addEventListener("resize",resize);const chars="アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン0123456789";const fs=10;let cols=Math.floor(canvas.width/fs);let drops=Array(cols).fill(0).map(()=>Math.random()*-20);setInterval(()=>{ctx.fillStyle="rgba(10,2,10,0.12)";ctx.fillRect(0,0,canvas.width,canvas.height);ctx.font=fs+"px 'Share Tech Mono',monospace";const c=Math.floor(canvas.width/fs);if(c!==cols){cols=c;drops=Array(cols).fill(0).map(()=>Math.random()*-20);}for(let i=0;i<drops.length;i++){ctx.fillStyle=Math.random()>0.5?"rgba(255,200,220,0.9)":"rgba(255,107,157,0.5)";ctx.fillText(chars[Math.floor(Math.random()*chars.length)],i*fs,drops[i]*fs);if(drops[i]*fs>canvas.height&&Math.random()>0.975)drops[i]=0;drops[i]++;}},50);}
+
+/* TILT */
+document.querySelectorAll("[data-tilt]").forEach(tile=>{tile.addEventListener("mousemove",e=>{const r=tile.getBoundingClientRect();const x=e.clientX-r.left,y=e.clientY-r.top;tile.style.transform=`perspective(800px) rotateX(${((y-r.height/2)/(r.height/2))*-2}deg) rotateY(${((x-r.width/2)/(r.width/2))*2}deg) scale(1.01)`;tile.style.setProperty("--mouse-x",((x/r.width)*100)+"%");tile.style.setProperty("--mouse-y",((y/r.height)*100)+"%");});tile.addEventListener("mouseleave",()=>{tile.style.transform="perspective(800px) rotateX(0) rotateY(0) scale(1)";});});
+
+/* LANYARD */
+let lanyardWs;
+function connectLanyard(){lanyardWs=new WebSocket("wss://api.lanyard.rest/socket");lanyardWs.onmessage=(event)=>{const d=JSON.parse(event.data);if(d.op===1){lanyardWs.send(JSON.stringify({op:2,d:{subscribe_to_id:DISCORD_ID}}));setInterval(()=>{try{lanyardWs.send(JSON.stringify({op:3}));}catch(e){}},d.d.heartbeat_interval);}if(d.op===0)updatePresence(d.d);};lanyardWs.onclose=()=>setTimeout(connectLanyard,3000);lanyardWs.onerror=()=>lanyardWs.close();}
+
+function updatePresence(data){
+    const av=document.getElementById("avatar");
+    if(data.discord_user?.avatar){const ext=data.discord_user.avatar.startsWith("a_")?"gif":"png";av.src=`https://cdn.discordapp.com/avatars/${DISCORD_ID}/${data.discord_user.avatar}.${ext}?size=256`;}
+    const deco=document.getElementById("avatar-decoration");
+    if(data.discord_user?.avatar_decoration_data?.asset){deco.src=`https://cdn.discordapp.com/avatar-decoration-presets/${data.discord_user.avatar_decoration_data.asset}.png?size=160&passthrough=true`;deco.style.display="block";}
+    document.getElementById("display-name").textContent=data.discord_user?.global_name||data.discord_user?.username||"realmxrza";
+    const un=data.discord_user?.username;if(un)document.getElementById("username-tag").textContent=`@${un}`;
+    const st=data.discord_status||"offline";document.getElementById("status-dot").className="status-dot "+st;
+    const lb={online:"Online",idle:"Idle",dnd:"Do Not Disturb",offline:"Offline"};
+    document.getElementById("discord-status-label").textContent=lb[st]||"Offline";
+    document.getElementById("discord-status-neo").textContent=st;
+    const cs=data.activities?.find(a=>a.type===4);const csEl=document.getElementById("custom-status");
+    if(cs){csEl.style.display="flex";const em=document.getElementById("status-emoji");if(cs.emoji?.id)em.innerHTML=`<img src="https://cdn.discordapp.com/emojis/${cs.emoji.id}.${cs.emoji.animated?'gif':'png'}?size=20" width="14" height="14" style="vertical-align:middle;"/>`;else if(cs.emoji?.name)em.textContent=cs.emoji.name;else em.textContent="";document.getElementById("status-text-content").textContent=cs.state||"";}else csEl.style.display="none";
+    currentSpotifyData=data.spotify;
+    renderActivities(data);
+}
+
+function renderActivities(data){
+    const c=document.getElementById("activity-container");
+    const acts=(data.activities||[]).filter(a=>a.type!==4&&a.type!==2);
+    const sp=data.spotify;
+    if(!acts.length&&!sp){c.innerHTML='<div class="no-activity">No current activity</div>';return;}
+    let h="";
+    if(sp){
+        const trackUrl=`https://open.spotify.com/track/${sp.track_id}`;
+        const coverClick=`event.stopPropagation();openLightbox('${(sp.album_art_url||"").replace(/'/g,"\\'")}','${escapeHtml(sp.song).replace(/'/g,"\\'")}','${escapeHtml(sp.artist).replace(/'/g,"\\'")}')`;
+        h+=`<div class="activity-item spotify-clickable" onclick="window.open('${trackUrl}','_blank')">
+            <img class="activity-img clickable" src="${sp.album_art_url}" alt="" onclick="${coverClick}"/>
+            <div class="activity-details">
+                <div class="activity-name" style="color:#1db954;">♫ Spotify</div>
+                <div class="activity-state">${escapeHtml(sp.song)}</div>
+                <div class="activity-detail">by ${escapeHtml(sp.artist)}</div>
+            </div></div>`;
+    }
+    for(const a of acts){
+        let img="";
+        if(a.assets?.large_image){
+            if(a.assets.large_image.startsWith("mp:external/"))img=`https://media.discordapp.net/external/${a.assets.large_image.replace("mp:external/","")}`;
+            else if(a.application_id)img=`https://cdn.discordapp.com/app-assets/${a.application_id}/${a.assets.large_image}.png`;
+        } else if(a.assets?.small_image){
+            if(a.assets.small_image.startsWith("mp:external/"))img=`https://media.discordapp.net/external/${a.assets.small_image.replace("mp:external/","")}`;
+            else if(a.application_id)img=`https://cdn.discordapp.com/app-assets/${a.application_id}/${a.assets.small_image}.png`;
         }
+        if(!img&&a.application_id){img=`https://cdn.discordapp.com/app-icons/${a.application_id}/${a.assets?.large_image||""}.png`;if(!a.assets?.large_image)img=`https://dcdn.dstn.to/app-icons/${a.application_id}`;}
+        const tn=a.type===0?"Playing":a.type===3?"Watching":"Playing";
+        let el="";if(a.timestamps?.start)el=`${formatTime(Date.now()-a.timestamps.start)} elapsed`;
+        h+=`<div class="activity-item">${img?`<img class="activity-img" src="${img}" alt="" onerror="this.style.display='none'"/>`:`<div class="activity-img" style="display:flex;align-items:center;justify-content:center;font-size:14px;">🎮</div>`}<div class="activity-details"><div class="activity-name">${escapeHtml(tn)} ${escapeHtml(a.name)}</div>${a.details?`<div class="activity-detail">${escapeHtml(a.details)}</div>`:""}${a.state?`<div class="activity-state">${escapeHtml(a.state)}</div>`:""}${el?`<div class="activity-time">${el}</div>`:""}</div></div>`;
+    }
+    c.innerHTML=h;
+}
 
-        function sleep(ms){return new Promise(r=>setTimeout(r,ms));}
-
-        /* CLOCK GMT+8 */
-        function updateClock(){
-            const now=new Date();
-            const utc=now.getTime()+now.getTimezoneOffset()*60000;
-            const g=new Date(utc+8*3600000);
-            document.getElementById("clock-time").textContent=
-                `${String(g.getHours()).padStart(2,"0")}:${String(g.getMinutes()).padStart(2,"0")}:${String(g.getSeconds()).padStart(2,"0")}`;
-            document.getElementById("clock-date").textContent=
-                `${String(g.getDate()).padStart(2,"0")}/${String(g.getMonth()+1).padStart(2,"0")}/${g.getFullYear()}`;
-        }
-        setInterval(updateClock,1000);updateClock();
-
-        /* UPTIME */
-        const pLoad=Date.now();
-        setInterval(()=>{const d=Date.now()-pLoad;document.getElementById("uptime-value").textContent=`${Math.floor(d/3600000)}h ${Math.floor((d%3600000)/60000)}m ${Math.floor((d%60000)/1000)}s`;},1000);
-
-        /* TYPEWRITER */
-        const cmds=["cat /etc/hostname","pacman -Syu","btop","hyprctl dispatch exec kitty","nvim ~/projects"];
-        async function startTypewriter(){const e=document.getElementById("typed-cmd");while(true){for(const c of cmds){e.textContent="";for(const ch of c){e.textContent+=ch;await sleep(50+Math.random()*30);}await sleep(1800);while(e.textContent.length>0){e.textContent=e.textContent.slice(0,-1);await sleep(20);}await sleep(300);}}}
-
-        /* ABOUT ME — position relative to profile widget */
-        let aboutOpen=false;
-        function toggleAbout(e){
-            if(e)e.stopPropagation();
-            aboutOpen=!aboutOpen;
-            const dd=document.getElementById("about-dropdown");
-            if(aboutOpen){
-                const btn=document.querySelector(".about-toggle");
-                const rect=btn.getBoundingClientRect();
-                dd.style.top=(rect.bottom+6)+"px";
-                dd.style.right=(window.innerWidth-rect.right)+"px";
-                dd.classList.add("show");
-            }else{
-                dd.classList.remove("show");
-            }
-        }
-        document.addEventListener("click",e=>{
-            if(aboutOpen&&!e.target.closest(".about-dropdown")&&!e.target.closest(".about-toggle")){
-                aboutOpen=false;
-                document.getElementById("about-dropdown").classList.remove("show");
-            }
-        });
-
-        /* COPY DISCORD */
-        function copyDiscord(){
-            navigator.clipboard.writeText("realmxrza").then(()=>{
-                const t=document.getElementById("copy-toast");
-                t.classList.add("show");
-                setTimeout(()=>t.classList.remove("show"),1800);
-            });
-        }
-
-        /* AUDIO */
-        function setupAudio(){
-            if(isAudioSetup)return;
-            try{
-                isAudioSetup=true;
-                audioCtx=new(window.AudioContext||window.webkitAudioContext)();
-                analyser=audioCtx.createAnalyser();
-                analyser.fftSize=64;
-                sourceNode=audioCtx.createMediaElementSource(audio);
-                sourceNode.connect(analyser);
-                analyser.connect(audioCtx.destination);
-                dataArray=new Uint8Array(analyser.frequencyBinCount);
-                const v=document.getElementById("visualizer");v.innerHTML="";
-                for(let i=0;i<18;i++){const b=document.createElement("div");b.className="vis-bar";b.style.height="2px";v.appendChild(b);}
-                animVis();
-            }catch(e){console.log("Audio err:",e);}
-        }
-
-        function animVis(){
-            if(!analyser)return;
-            requestAnimationFrame(animVis);
-            analyser.getByteFrequencyData(dataArray);
-            const bars=document.querySelectorAll(".vis-bar");
-            const step=Math.max(1,Math.floor(dataArray.length/bars.length));
-            bars.forEach((b,i)=>{b.style.height=Math.max(2,(dataArray[i*step]||0)/255*22)+"px";});
-        }
-
-        function togglePlay(){
-            if(!isAudioSetup)setupAudio();
-            if(audioCtx&&audioCtx.state==="suspended")audioCtx.resume();
-            if(isPlaying){audio.pause();isPlaying=false;document.getElementById("play-btn").textContent="▶";}
-            else{audio.play();isPlaying=true;document.getElementById("play-btn").textContent="⏸";}
-        }
-
-        function seekAudio(v){audio.currentTime=(v/1000)*SONG_DURATION;}
-        function setVolume(v){audio.volume=v/100;const i=document.querySelector(".volume-icon");i.textContent=v==0?"🔇":v<50?"🔉":"🔊";}
-
-        setInterval(()=>{
-            if(!audio.duration&&!audio.currentTime)return;
-            const ct=audio.currentTime,p=(ct/SONG_DURATION)*100;
-            document.getElementById("progress-fill").style.width=Math.min(p,100)+"%";
-            document.getElementById("seek-bar").value=Math.min(p*10,1000);
-            document.getElementById("current-time").textContent=formatTime(ct*1000);
-        },200);
-
-        function formatTime(ms){const s=Math.floor(ms/1000);return`${Math.floor(s/60)}:${(s%60).toString().padStart(2,"0")}`;}
-        function escapeHtml(s){if(!s)return"";const d=document.createElement("div");d.textContent=s;return d.innerHTML;}
-
-        /* CMATRIX */
-        function startCmatrix(){
-            const canvas=document.getElementById("cmatrix-canvas"),parent=canvas.parentElement,ctx=canvas.getContext("2d");
-            function resize(){canvas.width=parent.clientWidth;canvas.height=parent.clientHeight-24;}
-            resize();window.addEventListener("resize",resize);
-            const chars="アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン0123456789";
-            const fs=10;let cols=Math.floor(canvas.width/fs);let drops=Array(cols).fill(0).map(()=>Math.random()*-20);
-            setInterval(()=>{
-                ctx.fillStyle="rgba(10,2,10,0.12)";ctx.fillRect(0,0,canvas.width,canvas.height);
-                ctx.font=fs+"px 'Share Tech Mono',monospace";
-                const c=Math.floor(canvas.width/fs);
-                if(c!==cols){cols=c;drops=Array(cols).fill(0).map(()=>Math.random()*-20);}
-                for(let i=0;i<drops.length;i++){
-                    ctx.fillStyle=Math.random()>0.5?"rgba(255,200,220,0.9)":"rgba(255,107,157,0.5)";
-                    ctx.fillText(chars[Math.floor(Math.random()*chars.length)],i*fs,drops[i]*fs);
-                    if(drops[i]*fs>canvas.height&&Math.random()>0.975)drops[i]=0;
-                    drops[i]++;
-                }
-            },50);
-        }
-
-        /* TILE TILT + HOVER GLOW */
-        document.querySelectorAll("[data-tilt]").forEach(tile=>{
-            tile.addEventListener("mousemove",e=>{
-                const r=tile.getBoundingClientRect();
-                const x=e.clientX-r.left, y=e.clientY-r.top;
-                const rx=((y-r.height/2)/(r.height/2))*-2.5;
-                const ry=((x-r.width/2)/(r.width/2))*2.5;
-                tile.style.transform=`perspective(800px) rotateX(${rx}deg) rotateY(${ry}deg) scale(1.01)`;
-                tile.style.setProperty("--mouse-x",((x/r.width)*100)+"%");
-                tile.style.setProperty("--mouse-y",((y/r.height)*100)+"%");
-            });
-            tile.addEventListener("mouseleave",()=>{
-                tile.style.transform="perspective(800px) rotateX(0deg) rotateY(0deg) scale(1)";
-            });
-        });
-
-        /* LANYARD */
-        let lanyardWs;
-        function connectLanyard(){
-            lanyardWs=new WebSocket("wss://api.lanyard.rest/socket");
-            lanyardWs.onmessage=(event)=>{
-                const d=JSON.parse(event.data);
-                if(d.op===1){
-                    lanyardWs.send(JSON.stringify({op:2,d:{subscribe_to_id:DISCORD_ID}}));
-                    setInterval(()=>{try{lanyardWs.send(JSON.stringify({op:3}));}catch(e){}},d.d.heartbeat_interval);
-                }
-                if(d.op===0)updatePresence(d.d);
-            };
-            lanyardWs.onclose=()=>setTimeout(connectLanyard,3000);
-            lanyardWs.onerror=()=>lanyardWs.close();
-        }
-
-        function updatePresence(data){
-            const av=document.getElementById("avatar");
-            if(data.discord_user?.avatar){
-                const ext=data.discord_user.avatar.startsWith("a_")?"gif":"png";
-                av.src=`https://cdn.discordapp.com/avatars/${DISCORD_ID}/${data.discord_user.avatar}.${ext}?size=256`;
-            }
-            const deco=document.getElementById("avatar-decoration");
-            if(data.discord_user?.avatar_decoration_data?.asset){
-                deco.src=`https://cdn.discordapp.com/avatar-decoration-presets/${data.discord_user.avatar_decoration_data.asset}.png?size=160&passthrough=true`;
-                deco.style.display="block";
-            }
-            document.getElementById("display-name").textContent=data.discord_user?.global_name||data.discord_user?.username||"realmxrza";
-            const un=data.discord_user?.username;
-            if(un)document.getElementById("username-tag").textContent=`@${un}`;
-            const st=data.discord_status||"offline";
-            document.getElementById("status-dot").className="status-dot "+st;
-            const lb={online:"Online",idle:"Idle",dnd:"Do Not Disturb",offline:"Offline"};
-            document.getElementById("discord-status-label").textContent=lb[st]||"Offline";
-            document.getElementById("discord-status-neo").textContent=st;
-            const cs=data.activities?.find(a=>a.type===4);
-            const csEl=document.getElementById("custom-status");
-            if(cs){
-                csEl.style.display="flex";
-                const em=document.getElementById("status-emoji");
-                if(cs.emoji?.id)em.innerHTML=`<img src="https://cdn.discordapp.com/emojis/${cs.emoji.id}.${cs.emoji.animated?'gif':'png'}?size=20" width="14" height="14" style="vertical-align:middle;" />`;
-                else if(cs.emoji?.name)em.textContent=cs.emoji.name;
-                else em.textContent="";
-                document.getElementById("status-text-content").textContent=cs.state||"";
-            }else csEl.style.display="none";
-            renderActivities(data);
-        }
-
-        function renderActivities(data){
-            const c=document.getElementById("activity-container");
-            const acts=(data.activities||[]).filter(a=>a.type!==4&&a.type!==2);
-            const sp=data.spotify;
-            if(!acts.length&&!sp){c.innerHTML='<div class="no-activity">No current activity</div>';return;}
-            let h="";
-            if(sp){
-                h+=`<div class="activity-item"><img class="activity-img" src="${sp.album_art_url}" alt="" /><div class="activity-details"><div class="activity-name" style="color:#1db954;">♫ Spotify</div><div class="activity-state">${escapeHtml(sp.song)}</div><div class="activity-detail">by ${escapeHtml(sp.artist)}</div></div></div>`;
-            }
-            for(const a of acts){
-                let img="";
-                if(a.assets?.large_image){
-                    if(a.assets.large_image.startsWith("mp:external/"))img=`https://media.discordapp.net/external/${a.assets.large_image.replace("mp:external/","")}`;
-                    else if(a.application_id)img=`https://cdn.discordapp.com/app-assets/${a.application_id}/${a.assets.large_image}.png`;
-                }
-                const tn=a.type===0?"Playing":a.type===3?"Watching":"Playing";
-                let el="";if(a.timestamps?.start)el=`${formatTime(Date.now()-a.timestamps.start)} elapsed`;
-                h+=`<div class="activity-item">${img?`<img class="activity-img" src="${img}" alt="" />`:`<div class="activity-img" style="display:flex;align-items:center;justify-content:center;font-size:16px;">🎮</div>`}<div class="activity-details"><div class="activity-name">${escapeHtml(tn)} ${escapeHtml(a.name)}</div>${a.details?`<div class="activity-detail">${escapeHtml(a.details)}</div>`:""}${a.state?`<div class="activity-state">${escapeHtml(a.state)}</div>`:""}${el?`<div class="activity-time">${el}</div>`:""}</div></div>`;
-            }
-            c.innerHTML=h;
-        }
-
-        async function fetchRest(){try{const r=await fetch(`https://api.lanyard.rest/v1/users/${DISCORD_ID}`);const j=await r.json();if(j.success)updatePresence(j.data);}catch(e){}}
-
-        document.addEventListener("DOMContentLoaded",()=>{try{connectLanyard();}catch{fetchRest();setInterval(fetchRest,30000);}fetchRest();});
-    </script>
+async function fetchRest(){try{const r=await fetch(`https://api.lanyard.rest/v1/users/${DISCORD_ID}`);const j=await r.json();if(j.success)updatePresence(j.data);}catch(e){}}
+document.addEventListener("DOMContentLoaded",()=>{try{connectLanyard();}catch{fetchRest();setInterval(fetchRest,30000);}fetchRest();});
+</script>
 </body>
 </html>
