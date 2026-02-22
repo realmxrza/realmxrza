@@ -1,332 +1,270 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <title>realmxrza</title>
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><text y='14' font-size='14'>連</text></svg>">
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&family=Share+Tech+Mono&display=swap');
-        :root {
-            --bg: #0a0008;
-            --terminal-bg: rgba(10, 2, 10, 0.32);
-            --border: rgba(255, 100, 150, 0.2);
-            --accent: #ff6b9d;
-            --accent-dim: #cc5580;
-            --accent-glow: rgba(255, 107, 157, 0.3);
-            --green: #50fa7b;
-            --red: #ff5555;
-            --yellow: #f1fa8c;
-            --cyan: #8be9fd;
-            --pink: #ff79c6;
-            --text: #f0d0e0;
-            --text-dim: #9a6b80;
-            --text-muted: #5a3a4c;
-        }
-        * { margin:0; padding:0; box-sizing:border-box; }
-        html, body {
-            height:100%; overflow:hidden;
-            cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='20' viewBox='0 0 16 20'%3E%3Cpolygon points='0,0 0,18 4.5,13.5 8,20 10.5,19 7,12.5 13,12.5' fill='%23ff6b9d' stroke='%23cc2266' stroke-width='0.8'/%3E%3C/svg%3E") 0 0, auto;
-        }
-        body { background:var(--bg); color:var(--text); font-family:'JetBrains Mono',monospace; }
-        a, button, input[type="range"] {
-            cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='20' viewBox='0 0 16 20'%3E%3Cpolygon points='0,0 0,18 4.5,13.5 8,20 10.5,19 7,12.5 13,12.5' fill='%23ff79c6' stroke='%23ff6b9d' stroke-width='0.8'/%3E%3C/svg%3E") 0 0, pointer;
-        }
-        .bg-image {
-            position:fixed; top:0; right:0; width:100%; height:100%;
-            background:url('https://raw.githubusercontent.com/realmxrza/realmxrza/ccc6bbab8e68c7dfcaf02483f39fba14e787f77c/assets/just-a-thoughtful-Lain.png') no-repeat right center;
-            background-size:cover; z-index:0; opacity:1; filter:saturate(1) brightness(1);
-        }
-        .bg-overlay {
-            position:fixed; top:0; left:0; width:100%; height:100%;
-            background:linear-gradient(135deg, rgba(10,0,8,0.7) 0%, rgba(10,0,8,0.15) 50%, rgba(10,0,8,0.45) 100%);
-            z-index:0;
-        }
-        /* BOOT */
-        #boot-screen { position:fixed; top:0; left:0; width:100vw; height:100vh; background:#000; z-index:10000; display:flex; flex-direction:column; padding:20px 30px; overflow:hidden; font-family:'Share Tech Mono',monospace; }
-        #boot-screen.fade-out { animation:bootFade 0.8s ease forwards; }
-        @keyframes bootFade { to { opacity:0; pointer-events:none; } }
-        #boot-lines { font-size:12px; line-height:1.5; color:#aaa; white-space:pre; overflow:hidden; flex:1; }
-        #boot-lines .ok { color:var(--green); } #boot-lines .info { color:var(--cyan); } #boot-lines .warn { color:var(--yellow); } #boot-lines .accent { color:var(--accent); }
-        #boot-progress-container { margin-top:12px; width:100%; max-width:400px; display:none; }
-        #boot-progress-label { font-size:11px; color:var(--text-dim); margin-bottom:4px; }
-        #boot-progress-bar { width:100%; height:2px; background:#111; border-radius:1px; overflow:hidden; }
-        #boot-progress-fill { height:100%; width:0%; background:var(--accent); transition:width 0.15s linear; box-shadow:0 0 8px var(--accent-glow); }
-        /* CLICK */
-        #click-screen { position:fixed; top:0; left:0; width:100vw; height:100vh; background:#000; z-index:10001; display:none; flex-direction:column; align-items:center; justify-content:center; font-family:'Share Tech Mono',monospace; }
-        #click-screen.show { display:flex; }
-        .click-lain-text { font-size:14px; color:var(--accent); letter-spacing:4px; text-transform:uppercase; margin-bottom:8px; animation:pulse 2s ease-in-out infinite; }
-        .click-subtitle { font-size:11px; color:var(--text-muted); letter-spacing:2px; }
-        .click-border { border:1px solid rgba(255,107,157,0.3); padding:30px 60px; text-align:center; transition:all 0.3s ease; }
-        .click-border:hover { border-color:var(--accent); box-shadow:0 0 30px rgba(255,107,157,0.15); }
-        .lain-ascii-small { font-size:8px; line-height:1.1; color:var(--accent); opacity:0.4; white-space:pre; margin-bottom:20px; }
-        @keyframes pulse { 0%,100%{opacity:1;} 50%{opacity:0.5;} }
-        /* MAIN */
-        #main-content { display:none; opacity:0; transition:opacity 0.6s ease; height:100vh; position:relative; z-index:1; }
-        #main-content.visible { display:flex; opacity:1; }
-        /* LAYOUT */
-        .layout {
-            display:grid; grid-template-columns:1fr 1fr; grid-template-rows:auto 1fr auto;
-            gap:6px; padding:6px; height:100vh; width:100%; max-width:1200px; margin:0 auto; min-height:0;
-        }
-        /* TILES */
-        .tilt-tile { transition:transform 0.25s ease, box-shadow 0.3s ease, border-color 0.3s ease; transform-style:preserve-3d; perspective:800px; position:relative; }
-        .tilt-tile::before { content:''; position:absolute; inset:0; border-radius:inherit; opacity:0; transition:opacity 0.4s ease; background:radial-gradient(600px circle at var(--mouse-x,50%) var(--mouse-y,50%),rgba(255,107,157,0.06),transparent 40%); pointer-events:none; z-index:0; }
-        .tilt-tile:hover::before { opacity:1; }
-        .tilt-tile:hover { border-color:rgba(255,107,157,0.4)!important; box-shadow:0 0 18px rgba(255,107,157,0.08),inset 0 0 18px rgba(255,107,157,0.03); }
-        /* CLOCK */
-        .clock-widget { grid-column:1; grid-row:1; background:var(--terminal-bg); border:1px solid var(--border); border-radius:6px; padding:8px 12px; animation:fadeSlideUp 0.6s ease both 0.1s; display:flex; align-items:center; gap:12px; }
-        .clock-left { text-align:center; flex-shrink:0; }
-        .clock-time { font-family:'Share Tech Mono',monospace; font-size:32px; font-weight:700; color:var(--accent); text-shadow:0 0 20px var(--accent-glow); letter-spacing:3px; animation:glowPulse 3s ease-in-out infinite; }
-        @keyframes glowPulse { 0%,100%{text-shadow:0 0 20px var(--accent-glow);} 50%{text-shadow:0 0 30px var(--accent-glow),0 0 60px rgba(255,107,157,0.2);} }
-        .clock-date { font-size:10px; color:var(--accent); opacity:0.7; margin-top:1px; }
-        .clock-tz { font-size:8px; color:var(--text-muted); }
-        .weather-info { font-size:9px; color:var(--text-dim); line-height:1.5; border-left:1px solid var(--border); padding-left:12px; }
-        .weather-info .weather-temp { font-size:16px; font-weight:700; color:var(--accent); }
-        .weather-info .weather-label { color:var(--text-muted); font-size:8px; }
-        /* PROFILE */
-        .profile-widget { grid-column:2; grid-row:1; background:var(--terminal-bg); border:1px solid var(--border); border-radius:6px; padding:8px 12px; display:flex; align-items:center; gap:10px; animation:fadeSlideUp 0.6s ease both 0.2s; position:relative; z-index:500; }
-        .avatar-wrapper { position:relative; flex-shrink:0; }
-        .avatar-container { position:relative; width:50px; height:50px; }
-        .avatar { width:50px; height:50px; border-radius:50%; border:2px solid var(--border); object-fit:cover; transition:border-color 0.3s ease; }
-        .avatar:hover { border-color:var(--accent); }
-        .avatar-decoration { position:absolute; top:-6px; left:-6px; width:62px; height:62px; pointer-events:none; z-index:2; }
-        .status-dot { position:absolute; bottom:0; right:0; width:12px; height:12px; border-radius:50%; border:2px solid rgba(10,0,8,0.9); background:#747f8d; z-index:3; }
-        .status-dot.online { background:#43b581; } .status-dot.idle { background:#faa61a; } .status-dot.dnd { background:#f04747; }
-        .profile-center { flex:1; min-width:0; }
-        .profile-info h1 { font-size:15px; font-weight:700; }
-        #display-name { color:#fff; text-shadow:0 0 8px rgba(255,255,255,0.5),0 0 20px rgba(255,255,255,0.25); animation:nameGlow 3s ease-in-out infinite; }
-        @keyframes nameGlow { 0%,100%{text-shadow:0 0 8px rgba(255,255,255,0.5),0 0 20px rgba(255,255,255,0.25);} 50%{text-shadow:0 0 14px rgba(255,255,255,0.7),0 0 30px rgba(255,255,255,0.35);} }
-        .profile-info .tag { font-size:10px; color:var(--text-dim); font-weight:400; }
-        .profile-info .status-text { font-size:9px; color:var(--text-dim); margin-top:1px; display:flex; align-items:center; gap:3px; }
-        .discord-badge { display:inline-flex; align-items:center; gap:3px; margin-top:2px; padding:1px 6px; background:rgba(255,107,157,0.1); border:1px solid rgba(255,107,157,0.2); border-radius:10px; font-size:8px; color:var(--accent); }
-        .discord-badge .dot { width:4px; height:4px; border-radius:50%; background:var(--accent); animation:blink 2s step-end infinite; }
-        @keyframes blink { 0%,100%{opacity:1;} 50%{opacity:0;} }
-        /* ABOUT */
-        .about-toggle { position:absolute; top:6px; right:8px; background:rgba(255,107,157,0.08); border:1px solid rgba(255,107,157,0.2); color:var(--accent); width:20px; height:20px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:10px; font-family:'JetBrains Mono',monospace; font-weight:700; transition:all 0.3s ease; z-index:9999; }
-        .about-toggle:hover { background:rgba(255,107,157,0.2); border-color:var(--accent); box-shadow:0 0 10px var(--accent-glow); transform:rotate(15deg) scale(1.1); }
-        .about-dropdown { position:fixed; z-index:99999; width:300px; background:rgba(10,2,10,0.96); border:1px solid rgba(255,107,157,0.35); border-radius:8px; display:none; backdrop-filter:blur(12px); box-shadow:0 8px 40px rgba(0,0,0,0.6),0 0 20px rgba(255,107,157,0.1); }
-        .about-dropdown.show { display:block; animation:aboutDrop 0.3s ease both; }
-        @keyframes aboutDrop { from{opacity:0;transform:translateY(-6px) scale(0.97);} to{opacity:1;transform:translateY(0) scale(1);} }
-        .about-dropdown-bar { display:flex; align-items:center; padding:5px 10px; border-bottom:1px solid var(--border); border-radius:8px 8px 0 0; background:rgba(15,5,15,0.9); }
-        .about-dropdown-bar span { flex:1; font-size:9px; color:var(--text-dim); }
-        .about-dropdown-close { background:none; border:none; color:var(--accent); font-size:13px; line-height:1; padding:0; font-family:'JetBrains Mono',monospace; }
-        .about-dropdown-close:hover { color:var(--red); }
-        .about-dropdown-body { padding:10px; font-size:9.5px; line-height:1.6; color:var(--text-dim); }
-        .about-dropdown-body .hl { color:var(--accent); }
-        /* TERMINAL */
-        .terminal { grid-column:1; grid-row:2; background:var(--terminal-bg); border:1px solid var(--border); border-radius:6px; overflow:hidden; display:flex; flex-direction:column; animation:fadeSlideUp 0.6s ease both 0.3s; min-height:0; }
-        .terminal-bar { display:flex; align-items:center; gap:5px; padding:5px 8px; background:rgba(15,5,15,0.45); border-bottom:1px solid var(--border); flex-shrink:0; }
-        .terminal-btn { width:8px; height:8px; border-radius:50%; transition:transform 0.2s; }
-        .terminal-btn:hover { transform:scale(1.3); }
-        .terminal-btn.close { background:#ff5f57; } .terminal-btn.min { background:#febc2e; } .terminal-btn.max { background:#28c840; }
-        .terminal-title { flex:1; text-align:center; font-size:8px; color:var(--text-dim); }
-        .terminal-body { padding:8px; font-size:10px; line-height:1.5; overflow-y:auto; flex:1; min-height:0; }
-        .terminal-body::-webkit-scrollbar { width:3px; } .terminal-body::-webkit-scrollbar-thumb { background:var(--accent-dim); border-radius:2px; }
-        .terminal-prompt { color:var(--accent); margin-right:5px; white-space:nowrap; }
-        .terminal-prompt .user { color:var(--pink); } .terminal-prompt .at { color:var(--text-dim); } .terminal-prompt .host { color:var(--accent); } .terminal-prompt .symbol { color:var(--pink); }
-        .neofetch-container { display:flex; gap:8px; align-items:flex-start; }
-        .neofetch-ascii { color:var(--accent); font-size:3.2px; line-height:1.02; white-space:pre; flex-shrink:0; text-shadow:0 0 4px var(--accent-glow); opacity:0.8; }
-        .neofetch-info { flex:1; min-width:0; }
-        .neofetch-info .line { margin-bottom:0px; font-size:10px; }
-        .neofetch-separator { color:var(--text-muted); }
-        .key { color:var(--accent); display:inline-block; min-width:70px; }
-        .value { color:var(--text); }
-        .color-blocks { display:flex; gap:2px; margin-top:3px; }
-        .color-block { width:12px; height:6px; border-radius:1px; }
-        .terminal-cursor { display:inline-block; width:6px; height:11px; background:var(--accent); animation:blink 1s step-end infinite; vertical-align:middle; margin-left:2px; }
-        /* LAST.FM */
-        .lastfm-section { margin-top:6px; padding-top:6px; border-top:1px solid var(--border); }
-        .lastfm-title { font-size:8px; text-transform:uppercase; letter-spacing:1px; color:var(--text-dim); margin-bottom:4px; }
-        .lastfm-tracks { display:flex; flex-direction:column; gap:3px; }
-        .lastfm-track { display:flex; align-items:center; gap:6px; padding:3px 4px; border-radius:4px; transition:background 0.2s; font-size:9px; }
-        .lastfm-track:hover { background:rgba(255,107,157,0.05); }
-        .lastfm-cover { width:28px; height:28px; border-radius:3px; object-fit:cover; flex-shrink:0; background:var(--bg); transition:transform 0.2s, box-shadow 0.2s; }
-        .lastfm-cover:hover { transform:scale(1.1); box-shadow:0 0 10px var(--accent-glow); }
-        .lastfm-track-info { flex:1; min-width:0; }
-        .lastfm-track-name { color:var(--text); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; font-size:9px; }
-        .lastfm-track-artist { color:var(--text-dim); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; font-size:8px; }
-        .lastfm-now { color:var(--green); font-size:7px; }
-        /* RIGHT PANEL */
-        .right-panel { grid-column:2; grid-row:2; display:flex; flex-direction:column; gap:6px; min-height:0; overflow:hidden; }
-        /* ACTIVITY */
-        .activity-card { background:var(--terminal-bg); border:1px solid var(--border); border-radius:6px; padding:8px; animation:fadeSlideUp 0.6s ease both 0.4s; flex-shrink:0; max-height:150px; display:flex; flex-direction:column; }
-        .activity-card h3 { font-size:8px; text-transform:uppercase; letter-spacing:1.5px; color:var(--text-dim); margin-bottom:6px; flex-shrink:0; }
-        #activity-container { overflow-y:auto; flex:1; min-height:0; }
-        #activity-container::-webkit-scrollbar { width:3px; } #activity-container::-webkit-scrollbar-thumb { background:var(--accent-dim); border-radius:2px; }
-        .activity-item { display:flex; align-items:center; gap:7px; padding:5px; background:rgba(255,255,255,0.02); border-radius:4px; border:1px solid rgba(255,255,255,0.02); transition:border-color 0.3s; }
-        .activity-item:hover { border-color:var(--border); }
-        .activity-item+.activity-item { margin-top:4px; }
-        .activity-item.spotify-clickable { cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='20' viewBox='0 0 16 20'%3E%3Cpolygon points='0,0 0,18 4.5,13.5 8,20 10.5,19 7,12.5 13,12.5' fill='%23ff79c6' stroke='%23ff6b9d' stroke-width='0.8'/%3E%3C/svg%3E") 0 0, pointer; }
-        .activity-img { width:36px; height:36px; border-radius:4px; object-fit:cover; flex-shrink:0; background:var(--bg); transition:transform 0.2s, box-shadow 0.2s; }
-        .activity-img.clickable:hover { transform:scale(1.1); box-shadow:0 0 12px var(--accent-glow); }
-        .activity-details { flex:1; min-width:0; }
-        .activity-name { font-size:9px; font-weight:600; color:var(--text); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-        .activity-state,.activity-detail { font-size:8px; color:var(--text-dim); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; margin-top:0px; }
-        .activity-time { font-size:7px; color:var(--text-muted); margin-top:1px; }
-        .no-activity { color:var(--text-muted); font-size:9px; font-style:italic; text-align:center; padding:8px; }
-        /* SOCIALS */
-        .social-section { background:var(--terminal-bg); border:1px solid var(--border); border-radius:6px; padding:8px; animation:fadeSlideUp 0.6s ease both 0.5s; flex-shrink:0; }
-        .social-section h3 { font-size:8px; text-transform:uppercase; letter-spacing:1.5px; color:var(--text-dim); margin-bottom:6px; }
-        .social-links { display:flex; gap:5px; flex-wrap:wrap; }
-        .social-link { display:flex; align-items:center; justify-content:center; width:30px; height:30px; background:rgba(255,107,157,0.04); border:1px solid var(--border); border-radius:6px; color:var(--text-dim); text-decoration:none; transition:all 0.3s cubic-bezier(0.4,0,0.2,1); position:relative; }
-        .social-link svg { width:14px; height:14px; transition:all 0.3s ease; position:relative; z-index:1; }
-        .social-link:hover { transform:translateY(-3px) scale(1.08); box-shadow:0 4px 14px rgba(255,107,157,0.15); }
-        .social-link.github:hover { border-color:#e6edf3; color:#e6edf3; } .social-link.roblox:hover { border-color:#e2231a; color:#e2231a; } .social-link.spotify:hover { border-color:#1db954; color:#1db954; } .social-link.youtube:hover { border-color:#ff0000; color:#ff0000; } .social-link.discord-link:hover { border-color:#5865f2; color:#5865f2; } .social-link.steam:hover { border-color:#66c0f4; color:#66c0f4; } .social-link.instagram:hover { border-color:#e4405f; color:#e4405f; } .social-link.lastfm:hover { border-color:#d51007; color:#d51007; }
-        .social-link:hover svg { color:inherit; filter:drop-shadow(0 0 6px currentColor); }
-        .social-tooltip { position:absolute; bottom:calc(100% + 5px); left:50%; transform:translateX(-50%) translateY(4px); background:rgba(15,5,15,0.95); border:1px solid var(--border); color:var(--text); font-size:7px; padding:2px 6px; border-radius:3px; white-space:nowrap; opacity:0; pointer-events:none; transition:all 0.2s ease; }
-        .social-link:hover .social-tooltip { opacity:1; transform:translateX(-50%) translateY(0); }
-        .copy-toast { position:fixed; top:50%; left:50%; transform:translate(-50%,-50%) scale(0.8); background:rgba(10,2,10,0.95); border:1px solid var(--accent); color:var(--accent); padding:8px 18px; border-radius:6px; font-size:11px; font-family:'JetBrains Mono',monospace; z-index:100000; opacity:0; pointer-events:none; transition:all 0.3s ease; box-shadow:0 0 20px var(--accent-glow); }
-        .copy-toast.show { opacity:1; transform:translate(-50%,-50%) scale(1); }
-        /* CMATRIX */
-        .cmatrix-section { background:rgba(10,2,10,0.35); border:1px solid var(--border); border-radius:6px; overflow:hidden; animation:fadeSlideUp 0.6s ease both 0.6s; flex:1; min-height:0; display:flex; flex-direction:column; }
-        .cmatrix-bar { display:flex; align-items:center; gap:5px; padding:3px 7px; background:rgba(15,5,15,0.45); border-bottom:1px solid var(--border); flex-shrink:0; }
-        .cmatrix-bar .terminal-btn { width:6px; height:6px; }
-        .cmatrix-bar span { flex:1; text-align:center; font-size:7px; color:var(--text-dim); }
-        .cmatrix-canvas { width:100%; flex:1; display:block; min-height:0; }
-        /* MUSIC */
-        .music-player { grid-column:1/-1; grid-row:3; background:var(--terminal-bg); border:1px solid var(--border); border-radius:6px; padding:5px 10px; display:flex; align-items:center; gap:8px; animation:fadeSlideUp 0.6s ease both 0.7s; flex-shrink:0; }
-        .player-controls { display:flex; align-items:center; flex-shrink:0; }
-        .player-btn { background:none; border:1px solid var(--border); color:var(--accent); width:26px; height:26px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:10px; transition:all 0.2s ease; }
-        .player-btn:hover { background:rgba(255,107,157,0.15); border-color:var(--accent); box-shadow:0 0 10px var(--accent-glow); transform:scale(1.1); }
-        .player-info { flex-shrink:0; }
-        .player-title { font-size:9px; color:var(--text); font-weight:600; }
-        .player-artist { font-size:7px; color:var(--text-dim); }
-        .player-progress { flex:1; display:flex; align-items:center; gap:5px; min-width:0; }
-        .player-time { font-size:8px; color:var(--text-muted); font-family:'Share Tech Mono',monospace; white-space:nowrap; min-width:24px; }
-        .progress-bar-container { flex:1; height:16px; display:flex; align-items:center; position:relative; min-width:0; }
-        .progress-bar { width:100%; height:3px; background:rgba(255,107,157,0.12); border-radius:2px; overflow:hidden; }
-        .progress-fill { height:100%; background:linear-gradient(90deg,var(--accent-dim),var(--accent)); border-radius:2px; width:0%; transition:width 0.2s linear; box-shadow:0 0 6px var(--accent-glow); }
-        .progress-bar-container input[type="range"] { position:absolute; top:0; left:0; width:100%; height:100%; opacity:0; margin:0; }
-        .visualizer { display:flex; align-items:end; gap:1.5px; height:20px; flex-shrink:0; }
-        .vis-bar { width:2px; background:var(--accent); border-radius:1px 1px 0 0; transition:height 0.08s ease; opacity:0.7; min-height:2px; }
-        .vis-bar:nth-child(even) { opacity:0.5; }
-        .volume-control { display:flex; align-items:center; gap:3px; flex-shrink:0; }
-        .volume-icon { color:var(--text-dim); font-size:10px; }
-        .volume-slider { -webkit-appearance:none; appearance:none; width:40px; height:3px; background:rgba(255,107,157,0.15); border-radius:2px; outline:none; }
-        .volume-slider::-webkit-slider-thumb { -webkit-appearance:none; width:8px; height:8px; background:var(--accent); border-radius:50%; box-shadow:0 0 4px var(--accent-glow); }
-        /* LIGHTBOX */
-        .lightbox { position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:200000; display:none; align-items:center; justify-content:center; backdrop-filter:blur(8px); }
-        .lightbox.show { display:flex; }
-        .lightbox img { max-width:80vw; max-height:80vh; border-radius:10px; border:2px solid var(--border); box-shadow:0 0 40px rgba(255,107,157,0.2); }
-        .lightbox-close { position:absolute; top:20px; right:20px; background:none; border:1px solid var(--border); color:var(--accent); width:30px; height:30px; border-radius:50%; font-size:16px; display:flex; align-items:center; justify-content:center; font-family:'JetBrains Mono',monospace; }
-        .lightbox-close:hover { background:rgba(255,107,157,0.2); border-color:var(--accent); }
-        .lightbox-info { position:absolute; bottom:30px; text-align:center; color:var(--text); font-size:12px; }
-        .lightbox-info .lb-title { font-weight:700; } .lightbox-info .lb-artist { color:var(--text-dim); font-size:10px; }
-        /* ANIM */
-        @keyframes fadeSlideUp { from{opacity:0;transform:translateY(15px);} to{opacity:1;transform:translateY(0);} }
-        .float-particle { position:fixed; width:2px; height:2px; background:var(--accent); border-radius:50%; pointer-events:none; z-index:0; opacity:0; animation:floatUp linear infinite; }
-        @keyframes floatUp { 0%{opacity:0;transform:translateY(100vh) scale(0);} 10%{opacity:0.4;} 90%{opacity:0.2;} 100%{opacity:0;transform:translateY(-10vh) scale(1);} }
-        .shimmer-border { position:relative; }
-        .shimmer-border::after { content:''; position:absolute; inset:0; border-radius:inherit; border:1px solid transparent; background:linear-gradient(90deg,transparent,rgba(255,107,157,0.12),transparent) border-box; background-size:200% 100%; -webkit-mask:linear-gradient(#fff 0 0) padding-box,linear-gradient(#fff 0 0); -webkit-mask-composite:destination-out; mask-composite:exclude; animation:shimmer 4s linear infinite; pointer-events:none; }
-        @keyframes shimmer { 0%{background-position:-200% 0;} 100%{background-position:200% 0;} }
-        /* MOBILE */
-        @media (max-width:768px) {
-            html, body { overflow-y:auto; overflow-x:hidden; height:auto; }
-            .layout { grid-template-columns:1fr; grid-template-rows:auto auto auto auto auto; height:auto; min-height:100vh; gap:6px; padding:6px; }
-            .clock-widget { grid-column:1; grid-row:1; flex-direction:column; text-align:center; gap:6px; }
-            .weather-info { border-left:none; border-top:1px solid var(--border); padding-left:0; padding-top:6px; text-align:center; }
-            .profile-widget { grid-column:1; grid-row:2; }
-            .terminal { grid-column:1; grid-row:3; max-height:350px; }
-            .right-panel { grid-column:1; grid-row:4; overflow:visible; }
-            .music-player { grid-column:1; grid-row:5; flex-wrap:wrap; gap:6px; }
-            .neofetch-ascii { font-size:2.5px; }
-            .clock-time { font-size:28px; }
-            .about-dropdown { width:calc(100vw - 24px); right:12px!important; }
-            .player-progress { min-width:0; flex-basis:100%; order:10; }
-            .visualizer { display:none; }
-            .volume-control { display:none; }
-            .cmatrix-section { min-height:100px; }
-            .activity-card { max-height:180px; }
-        }
-        @media (max-width:400px) {
-            .clock-time { font-size:22px; letter-spacing:2px; }
-            .neofetch-ascii { display:none; }
-        }
-    </style>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
+<title>realmxrza</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><text y='14' font-size='14'>連</text></svg>">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&family=Share+Tech+Mono&display=swap');
+:root{--bg:#0a0008;--terminal-bg:rgba(10,2,10,0.32);--border:rgba(255,100,150,0.2);--accent:#ff6b9d;--accent-dim:#cc5580;--accent-glow:rgba(255,107,157,0.3);--green:#50fa7b;--red:#ff5555;--yellow:#f1fa8c;--cyan:#8be9fd;--pink:#ff79c6;--text:#f0d0e0;--text-dim:#9a6b80;--text-muted:#5a3a4c;}
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{height:100%;overflow:hidden;cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='20' viewBox='0 0 16 20'%3E%3Cpolygon points='0,0 0,18 4.5,13.5 8,20 10.5,19 7,12.5 13,12.5' fill='%23ff6b9d' stroke='%23cc2266' stroke-width='0.8'/%3E%3C/svg%3E") 0 0,auto;}
+body{background:var(--bg);color:var(--text);font-family:'JetBrains Mono',monospace;}
+a,button,input[type="range"]{cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='20' viewBox='0 0 16 20'%3E%3Cpolygon points='0,0 0,18 4.5,13.5 8,20 10.5,19 7,12.5 13,12.5' fill='%23ff79c6' stroke='%23ff6b9d' stroke-width='0.8'/%3E%3C/svg%3E") 0 0,pointer;}
+/* BG WALLPAPER ROTATION */
+.bg-layer{position:fixed;top:0;left:0;width:100%;height:100%;background-size:cover;background-position:center;z-index:0;transition:opacity 1.5s ease;}
+.bg-layer.active{opacity:1;}
+.bg-layer.hidden{opacity:0;}
+.bg-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:linear-gradient(135deg,rgba(10,0,8,0.72) 0%,rgba(10,0,8,0.18) 50%,rgba(10,0,8,0.48) 100%);z-index:0;}
+/* BOOT */
+#boot-screen{position:fixed;top:0;left:0;width:100vw;height:100vh;background:#000;z-index:10000;display:flex;flex-direction:column;padding:20px 30px;overflow:hidden;font-family:'Share Tech Mono',monospace;}
+#boot-screen.fade-out{animation:bootFade .8s ease forwards;}
+@keyframes bootFade{to{opacity:0;pointer-events:none;}}
+#boot-lines{font-size:12px;line-height:1.5;color:#aaa;white-space:pre;overflow:hidden;flex:1;}
+#boot-lines .ok{color:var(--green);}#boot-lines .info{color:var(--cyan);}#boot-lines .warn{color:var(--yellow);}#boot-lines .accent{color:var(--accent);}
+#boot-progress-container{margin-top:12px;width:100%;max-width:400px;display:none;}
+#boot-progress-label{font-size:11px;color:var(--text-dim);margin-bottom:4px;}
+#boot-progress-bar{width:100%;height:2px;background:#111;border-radius:1px;overflow:hidden;}
+#boot-progress-fill{height:100%;width:0%;background:var(--accent);transition:width .15s linear;box-shadow:0 0 8px var(--accent-glow);}
+/* CLICK */
+#click-screen{position:fixed;top:0;left:0;width:100vw;height:100vh;background:#000;z-index:10001;display:none;flex-direction:column;align-items:center;justify-content:center;font-family:'Share Tech Mono',monospace;}
+#click-screen.show{display:flex;}
+.click-lain-text{font-size:14px;color:var(--accent);letter-spacing:4px;text-transform:uppercase;margin-bottom:8px;animation:pulse 2s ease-in-out infinite;}
+.click-subtitle{font-size:11px;color:var(--text-muted);letter-spacing:2px;}
+.click-border{border:1px solid rgba(255,107,157,0.3);padding:30px 60px;text-align:center;transition:all .3s ease;}
+.click-border:hover{border-color:var(--accent);box-shadow:0 0 30px rgba(255,107,157,0.15);}
+.lain-ascii-small{font-size:8px;line-height:1.1;color:var(--accent);opacity:0.4;white-space:pre;margin-bottom:20px;}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:0.5;}}
+/* MAIN */
+#main-content{display:none;opacity:0;transition:opacity .6s ease;height:100vh;position:relative;z-index:1;}
+#main-content.visible{display:flex;opacity:1;}
+/* UI HIDE */
+.layout.ui-hidden>*{opacity:0!important;pointer-events:none!important;transition:opacity .5s ease;}
+.layout.ui-hidden .music-player{opacity:0!important;pointer-events:none!important;}
+/* LAYOUT */
+.layout{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:auto 1fr auto;gap:6px;padding:6px;height:100vh;width:100%;max-width:1200px;margin:0 auto;min-height:0;}
+/* TILES */
+.tilt-tile{transition:transform .3s ease,box-shadow .3s ease,border-color .3s ease;position:relative;will-change:transform;}
+.tilt-tile::before{content:'';position:absolute;inset:0;border-radius:inherit;opacity:0;transition:opacity .4s ease;background:radial-gradient(500px circle at var(--mouse-x,50%) var(--mouse-y,50%),rgba(255,107,157,0.06),transparent 40%);pointer-events:none;z-index:0;}
+.tilt-tile:hover::before{opacity:1;}
+.tilt-tile:hover{border-color:rgba(255,107,157,0.4)!important;box-shadow:0 0 18px rgba(255,107,157,0.08),inset 0 0 18px rgba(255,107,157,0.03);}
+/* CLOCK */
+.clock-widget{grid-column:1;grid-row:1;background:var(--terminal-bg);border:1px solid var(--border);border-radius:6px;padding:6px 10px;animation:fadeSlideUp .6s ease both .1s;display:flex;align-items:center;gap:10px;}
+.clock-left{text-align:center;flex-shrink:0;}
+.clock-time{font-family:'Share Tech Mono',monospace;font-size:30px;font-weight:700;color:var(--accent);text-shadow:0 0 20px var(--accent-glow);letter-spacing:2px;animation:glowPulse 3s ease-in-out infinite;}
+@keyframes glowPulse{0%,100%{text-shadow:0 0 20px var(--accent-glow);}50%{text-shadow:0 0 30px var(--accent-glow),0 0 60px rgba(255,107,157,0.2);}}
+.clock-date{font-size:9px;color:var(--accent);opacity:0.7;}
+.clock-tz{font-size:7px;color:var(--text-muted);}
+.clock-epoch{font-size:7px;color:var(--text-muted);font-family:'Share Tech Mono',monospace;margin-top:1px;}
+.weather-info{font-size:8px;color:var(--text-dim);line-height:1.4;border-left:1px solid var(--border);padding-left:10px;}
+.weather-temp{font-size:15px;font-weight:700;color:var(--accent);}
+.weather-label{color:var(--text-muted);font-size:7px;}
+.weather-condition{color:var(--pink);font-size:8px;font-weight:500;}
+/* PROFILE */
+.profile-widget{grid-column:2;grid-row:1;background:var(--terminal-bg);border:1px solid var(--border);border-radius:6px;padding:6px 10px;display:flex;align-items:center;gap:8px;animation:fadeSlideUp .6s ease both .2s;position:relative;z-index:500;}
+.avatar-wrapper{position:relative;flex-shrink:0;}
+.avatar-container{position:relative;width:46px;height:46px;}
+.avatar{width:46px;height:46px;border-radius:50%;border:2px solid var(--border);object-fit:cover;transition:border-color .3s ease;}
+.avatar:hover{border-color:var(--accent);}
+.avatar-decoration{position:absolute;top:-5px;left:-5px;width:56px;height:56px;pointer-events:none;z-index:2;}
+.status-dot{position:absolute;bottom:0;right:0;width:12px;height:12px;border-radius:50%;border:2px solid rgba(10,0,8,0.9);background:#747f8d;z-index:3;}
+.status-dot.online{background:#43b581;}.status-dot.idle{background:#faa61a;}.status-dot.dnd{background:#f04747;}
+.profile-center{flex:1;min-width:0;}
+.profile-name-row{display:flex;align-items:center;gap:5px;}
+.lain-dance{width:22px;height:22px;image-rendering:pixelated;vertical-align:middle;}
+.profile-info h1{font-size:14px;font-weight:700;}
+#display-name{color:#fff;text-shadow:0 0 8px rgba(255,255,255,0.5),0 0 20px rgba(255,255,255,0.25);animation:nameGlow 3s ease-in-out infinite;}
+@keyframes nameGlow{0%,100%{text-shadow:0 0 8px rgba(255,255,255,0.5),0 0 20px rgba(255,255,255,0.25);}50%{text-shadow:0 0 14px rgba(255,255,255,0.7),0 0 30px rgba(255,255,255,0.35);}}
+.profile-info .tag{font-size:9px;color:var(--text-dim);font-weight:400;}
+.profile-info .status-text{font-size:8px;color:var(--text-dim);margin-top:1px;display:flex;align-items:center;gap:3px;}
+.discord-badge{display:inline-flex;align-items:center;gap:3px;margin-top:2px;padding:1px 6px;background:rgba(255,107,157,0.1);border:1px solid rgba(255,107,157,0.2);border-radius:10px;font-size:7px;color:var(--accent);}
+.discord-badge .dot{width:4px;height:4px;border-radius:50%;background:var(--accent);animation:blink 2s step-end infinite;}
+@keyframes blink{0%,100%{opacity:1;}50%{opacity:0;}}
+/* TOGGLE BTNS */
+.profile-btns{position:absolute;top:5px;right:8px;display:flex;gap:4px;z-index:9999;}
+.toggle-btn{background:rgba(255,107,157,0.08);border:1px solid rgba(255,107,157,0.2);color:var(--accent);width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:9px;font-family:'JetBrains Mono',monospace;font-weight:700;transition:all .3s ease;}
+.toggle-btn:hover{background:rgba(255,107,157,0.2);border-color:var(--accent);box-shadow:0 0 10px var(--accent-glow);transform:scale(1.1);}
+/* ABOUT */
+.about-dropdown{position:fixed;z-index:99999;width:300px;background:rgba(10,2,10,0.96);border:1px solid rgba(255,107,157,0.35);border-radius:8px;display:none;backdrop-filter:blur(12px);box-shadow:0 8px 40px rgba(0,0,0,0.6),0 0 20px rgba(255,107,157,0.1);}
+.about-dropdown.show{display:block;animation:aboutDrop .3s ease both;}
+@keyframes aboutDrop{from{opacity:0;transform:translateY(-6px) scale(0.97);}to{opacity:1;transform:translateY(0) scale(1);}}
+.about-dropdown-bar{display:flex;align-items:center;padding:5px 10px;border-bottom:1px solid var(--border);border-radius:8px 8px 0 0;background:rgba(15,5,15,0.9);}
+.about-dropdown-bar span{flex:1;font-size:8px;color:var(--text-dim);}
+.about-dropdown-close{background:none;border:none;color:var(--accent);font-size:13px;line-height:1;padding:0;font-family:'JetBrains Mono',monospace;}
+.about-dropdown-close:hover{color:var(--red);}
+.about-dropdown-body{padding:10px;font-size:9px;line-height:1.6;color:var(--text-dim);}
+.about-dropdown-body .hl{color:var(--accent);}
+/* TERMINAL */
+.terminal{grid-column:1;grid-row:2;background:var(--terminal-bg);border:1px solid var(--border);border-radius:6px;overflow:hidden;display:flex;flex-direction:column;animation:fadeSlideUp .6s ease both .3s;min-height:0;}
+.terminal-bar{display:flex;align-items:center;gap:5px;padding:4px 8px;background:rgba(15,5,15,0.45);border-bottom:1px solid var(--border);flex-shrink:0;}
+.terminal-btn{width:7px;height:7px;border-radius:50%;}.terminal-btn.close{background:#ff5f57;}.terminal-btn.min{background:#febc2e;}.terminal-btn.max{background:#28c840;}
+.terminal-title{flex:1;text-align:center;font-size:7px;color:var(--text-dim);}
+.terminal-body{padding:6px;font-size:9.5px;line-height:1.45;overflow-y:auto;flex:1;min-height:0;}
+.terminal-body::-webkit-scrollbar{width:3px;}.terminal-body::-webkit-scrollbar-thumb{background:var(--accent-dim);border-radius:2px;}
+.terminal-prompt{color:var(--accent);margin-right:4px;white-space:nowrap;}
+.terminal-prompt .user{color:var(--pink);}.terminal-prompt .at{color:var(--text-dim);}.terminal-prompt .host{color:var(--accent);}.terminal-prompt .symbol{color:var(--pink);}
+.neofetch-container{display:flex;gap:6px;align-items:flex-start;}
+.neofetch-ascii{color:var(--accent);font-size:3px;line-height:1.02;white-space:pre;flex-shrink:0;text-shadow:0 0 4px var(--accent-glow);opacity:0.8;}
+.neofetch-info{flex:1;min-width:0;}
+.neofetch-info .line{margin-bottom:0;font-size:9.5px;}
+.neofetch-separator{color:var(--text-muted);}
+.key{color:var(--accent);display:inline-block;min-width:65px;}
+.value{color:var(--text);}
+.color-blocks{display:flex;gap:2px;margin-top:2px;}
+.color-block{width:10px;height:5px;border-radius:1px;}
+.terminal-cursor{display:inline-block;width:6px;height:10px;background:var(--accent);animation:blink 1s step-end infinite;vertical-align:middle;margin-left:2px;}
+/* LASTFM */
+.lastfm-section{margin-top:4px;padding-top:4px;border-top:1px solid var(--border);}
+.lastfm-title{font-size:7px;text-transform:uppercase;letter-spacing:1px;color:var(--text-dim);margin-bottom:3px;}
+.lastfm-tracks{display:flex;flex-direction:column;gap:2px;}
+.lastfm-track{display:flex;align-items:center;gap:5px;padding:2px 3px;border-radius:3px;transition:background .2s;font-size:8px;text-decoration:none;color:inherit;}
+.lastfm-track:hover{background:rgba(255,107,157,0.05);}
+.lastfm-cover{width:24px;height:24px;border-radius:2px;object-fit:cover;flex-shrink:0;background:var(--bg);transition:transform .2s;}
+.lastfm-cover:hover{transform:scale(1.08);}
+.lastfm-track-info{flex:1;min-width:0;}
+.lastfm-track-name{color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:8px;}
+.lastfm-track-artist{color:var(--text-dim);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:7px;}
+.lastfm-now{color:var(--green);font-size:6px;flex-shrink:0;}
+/* RIGHT */
+.right-panel{grid-column:2;grid-row:2;display:flex;flex-direction:column;gap:6px;min-height:0;overflow:hidden;}
+/* ACTIVITY */
+.activity-card{background:var(--terminal-bg);border:1px solid var(--border);border-radius:6px;padding:7px;animation:fadeSlideUp .6s ease both .4s;flex-shrink:0;max-height:140px;display:flex;flex-direction:column;}
+.activity-card h3{font-size:7px;text-transform:uppercase;letter-spacing:1.5px;color:var(--text-dim);margin-bottom:5px;flex-shrink:0;}
+#activity-container{overflow-y:auto;flex:1;min-height:0;}
+#activity-container::-webkit-scrollbar{width:3px;}#activity-container::-webkit-scrollbar-thumb{background:var(--accent-dim);border-radius:2px;}
+.activity-item{display:flex;align-items:center;gap:6px;padding:4px;background:rgba(255,255,255,0.02);border-radius:4px;border:1px solid rgba(255,255,255,0.02);transition:border-color .3s;}
+.activity-item:hover{border-color:var(--border);}
+.activity-item+.activity-item{margin-top:3px;}
+.activity-item.clickable{text-decoration:none;color:inherit;}
+.activity-img{width:32px;height:32px;border-radius:4px;object-fit:cover;flex-shrink:0;background:var(--bg);transition:transform .2s;}
+.activity-img.zoomable:hover{transform:scale(1.1);box-shadow:0 0 10px var(--accent-glow);}
+.activity-details{flex:1;min-width:0;}
+.activity-name{font-size:8.5px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.activity-state,.activity-detail{font-size:7.5px;color:var(--text-dim);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.activity-time{font-size:6.5px;color:var(--text-muted);margin-top:1px;}
+.no-activity{color:var(--text-muted);font-size:9px;font-style:italic;text-align:center;padding:8px;}
+/* SOCIALS */
+.social-section{background:var(--terminal-bg);border:1px solid var(--border);border-radius:6px;padding:7px;animation:fadeSlideUp .6s ease both .5s;flex-shrink:0;}
+.social-section h3{font-size:7px;text-transform:uppercase;letter-spacing:1.5px;color:var(--text-dim);margin-bottom:5px;}
+.social-links{display:flex;gap:4px;flex-wrap:wrap;}
+.social-link{display:flex;align-items:center;justify-content:center;width:28px;height:28px;background:rgba(255,107,157,0.04);border:1px solid var(--border);border-radius:5px;color:var(--text-dim);text-decoration:none;transition:all .3s cubic-bezier(0.4,0,0.2,1);position:relative;}
+.social-link svg{width:13px;height:13px;transition:all .3s ease;position:relative;z-index:1;}
+.social-link:hover{transform:translateY(-2px) scale(1.06);box-shadow:0 4px 12px rgba(255,107,157,0.15);}
+.social-link.github:hover{border-color:#e6edf3;color:#e6edf3;}.social-link.roblox:hover{border-color:#e2231a;color:#e2231a;}.social-link.spotify:hover{border-color:#1db954;color:#1db954;}.social-link.youtube:hover{border-color:#ff0000;color:#ff0000;}.social-link.discord-link:hover{border-color:#5865f2;color:#5865f2;}.social-link.steam:hover{border-color:#66c0f4;color:#66c0f4;}.social-link.instagram:hover{border-color:#e4405f;color:#e4405f;}.social-link.lastfm:hover{border-color:#d51007;color:#d51007;}.social-link.tiktok:hover{border-color:#fe2c55;color:#fe2c55;}.social-link.twitch:hover{border-color:#9146ff;color:#9146ff;}.social-link.twitter:hover{border-color:#1da1f2;color:#1da1f2;}.social-link.pinterest:hover{border-color:#e60023;color:#e60023;}.social-link.crunchyroll:hover{border-color:#f47521;color:#f47521;}
+.social-link:hover svg{color:inherit;filter:drop-shadow(0 0 6px currentColor);}
+.social-tooltip{position:absolute;bottom:calc(100% + 5px);left:50%;transform:translateX(-50%) translateY(4px);background:rgba(15,5,15,0.95);border:1px solid var(--border);color:var(--text);font-size:6.5px;padding:2px 5px;border-radius:3px;white-space:nowrap;opacity:0;pointer-events:none;transition:all .2s ease;z-index:50;}
+.social-link:hover .social-tooltip{opacity:1;transform:translateX(-50%) translateY(0);}
+.copy-toast{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%) scale(0.8);background:rgba(10,2,10,0.95);border:1px solid var(--accent);color:var(--accent);padding:8px 18px;border-radius:6px;font-size:11px;font-family:'JetBrains Mono',monospace;z-index:100000;opacity:0;pointer-events:none;transition:all .3s ease;box-shadow:0 0 20px var(--accent-glow);}
+.copy-toast.show{opacity:1;transform:translate(-50%,-50%) scale(1);}
+/* CMATRIX */
+.cmatrix-section{background:rgba(10,2,10,0.35);border:1px solid var(--border);border-radius:6px;overflow:hidden;animation:fadeSlideUp .6s ease both .6s;flex:1;min-height:0;display:flex;flex-direction:column;}
+.cmatrix-bar{display:flex;align-items:center;gap:4px;padding:3px 6px;background:rgba(15,5,15,0.45);border-bottom:1px solid var(--border);flex-shrink:0;}
+.cmatrix-bar .terminal-btn{width:5px;height:5px;}
+.cmatrix-bar span{flex:1;text-align:center;font-size:6px;color:var(--text-dim);}
+.cmatrix-canvas{width:100%;flex:1;display:block;min-height:0;}
+/* MUSIC */
+.music-player{grid-column:1/-1;grid-row:3;background:var(--terminal-bg);border:1px solid var(--border);border-radius:6px;padding:5px 10px;display:flex;align-items:center;gap:8px;animation:fadeSlideUp .6s ease both .7s;flex-shrink:0;transition:opacity .5s ease;}
+.player-controls{display:flex;align-items:center;gap:3px;flex-shrink:0;}
+.player-btn{background:none;border:1px solid var(--border);color:var(--accent);width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:9px;transition:all .2s ease;}
+.player-btn.small{width:20px;height:20px;font-size:7px;}
+.player-btn:hover{background:rgba(255,107,157,0.15);border-color:var(--accent);box-shadow:0 0 8px var(--accent-glow);transform:scale(1.08);}
+.player-info{flex-shrink:0;max-width:120px;}
+.player-title{font-size:9px;color:var(--text);font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.player-artist{font-size:7px;color:var(--text-dim);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.player-progress{flex:1;display:flex;align-items:center;gap:5px;min-width:0;}
+.player-time{font-size:7px;color:var(--text-muted);font-family:'Share Tech Mono',monospace;white-space:nowrap;min-width:22px;}
+.progress-bar-container{flex:1;height:16px;display:flex;align-items:center;position:relative;min-width:0;}
+.progress-bar{width:100%;height:3px;background:rgba(255,107,157,0.12);border-radius:2px;overflow:hidden;}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--accent-dim),var(--accent));border-radius:2px;width:0%;transition:width .2s linear;box-shadow:0 0 6px var(--accent-glow);}
+.progress-bar-container input[type="range"]{position:absolute;top:0;left:0;width:100%;height:100%;opacity:0;margin:0;}
+.visualizer{display:flex;align-items:end;gap:1.5px;height:18px;flex-shrink:0;}
+.vis-bar{width:2px;background:var(--accent);border-radius:1px 1px 0 0;transition:height .08s ease;opacity:0.7;min-height:2px;}
+.vis-bar:nth-child(even){opacity:0.5;}
+.volume-control{display:flex;align-items:center;gap:4px;flex-shrink:0;}
+.volume-icon{color:var(--text-dim);font-size:10px;}
+.volume-slider{-webkit-appearance:none;appearance:none;width:60px;height:4px;background:rgba(255,107,157,0.15);border-radius:3px;outline:none;}
+.volume-slider::-webkit-slider-thumb{-webkit-appearance:none;width:12px;height:12px;background:var(--accent);border-radius:50%;box-shadow:0 0 6px var(--accent-glow);}
+.volume-slider::-moz-range-thumb{width:12px;height:12px;background:var(--accent);border-radius:50%;border:none;}
+/* LIGHTBOX */
+.lightbox{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.88);z-index:200000;display:none;align-items:center;justify-content:center;flex-direction:column;backdrop-filter:blur(8px);}
+.lightbox.show{display:flex;}
+.lightbox img{max-width:min(400px,85vw);max-height:min(400px,70vh);border-radius:10px;border:2px solid var(--border);box-shadow:0 0 40px rgba(255,107,157,0.2);}
+.lightbox-close{position:absolute;top:16px;right:16px;background:none;border:1px solid var(--border);color:var(--accent);width:28px;height:28px;border-radius:50%;font-size:14px;display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;}
+.lightbox-close:hover{background:rgba(255,107,157,0.2);border-color:var(--accent);}
+.lightbox-info{margin-top:12px;text-align:center;color:var(--text);font-size:12px;}
+.lightbox-info .lb-title{font-weight:700;}.lightbox-info .lb-artist{color:var(--text-dim);font-size:10px;}
+/* ANIM */
+@keyframes fadeSlideUp{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:translateY(0);}}
+.float-particle{position:fixed;width:2px;height:2px;background:var(--accent);border-radius:50%;pointer-events:none;z-index:0;opacity:0;animation:floatUp linear infinite;}
+@keyframes floatUp{0%{opacity:0;transform:translateY(100vh) scale(0);}10%{opacity:0.3;}90%{opacity:0.15;}100%{opacity:0;transform:translateY(-10vh) scale(1);}}
+.shimmer-border{position:relative;}
+.shimmer-border::after{content:'';position:absolute;inset:0;border-radius:inherit;border:1px solid transparent;background:linear-gradient(90deg,transparent,rgba(255,107,157,0.1),transparent) border-box;background-size:200% 100%;-webkit-mask:linear-gradient(#fff 0 0) padding-box,linear-gradient(#fff 0 0);-webkit-mask-composite:destination-out;mask-composite:exclude;animation:shimmer 4s linear infinite;pointer-events:none;}
+@keyframes shimmer{0%{background-position:-200% 0;}100%{background-position:200% 0;}}
+/* MOBILE */
+@media(max-width:768px){
+html,body{overflow-y:auto;overflow-x:hidden;height:auto;}
+.layout{grid-template-columns:1fr;grid-template-rows:auto auto auto auto auto;height:auto;min-height:100vh;gap:6px;padding:6px;}
+.clock-widget{grid-column:1;grid-row:1;flex-direction:column;text-align:center;gap:6px;padding:8px;}
+.weather-info{border-left:none;border-top:1px solid var(--border);padding-left:0;padding-top:6px;text-align:center;}
+.profile-widget{grid-column:1;grid-row:2;}
+.terminal{grid-column:1;grid-row:3;max-height:320px;}
+.right-panel{grid-column:1;grid-row:4;overflow:visible;}
+.music-player{grid-column:1;grid-row:5;flex-wrap:wrap;gap:5px;padding:8px;}
+.neofetch-ascii{font-size:2.2px;}
+.clock-time{font-size:26px;}
+.about-dropdown{width:calc(100vw - 20px);right:10px!important;}
+.player-progress{min-width:0;flex-basis:100%;order:10;}
+.visualizer{display:none;}
+.activity-card{max-height:160px;}
+.cmatrix-section{min-height:80px;}
+.social-links{gap:5px;}
+.social-link{width:32px;height:32px;}
+.player-info{max-width:80px;}
+}
+@media(max-width:400px){
+.clock-time{font-size:22px;letter-spacing:1px;}
+.neofetch-ascii{display:none;}
+.profile-info h1{font-size:12px;}
+}
+</style>
 </head>
 <body>
 <div id="particles"></div>
 <div id="click-screen" class="show" onclick="startExperience()">
-    <div class="lain-ascii-small">
+<div class="lain-ascii-small">
   ██       █████  ██ ███    ██
   ██      ██   ██ ██ ████   ██
   ██      ███████ ██ ██ ██  ██
   ██      ██   ██ ██ ██  ██ ██
   ███████ ██   ██ ██ ██   ████
-    </div>
-    <div class="click-border">
-        <div class="click-lain-text">Click to Continue...</div>
-        <div class="click-subtitle">the wired</div>
-    </div>
 </div>
-<div id="boot-screen" style="display:none;">
-    <div id="boot-lines"></div>
-    <div id="boot-progress-container">
-        <div id="boot-progress-label">Loading...</div>
-        <div id="boot-progress-bar"><div id="boot-progress-fill"></div></div>
-    </div>
+<div class="click-border"><div class="click-lain-text">Click to Continue...</div><div class="click-subtitle">the wired</div></div>
 </div>
-<div class="copy-toast" id="copy-toast">Copied "realmxrza" to clipboard!</div>
-<div class="about-dropdown" id="about-dropdown">
-    <div class="about-dropdown-bar"><span>~/aboutme.txt</span><button class="about-dropdown-close" onclick="toggleAbout(event)">×</button></div>
-    <div class="about-dropdown-body">
-        <span class="hl">$ cat aboutme.txt</span><br/><br/>
-        Hey, I'm <span class="hl">mxrza</span>. I'm 19, currently studying foundation level engineering in college. Spent most of my time infront of a computer. I do coding in my free time as a side project. My favourite color is actually purple or somewhat pink idk. For further inquiry feel free to contact me via Discord.<br/><br/>
-        <span style="color:var(--text-muted);">// Let's all love Lain.</span>
-    </div>
-</div>
-<!-- LIGHTBOX -->
-<div class="lightbox" id="lightbox" onclick="closeLightbox()">
-    <button class="lightbox-close" onclick="closeLightbox()">×</button>
-    <img id="lightbox-img" src="" alt=""/>
-    <div class="lightbox-info"><div class="lb-title" id="lb-title"></div><div class="lb-artist" id="lb-artist"></div></div>
-</div>
+<div id="boot-screen" style="display:none;"><div id="boot-lines"></div><div id="boot-progress-container"><div id="boot-progress-label">Loading...</div><div id="boot-progress-bar"><div id="boot-progress-fill"></div></div></div></div>
+<div class="copy-toast" id="copy-toast">Copied to clipboard!</div>
+<div class="about-dropdown" id="about-dropdown"><div class="about-dropdown-bar"><span>~/aboutme.txt</span><button class="about-dropdown-close" onclick="toggleAbout(event)">×</button></div><div class="about-dropdown-body"><span class="hl">$ cat aboutme.txt</span><br/><br/>Hey, I'm <span class="hl">mxrza</span>. I'm 19, currently studying foundation level engineering in college. Spent most of my time infront of a computer. I do coding in my free time as a side project. My favourite color is actually purple or somewhat pink idk. For further inquiry feel free to contact me via Discord.<br/><br/><span style="color:var(--text-muted);">// Let's all love Lain.</span></div></div>
+<div class="lightbox" id="lightbox" onclick="closeLightbox()"><button class="lightbox-close" onclick="closeLightbox()">×</button><img id="lightbox-img" src="" alt=""/><div class="lightbox-info"><div class="lb-title" id="lb-title"></div><div class="lb-artist" id="lb-artist"></div></div></div>
 <div id="main-content">
-    <div class="bg-image"></div>
-    <div class="bg-overlay"></div>
-    <div class="layout">
-        <!-- CLOCK + WEATHER -->
-        <div class="clock-widget tilt-tile shimmer-border" data-tilt>
-            <div class="clock-left">
-                <div class="clock-time" id="clock-time">00:00:00</div>
-                <div class="clock-date" id="clock-date"></div>
-                <div class="clock-tz">GMT+8</div>
-            </div>
-            <div class="weather-info" id="weather-info">
-                <div class="weather-label">KUALA LUMPUR</div>
-                <div class="weather-temp" id="w-temp">--°C</div>
-                <div id="w-humidity">Humidity: --%</div>
-                <div id="w-wind">Wind: -- km/h</div>
-            </div>
-        </div>
-        <!-- PROFILE -->
-        <div class="profile-widget tilt-tile" data-tilt>
-            <button class="about-toggle" onclick="toggleAbout(event)" title="About Me">i</button>
-            <div class="avatar-wrapper"><div class="avatar-container">
-                <img id="avatar" class="avatar" src="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 50 50'><rect fill='%230f0f1a' width='50' height='50'/></svg>" alt="avatar"/>
-                <img id="avatar-decoration" class="avatar-decoration" src="" alt="" style="display:none;"/>
-                <div id="status-dot" class="status-dot offline"></div>
-            </div></div>
-            <div class="profile-center"><div class="profile-info">
-                <h1><span id="display-name">realmxrza</span> <span id="username-tag" class="tag"></span></h1>
-                <div id="custom-status" class="status-text" style="display:none;"><span id="status-emoji"></span><span id="status-text-content"></span></div>
-                <div class="discord-badge"><span class="dot"></span><span id="discord-status-label">Offline</span></div>
-            </div></div>
-        </div>
-        <!-- TERMINAL -->
-        <div class="terminal tilt-tile" data-tilt>
-            <div class="terminal-bar">
-                <div class="terminal-btn close"></div><div class="terminal-btn min"></div><div class="terminal-btn max"></div>
-                <div class="terminal-title">realmxrza@lain ~</div>
-            </div>
-            <div class="terminal-body">
-                <div class="terminal-line">
-                    <span class="terminal-prompt"><span class="user">realmxrza</span><span class="at">@</span><span class="host">lain</span><span style="color:var(--text-dim)"> ~</span><span class="symbol"> ❯</span></span>
-                    <span style="color:var(--text)">neofetch</span>
-                </div><br/>
-                <div class="neofetch-container">
-                    <div class="neofetch-ascii">                                                 :::                                                
+<div class="bg-layer active" id="bg-a"></div>
+<div class="bg-layer hidden" id="bg-b"></div>
+<div class="bg-overlay"></div>
+<div class="layout" id="main-layout">
+<div class="clock-widget tilt-tile shimmer-border" data-tilt>
+<div class="clock-left"><div class="clock-time" id="clock-time">00:00:00</div><div class="clock-date" id="clock-date"></div><div class="clock-tz">GMT+8</div><div class="clock-epoch" id="clock-epoch"></div></div>
+<div class="weather-info" id="weather-info"><div class="weather-label">KUALA LUMPUR</div><div class="weather-condition" id="w-cond">--</div><div class="weather-temp" id="w-temp">--°C</div><div id="w-humidity">Humidity: --%</div><div id="w-wind">Wind: -- km/h</div><div id="w-precip">Precip: --%</div></div>
+</div>
+<div class="profile-widget tilt-tile" data-tilt>
+<div class="profile-btns"><button class="toggle-btn" onclick="toggleAbout(event)" title="About Me">i</button><button class="toggle-btn" onclick="toggleUI()" title="Hide UI">⊡</button></div>
+<div class="avatar-wrapper"><div class="avatar-container"><img id="avatar" class="avatar" src="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 46 46'><rect fill='%230f0f1a' width='46' height='46'/></svg>" alt=""/><img id="avatar-decoration" class="avatar-decoration" src="" alt="" style="display:none;"/><div id="status-dot" class="status-dot offline"></div></div></div>
+<div class="profile-center"><div class="profile-info"><h1><div class="profile-name-row"><span id="display-name">realmxrza</span><img class="lain-dance" src="https://raw.githubusercontent.com/realmxrza/realmxrza/main/assets/laindance.gif" alt=""/></div><span id="username-tag" class="tag"></span></h1><div id="custom-status" class="status-text" style="display:none;"><span id="status-emoji"></span><span id="status-text-content"></span></div><div class="discord-badge"><span class="dot"></span><span id="discord-status-label">Offline</span></div></div></div>
+</div>
+<div class="terminal tilt-tile" data-tilt>
+<div class="terminal-bar"><div class="terminal-btn close"></div><div class="terminal-btn min"></div><div class="terminal-btn max"></div><div class="terminal-title">realmxrza@lain ~</div></div>
+<div class="terminal-body">
+<div><span class="terminal-prompt"><span class="user">realmxrza</span><span class="at">@</span><span class="host">lain</span><span style="color:var(--text-dim)"> ~</span><span class="symbol"> ❯</span></span><span style="color:var(--text)">neofetch</span></div><br/>
+<div class="neofetch-container">
+<div class="neofetch-ascii">                                                 :::                                                
                                                ::::::                                               
                                                :::::::                                              
                                                ::::::                                               
@@ -343,7 +281,6 @@
       :::::::::           ::::::::        ::::::::::::::::         ::::::::          :::::::::      
      :::::::::           ::::::::        ::::::::::::::::::        ::::::::           :::::::::     
      ::::::::            ::::::::        ::::::::::::::::::         :::::::            ::::::::     
-     ::::::::            ::::::::        ::::::::::::::::::         :::::::            ::::::::     
      -::::::::           ::::::::         :::::::::::::::::        ::::::::           :::::::::     
       -:::::::::          ::::::::         ::::::::::::::-        ::::::::           :::::::::      
         :::::::::         :::::::::          ::::::::::           ::::::::         :::::::::        
@@ -357,7 +294,6 @@
            ::                          :::::::::     ::::::::                          ::           
                                          :::::::     :::::::                                        
                                          :::::::     ::::::                                         
-                                         :::::::     ::::::                                         
                        :::::             :::::::     ::::::             -::::                       
                       :::::::            :::::::     :::::::           :::::::                      
                       :::::::::         :::::::      ::::::::        :::::::::                      
@@ -365,253 +301,173 @@
                          ::::::::::::::::::::          ::::::::::::::::::::-                        
                            :::::::::::::::::             ::::::::::::::::                           
                                 :::::::                      -::::::                                </div>
-                    <div class="neofetch-info">
-                        <div class="line"><span class="key" style="color:var(--pink);font-weight:700;">realmxrza</span><span class="neofetch-separator">@</span><span style="color:var(--accent);font-weight:700;">lain</span></div>
-                        <div class="line"><span class="neofetch-separator">────────────────────</span></div>
-                        <div class="line"><span class="key">OS</span> <span class="value">Copland OS Enterprise</span></div>
-                        <div class="line"><span class="key">Host</span> <span class="value">ThinkPad T42</span></div>
-                        <div class="line"><span class="key">Kernel</span> <span class="value">6.12.10-zen1-1-zen</span></div>
-                        <div class="line"><span class="key">CPU</span> <span class="value">Intel Pentium M 1.7GHz</span></div>
-                        <div class="line"><span class="key">Shell</span> <span class="value">fish 3.7.1</span></div>
-                        <div class="line"><span class="key">DE</span> <span class="value">Hyprland</span></div>
-                        <div class="line"><span class="key">Uptime</span> <span class="value" id="uptime-value">0h 0m 0s</span></div>
-                        <div class="line"><span class="key">Discord</span> <span class="value" id="discord-status-neo">fetching...</span></div>
-                        <div class="color-blocks">
-                            <div class="color-block" style="background:#ff6b9d;"></div><div class="color-block" style="background:#50fa7b;"></div><div class="color-block" style="background:#f1fa8c;"></div><div class="color-block" style="background:#ff79c6;"></div><div class="color-block" style="background:#8be9fd;"></div><div class="color-block" style="background:#bd93f9;"></div><div class="color-block" style="background:#e2e2f0;"></div><div class="color-block" style="background:#5a3a4c;"></div>
-                        </div>
-                    </div>
-                </div>
-                <!-- LAST.FM -->
-                <div class="lastfm-section">
-                    <div class="lastfm-title">♫ Last.fm — Recent Tracks</div>
-                    <div class="lastfm-tracks" id="lastfm-tracks"><div class="no-activity">Loading...</div></div>
-                </div>
-                <br/>
-                <div class="terminal-line">
-                    <span class="terminal-prompt"><span class="user">realmxrza</span><span class="at">@</span><span class="host">lain</span><span style="color:var(--text-dim)"> ~</span><span class="symbol"> ❯</span></span>
-                    <span id="typed-cmd" style="color:var(--text)"></span><span class="terminal-cursor"></span>
-                </div>
-            </div>
-        </div>
-        <!-- RIGHT -->
-        <div class="right-panel">
-            <div class="activity-card tilt-tile" data-tilt>
-                <h3>Current Activity</h3>
-                <div id="activity-container"><div class="no-activity">Connecting to the Wired...</div></div>
-            </div>
-            <div class="social-section tilt-tile" data-tilt>
-                <h3>Connections</h3>
-                <div class="social-links">
-                    <a href="https://github.com/realmxrza" target="_blank" class="social-link github"><span class="social-tooltip">GitHub</span><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg></a>
-                    <a href="https://roblox.com/users/598266018/profile" target="_blank" class="social-link roblox"><span class="social-tooltip">Roblox</span><svg viewBox="0 0 24 24" fill="currentColor"><path d="M5.164 0L0 18.627 18.836 24 24 5.373ZM10.291 14.07l-2.098-5.573 5.573 2.098z"/></svg></a>
-                    <a href="https://open.spotify.com/user/31c6evjd5lx4eg6esebruhu4a5iu" target="_blank" class="social-link spotify"><span class="social-tooltip">Spotify</span><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/></svg></a>
-                    <a href="https://www.youtube.com/channel/UCBrEON5CKRLOpphz0dXokqw" target="_blank" class="social-link youtube"><span class="social-tooltip">YouTube</span><svg viewBox="0 0 24 24" fill="currentColor"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg></a>
-                    <a href="javascript:void(0)" onclick="copyDiscord()" class="social-link discord-link"><span class="social-tooltip">Discord — copy</span><svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.317 4.3698a19.7913 19.7913 0 00-4.8851-1.5152.0741.0741 0 00-.0785.0371c-.211.3753-.4447.8648-.6083 1.2495-1.8447-.2762-3.68-.2762-5.4868 0-.1636-.3933-.4058-.8742-.6177-1.2495a.077.077 0 00-.0785-.037 19.7363 19.7363 0 00-4.8852 1.515.0699.0699 0 00-.0321.0277C.5334 9.0458-.319 13.5799.0992 18.0578a.0824.0824 0 00.0312.0561c2.0528 1.5076 4.0413 2.4228 5.9929 3.0294a.0777.0777 0 00.0842-.0276c.4616-.6304.8731-1.2952 1.226-1.9942a.076.076 0 00-.0416-.1057c-.6528-.2476-1.2743-.5495-1.8722-.8923a.077.077 0 01-.0076-.1277c.1258-.0943.2517-.1923.3718-.2914a.0743.0743 0 01.0776-.0105c3.9278 1.7933 8.18 1.7933 12.0614 0a.0739.0739 0 01.0785.0095c.1202.099.246.1981.3728.2924a.077.077 0 01-.0066.1276 12.2986 12.2986 0 01-1.873.8914.0766.0766 0 00-.0407.1067c.3604.698.7719 1.3628 1.225 1.9932a.076.076 0 00.0842.0286c1.961-.6067 3.9495-1.5219 6.0023-3.0294a.077.077 0 00.0313-.0552c.5004-5.177-.8382-9.6739-3.5485-13.6604a.061.061 0 00-.0312-.0286zM8.02 15.3312c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9555-2.4189 2.157-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.9555 2.4189-2.1569 2.4189zm7.9748 0c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9554-2.4189 2.1569-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.946 2.4189-2.1568 2.4189z"/></svg></a>
-                    <a href="https://steamcommunity.com/profiles/76561199169292001" target="_blank" class="social-link steam"><span class="social-tooltip">Steam</span><svg viewBox="0 0 24 24" fill="currentColor"><path d="M11.979 0C5.678 0 .511 4.86.022 11.037l6.432 2.658c.545-.371 1.203-.59 1.912-.59.063 0 .125.004.188.006l2.861-4.142V8.91c0-2.495 2.028-4.524 4.524-4.524 2.494 0 4.524 2.031 4.524 4.527s-2.03 4.525-4.524 4.525h-.105l-4.076 2.911c0 .052.004.105.004.159 0 1.875-1.515 3.396-3.39 3.396-1.635 0-3.016-1.173-3.331-2.727L.436 15.27C1.862 20.307 6.486 24 11.979 24c6.627 0 11.999-5.373 11.999-12S18.605 0 11.979 0z"/></svg></a>
-                    <a href="https://www.instagram.com/realmxrza" target="_blank" class="social-link instagram"><span class="social-tooltip">Instagram</span><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg></a>
-                    <a href="https://www.last.fm/user/realmxrza" target="_blank" class="social-link lastfm"><span class="social-tooltip">Last.fm</span><svg viewBox="0 0 24 24" fill="currentColor"><path d="M10.584 17.21l-.88-2.392s-1.43 1.594-3.573 1.594c-1.897 0-3.244-1.649-3.244-4.288 0-3.381 1.704-4.591 3.381-4.591 2.422 0 3.189 1.567 3.849 3.574l.88 2.749c.88 2.666 2.529 4.81 7.284 4.81 3.409 0 5.718-1.044 5.718-3.793 0-2.227-1.265-3.381-3.627-3.933l-1.757-.385c-1.21-.275-1.567-.77-1.567-1.594 0-.935.742-1.484 1.952-1.484 1.32 0 2.034.495 2.144 1.677l2.749-.33c-.22-2.474-1.924-3.492-4.729-3.492-2.474 0-4.893.935-4.893 3.932 0 1.87.907 3.051 3.189 3.601l1.87.44c1.402.33 1.869.825 1.869 1.681 0 1.044-.99 1.484-2.859 1.484-2.776 0-3.932-1.457-4.591-3.464l-.907-2.749c-1.155-3.573-2.997-4.893-6.653-4.893C2.144 5.333 0 7.89 0 12.233c0 4.178 2.144 6.433 5.993 6.433 3.106 0 4.591-1.457 4.591-1.457z"/></svg></a>
-                </div>
-            </div>
-            <div class="cmatrix-section tilt-tile" data-tilt>
-                <div class="cmatrix-bar"><div class="terminal-btn close"></div><div class="terminal-btn min"></div><div class="terminal-btn max"></div><span>cmatrix</span></div>
-                <canvas id="cmatrix-canvas" class="cmatrix-canvas"></canvas>
-            </div>
-        </div>
-        <!-- MUSIC -->
-        <div class="music-player tilt-tile shimmer-border" data-tilt>
-            <div class="player-controls"><button class="player-btn" id="play-btn" onclick="togglePlay()">▶</button></div>
-            <div class="player-info"><div class="player-title">Duvet</div><div class="player-artist">Bôa</div></div>
-            <div class="player-progress">
-                <span class="player-time" id="current-time">0:00</span>
-                <div class="progress-bar-container"><div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div><input type="range" min="0" max="1000" value="0" id="seek-bar" oninput="seekAudio(this.value)"/></div>
-                <span class="player-time" id="total-time">4:22</span>
-            </div>
-            <div class="visualizer" id="visualizer"></div>
-            <div class="volume-control"><span class="volume-icon">🔊</span><input type="range" min="0" max="100" value="50" class="volume-slider" id="volume-slider" oninput="setVolume(this.value)"/></div>
-        </div>
-    </div>
+<div class="neofetch-info">
+<div class="line"><span class="key" style="color:var(--pink);font-weight:700;">realmxrza</span><span class="neofetch-separator">@</span><span style="color:var(--accent);font-weight:700;">lain</span></div>
+<div class="line"><span class="neofetch-separator">──────────────────</span></div>
+<div class="line"><span class="key">OS</span><span class="value">Copland OS Enterprise</span></div>
+<div class="line"><span class="key">Host</span><span class="value">ThinkPad T42</span></div>
+<div class="line"><span class="key">Kernel</span><span class="value">6.12.10-zen1-1-zen</span></div>
+<div class="line"><span class="key">CPU</span><span class="value">Pentium M 1.7GHz</span></div>
+<div class="line"><span class="key">Shell</span><span class="value">fish 3.7.1</span></div>
+<div class="line"><span class="key">DE</span><span class="value">Hyprland</span></div>
+<div class="line"><span class="key">Uptime</span><span class="value" id="uptime-value">0h 0m 0s</span></div>
+<div class="line"><span class="key">Discord</span><span class="value" id="discord-status-neo">fetching...</span></div>
+<div class="color-blocks"><div class="color-block" style="background:#ff6b9d;"></div><div class="color-block" style="background:#50fa7b;"></div><div class="color-block" style="background:#f1fa8c;"></div><div class="color-block" style="background:#ff79c6;"></div><div class="color-block" style="background:#8be9fd;"></div><div class="color-block" style="background:#bd93f9;"></div><div class="color-block" style="background:#e2e2f0;"></div><div class="color-block" style="background:#5a3a4c;"></div></div>
+</div></div>
+<div class="lastfm-section"><div class="lastfm-title">♫ Last.fm — Recent Tracks</div><div class="lastfm-tracks" id="lastfm-tracks"><div class="no-activity">Loading...</div></div></div><br/>
+<div><span class="terminal-prompt"><span class="user">realmxrza</span><span class="at">@</span><span class="host">lain</span><span style="color:var(--text-dim)"> ~</span><span class="symbol"> ❯</span></span><span id="typed-cmd" style="color:var(--text)"></span><span class="terminal-cursor"></span></div>
+</div></div>
+<div class="right-panel">
+<div class="activity-card tilt-tile" data-tilt><h3>Current Activity</h3><div id="activity-container"><div class="no-activity">Connecting to the Wired...</div></div></div>
+<div class="social-section tilt-tile" data-tilt><h3>Connections</h3><div class="social-links">
+<a href="https://github.com/realmxrza" target="_blank" class="social-link github"><span class="social-tooltip">GitHub</span><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg></a>
+<a href="https://roblox.com/users/598266018/profile" target="_blank" class="social-link roblox"><span class="social-tooltip">Roblox</span><svg viewBox="0 0 24 24" fill="currentColor"><path d="M5.164 0L0 18.627 18.836 24 24 5.373ZM10.291 14.07l-2.098-5.573 5.573 2.098z"/></svg></a>
+<a href="https://open.spotify.com/user/31c6evjd5lx4eg6esebruhu4a5iu" target="_blank" class="social-link spotify"><span class="social-tooltip">Spotify</span><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/></svg></a>
+<a href="https://www.youtube.com/channel/UCBrEON5CKRLOpphz0dXokqw" target="_blank" class="social-link youtube"><span class="social-tooltip">YouTube</span><svg viewBox="0 0 24 24" fill="currentColor"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg></a>
+<a href="javascript:void(0)" onclick="copyClip('realmxrza')" class="social-link discord-link"><span class="social-tooltip">Discord</span><svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.317 4.37a19.79 19.79 0 00-4.885-1.515.074.074 0 00-.079.037c-.21.375-.444.865-.608 1.25a18.27 18.27 0 00-5.487 0 12.64 12.64 0 00-.618-1.25.077.077 0 00-.079-.037A19.74 19.74 0 003.677 4.37a.07.07 0 00-.032.028C.533 9.046-.32 13.58.099 18.057a.082.082 0 00.031.057 19.9 19.9 0 005.993 3.03.078.078 0 00.084-.028c.462-.63.874-1.295 1.226-1.994a.076.076 0 00-.041-.106 13.11 13.11 0 01-1.872-.892.077.077 0 01-.008-.128c.126-.094.252-.192.372-.291a.074.074 0 01.078-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 01.078.009c.12.099.246.198.373.292a.077.077 0 01-.006.127 12.3 12.3 0 01-1.873.892.076.076 0 00-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 00.084.029 19.84 19.84 0 006.002-3.03.077.077 0 00.031-.056c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 00-.031-.029zM8.02 15.33c-1.183 0-2.157-1.086-2.157-2.419s.956-2.419 2.157-2.419c1.21 0 2.176 1.095 2.157 2.42 0 1.332-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.086-2.157-2.419s.955-2.419 2.157-2.419c1.21 0 2.176 1.095 2.157 2.42 0 1.332-.946 2.418-2.157 2.418z"/></svg></a>
+<a href="https://steamcommunity.com/profiles/76561199169292001" target="_blank" class="social-link steam"><span class="social-tooltip">Steam</span><svg viewBox="0 0 24 24" fill="currentColor"><path d="M11.979 0C5.678 0 .511 4.86.022 11.037l6.432 2.658c.545-.371 1.203-.59 1.912-.59.063 0 .125.004.188.006l2.861-4.142V8.91c0-2.495 2.028-4.524 4.524-4.524 2.494 0 4.524 2.031 4.524 4.527s-2.03 4.525-4.524 4.525h-.105l-4.076 2.911c0 .052.004.105.004.159 0 1.875-1.515 3.396-3.39 3.396-1.635 0-3.016-1.173-3.331-2.727L.436 15.27C1.862 20.307 6.486 24 11.979 24c6.627 0 12-5.373 12-12S18.605 0 11.979 0z"/></svg></a>
+<a href="https://www.instagram.com/realmxrza" target="_blank" class="social-link instagram"><span class="social-tooltip">Instagram</span><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg></a>
+<a href="https://www.last.fm/user/realmxrza" target="_blank" class="social-link lastfm"><span class="social-tooltip">Last.fm</span><svg viewBox="0 0 24 24" fill="currentColor"><path d="M10.584 17.21l-.88-2.392s-1.43 1.594-3.573 1.594c-1.897 0-3.244-1.649-3.244-4.288 0-3.381 1.704-4.591 3.381-4.591 2.422 0 3.189 1.567 3.849 3.574l.88 2.749c.88 2.666 2.529 4.81 7.284 4.81 3.409 0 5.718-1.044 5.718-3.793 0-2.227-1.265-3.381-3.627-3.933l-1.757-.385c-1.21-.275-1.567-.77-1.567-1.594 0-.935.742-1.484 1.952-1.484 1.32 0 2.034.495 2.144 1.677l2.749-.33c-.22-2.474-1.924-3.492-4.729-3.492-2.474 0-4.893.935-4.893 3.932 0 1.87.907 3.051 3.189 3.601l1.87.44c1.402.33 1.869.825 1.869 1.681 0 1.044-.99 1.484-2.859 1.484-2.776 0-3.932-1.457-4.591-3.464l-.907-2.749c-1.155-3.573-2.997-4.893-6.653-4.893C2.144 5.333 0 7.89 0 12.233c0 4.178 2.144 6.433 5.993 6.433 3.106 0 4.591-1.457 4.591-1.457z"/></svg></a>
+<a href="https://www.tiktok.com/@realmxrza" target="_blank" class="social-link tiktok"><span class="social-tooltip">TikTok</span><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z"/></svg></a>
+<a href="https://www.twitch.tv/realmxrza" target="_blank" class="social-link twitch"><span class="social-tooltip">Twitch</span><svg viewBox="0 0 24 24" fill="currentColor"><path d="M11.571 4.714h1.715v5.143H11.57zm4.715 0H18v5.143h-1.714zM6 0L1.714 4.286v15.428h5.143V24l4.286-4.286h3.428L22.286 12V0zm14.571 11.143l-3.428 3.428h-3.429l-3 3v-3H6.857V1.714h13.714z"/></svg></a>
+<a href="https://x.com/real_mxrza" target="_blank" class="social-link twitter"><span class="social-tooltip">X / Twitter</span><svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a>
+<a href="https://www.pinterest.com/realmxrza/" target="_blank" class="social-link pinterest"><span class="social-tooltip">Pinterest</span><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12.017 0C5.396 0 .029 5.367.029 11.987c0 5.079 3.158 9.417 7.618 11.162-.105-.949-.199-2.403.041-3.439.219-.937 1.406-5.957 1.406-5.957s-.359-.72-.359-1.781c0-1.668.967-2.914 2.171-2.914 1.023 0 1.518.769 1.518 1.69 0 1.029-.655 2.568-.994 3.995-.283 1.194.599 2.169 1.777 2.169 2.133 0 3.772-2.249 3.772-5.495 0-2.873-2.064-4.882-5.012-4.882-3.414 0-5.418 2.561-5.418 5.207 0 1.031.397 2.138.893 2.738a.36.36 0 01.083.345l-.333 1.36c-.053.22-.174.267-.402.161-1.499-.698-2.436-2.889-2.436-4.649 0-3.785 2.75-7.262 7.929-7.262 4.163 0 7.398 2.967 7.398 6.931 0 4.136-2.607 7.464-6.227 7.464-1.216 0-2.359-.631-2.75-1.378l-.748 2.853c-.271 1.043-1.002 2.35-1.492 3.146C9.57 23.812 10.763 24 12.017 24c6.624 0 11.99-5.367 11.99-11.988C24.007 5.367 18.641 0 12.017 0z"/></svg></a>
+<a href="javascript:void(0)" onclick="copyClip('realmxrza')" class="social-link crunchyroll"><span class="social-tooltip">Crunchyroll</span><svg viewBox="0 0 24 24" fill="currentColor"><path d="M2.933 13.467a10.55 10.55 0 01-.4-2.867A9.467 9.467 0 0121.6 7.6a9.462 9.462 0 01-1.6 12.133A6.727 6.727 0 0014.933 22a6.667 6.667 0 01-4.266-1.6A10.533 10.533 0 012.933 13.467zM12 4.533a6.133 6.133 0 100 12.267 6.133 6.133 0 000-12.267zm0 2.134a4 4 0 110 8 4 4 0 010-8z"/></svg></a>
+</div></div>
+<div class="cmatrix-section tilt-tile" data-tilt><div class="cmatrix-bar"><div class="terminal-btn close"></div><div class="terminal-btn min"></div><div class="terminal-btn max"></div><span>cmatrix</span></div><canvas id="cmatrix-canvas" class="cmatrix-canvas"></canvas></div>
 </div>
-<audio id="bg-audio" loop preload="auto" crossorigin="anonymous">
-    <source src="https://raw.githubusercontent.com/realmxrza/realmxrza/9ec5fbf78451ac4dcdb9305cfc01ca7e6f641561/assets/B%C3%B4a%20-%20Duvet.mp3" type="audio/mpeg"/>
-</audio>
+<div class="music-player tilt-tile shimmer-border" data-tilt>
+<div class="player-controls"><button class="player-btn small" onclick="prevTrack()">⏮</button><button class="player-btn" id="play-btn" onclick="togglePlay()">▶</button><button class="player-btn small" onclick="nextTrack()">⏭</button></div>
+<div class="player-info"><div class="player-title" id="song-title">Duvet</div><div class="player-artist" id="song-artist">Bôa</div></div>
+<div class="player-progress"><span class="player-time" id="current-time">0:00</span><div class="progress-bar-container"><div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div><input type="range" min="0" max="1000" value="0" id="seek-bar" oninput="seekAudio(this.value)"/></div><span class="player-time" id="total-time">--:--</span></div>
+<div class="visualizer" id="visualizer"></div>
+<div class="volume-control"><span class="volume-icon">🔊</span><input type="range" min="0" max="100" value="50" class="volume-slider" id="volume-slider" oninput="setVolume(this.value)"/></div>
+</div>
+</div></div>
+
 <script>
-const DISCORD_ID="693703872937590826";
-const LASTFM_KEY="1561f4157e7996b32bcdd2459b924ed8";
-const audio=document.getElementById("bg-audio");
+const DISCORD_ID="693703872937590826",LASTFM_KEY="1561f4157e7996b32bcdd2459b924ed8";
+const audio=document.getElementById("bg-audio")||document.createElement("audio");
 let audioCtx,analyser,sourceNode,dataArray,isAudioSetup=false,isPlaying=false;
-const SONG_DURATION=262;
-let currentSpotifyData=null;
+const playlist=[
+{src:"https://raw.githubusercontent.com/realmxrza/realmxrza/9ec5fbf78451ac4dcdb9305cfc01ca7e6f641561/assets/B%C3%B4a%20-%20Duvet.mp3",title:"Duvet",artist:"Bôa"},
+{src:"https://raw.githubusercontent.com/realmxrza/realmxrza/main/assets/SNOW%20STRIPPERS%20-%20UNDER%20YOUR%20SPELL%20%23SURFGANG.mp3",title:"Under Your Spell",artist:"SNOW STRIPPERS"},
+{src:"https://raw.githubusercontent.com/realmxrza/realmxrza/main/assets/Nightcore%20-%2018%20(English).mp3",title:"18",artist:"Code Red"},
+{src:"https://raw.githubusercontent.com/realmxrza/realmxrza/main/assets/L'amour%20Toujours.mp3",title:"L'amour Toujours",artist:"Gigi D'Agostino"},
+{src:"https://raw.githubusercontent.com/realmxrza/realmxrza/main/assets/Caramella%20Girls%20-%20Caramelldansen%20HD%20Version%20(Swedish%20Original).mp3",title:"Caramelldansen",artist:"Caramell"}
+];
+let currentTrack=0;
+const wallpapers=[
+"https://raw.githubusercontent.com/realmxrza/realmxrza/ccc6bbab8e68c7dfcaf02483f39fba14e787f77c/assets/just-a-thoughtful-Lain.png",
+"https://raw.githubusercontent.com/realmxrza/realmxrza/main/assets/mysterious-Lain.png",
+"https://raw.githubusercontent.com/realmxrza/realmxrza/main/assets/lainwallpaper2.png",
+"https://raw.githubusercontent.com/realmxrza/realmxrza/main/assets/lainwallpaper.jpg",
+"https://raw.githubusercontent.com/realmxrza/realmxrza/main/assets/just-a-sad-Lain.png"
+];
+let bgActive="a",bgIdx=Math.floor(Math.random()*wallpapers.length);
+
+// Create audio element
+const aud=document.createElement("audio");aud.id="bg-audio";aud.loop=false;aud.preload="auto";aud.crossOrigin="anonymous";document.body.appendChild(aud);
+const audioEl=document.getElementById("bg-audio");
+
+function loadTrack(i){currentTrack=i;audioEl.src=playlist[i].src;document.getElementById("song-title").textContent=playlist[i].title;document.getElementById("song-artist").textContent=playlist[i].artist;document.getElementById("total-time").textContent="--:--";}
+function nextTrack(){currentTrack=(currentTrack+1)%playlist.length;loadTrack(currentTrack);if(isPlaying)audioEl.play();}
+function prevTrack(){currentTrack=(currentTrack-1+playlist.length)%playlist.length;loadTrack(currentTrack);if(isPlaying)audioEl.play();}
+loadTrack(0);
+audioEl.addEventListener("ended",nextTrack);
+audioEl.addEventListener("loadedmetadata",()=>{document.getElementById("total-time").textContent=formatTime(audioEl.duration*1000);});
+
+/* WALLPAPER */
+function initBg(){document.getElementById("bg-a").style.backgroundImage=`url('${wallpapers[bgIdx]}')`;document.getElementById("bg-a").classList.add("active");document.getElementById("bg-a").classList.remove("hidden");}
+function rotateBg(){const nextIdx=(bgIdx+Math.floor(Math.random()*(wallpapers.length-1))+1)%wallpapers.length;const nextLayer=bgActive==="a"?"b":"a";const curLayer=bgActive;document.getElementById("bg-"+nextLayer).style.backgroundImage=`url('${wallpapers[nextIdx]}')`;document.getElementById("bg-"+nextLayer).classList.add("active");document.getElementById("bg-"+nextLayer).classList.remove("hidden");document.getElementById("bg-"+curLayer).classList.add("hidden");document.getElementById("bg-"+curLayer).classList.remove("active");bgActive=nextLayer;bgIdx=nextIdx;}
 
 /* PARTICLES */
-(function(){const c=document.getElementById("particles");for(let i=0;i<12;i++){const p=document.createElement("div");p.className="float-particle";p.style.left=Math.random()*100+"%";p.style.animationDuration=(8+Math.random()*12)+"s";p.style.animationDelay=(Math.random()*10)+"s";p.style.width=(1+Math.random()*2)+"px";p.style.height=p.style.width;c.appendChild(p);}})();
+(function(){const c=document.getElementById("particles");for(let i=0;i<10;i++){const p=document.createElement("div");p.className="float-particle";p.style.left=Math.random()*100+"%";p.style.animationDuration=(8+Math.random()*12)+"s";p.style.animationDelay=(Math.random()*10)+"s";c.appendChild(p);}})();
 
-/* CLICK */
 function startExperience(){document.getElementById("click-screen").style.display="none";document.getElementById("boot-screen").style.display="flex";runBoot();}
 
-/* BOOT */
-const bootLines=[{text:"IBM ThinkPad T42 BIOS v3.21",delay:150,cls:"info"},{text:"Intel Pentium M 1.70GHz — 1024MB RAM OK",delay:100},{text:"",delay:40},{text:"GRUB 2.12 — Loading kernel...",delay:150,cls:"info"},{text:"[    0.000000] Linux version 6.12.10-zen1-1-zen",delay:50},{text:"[    0.014200] DMI: IBM ThinkPad T42/2373",delay:40},{text:"[    0.023411] x86/cpu: Intel Pentium M (Dothan)",delay:40},{text:"",delay:40},{text:":: running early hook [udev]",delay:60,cls:"accent"},{text:"[  OK  ] Started systemd-udevd.service",delay:50,cls:"ok"},{text:"[  OK  ] Started NetworkManager.service",delay:60,cls:"ok"},{text:"[  OK  ] Started PipeWire Audio Service",delay:50,cls:"ok"},{text:"[  OK  ] Reached target Multi-User System",delay:50,cls:"ok"},{text:"",delay:40},{text:":: Loading Hyprland compositor...",delay:120,cls:"accent"},{text:"[  OK  ] Hyprland session initialized",delay:60,cls:"ok"},{text:"[  OK  ] Connected to the Wired",delay:80,cls:"ok"},{text:"",delay:40},{text:":: Fetching presence from Lanyard API...",delay:150,cls:"accent"},{text:"[  OK  ] Discord presence loaded",delay:80,cls:"ok"},{text:"",delay:40},{text:"Welcome back, realmxrza.",delay:150,cls:"warn"},{text:"And you don't seem to understand...",delay:150,cls:"warn"}];
-const bootC=document.getElementById("boot-lines");
-
-async function runBoot(){
-    for(const l of bootLines){const e=document.createElement("div");if(l.cls)e.classList.add(l.cls);e.textContent=l.text;bootC.appendChild(e);bootC.scrollTop=bootC.scrollHeight;await sleep(l.delay);}
-    document.getElementById("boot-progress-container").style.display="block";
-    const pf=document.getElementById("boot-progress-fill");
-    for(let p=0;p<=100;p+=5){pf.style.width=p+"%";await sleep(10);}
-    await sleep(200);document.getElementById("boot-screen").classList.add("fade-out");await sleep(400);
-    document.getElementById("main-content").classList.add("visible");document.getElementById("boot-screen").style.display="none";
-    audio.volume=0.5;try{await audio.play();isPlaying=true;document.getElementById("play-btn").textContent="⏸";}catch(e){}
-    setupAudio();startTypewriter();startCmatrix();fetchLastFm();fetchWeather();
-}
+const bootLines=[{text:"IBM ThinkPad T42 BIOS v3.21",delay:120,cls:"info"},{text:"Intel Pentium M 1.70GHz — 1024MB OK",delay:80},{text:"",delay:30},{text:"GRUB 2.12 — Loading kernel...",delay:120,cls:"info"},{text:"[    0.000000] Linux version 6.12.10-zen1-1-zen",delay:40},{text:"[    0.014200] DMI: IBM ThinkPad T42/2373",delay:30},{text:"",delay:30},{text:":: running early hook [udev]",delay:50,cls:"accent"},{text:"[  OK  ] Started systemd-udevd.service",delay:40,cls:"ok"},{text:"[  OK  ] Started NetworkManager.service",delay:50,cls:"ok"},{text:"[  OK  ] Started PipeWire Audio Service",delay:40,cls:"ok"},{text:"[  OK  ] Reached target Multi-User System",delay:40,cls:"ok"},{text:"",delay:30},{text:":: Loading Hyprland compositor...",delay:100,cls:"accent"},{text:"[  OK  ] Connected to the Wired",delay:60,cls:"ok"},{text:"[  OK  ] Discord presence loaded",delay:60,cls:"ok"},{text:"",delay:30},{text:"Welcome back, realmxrza.",delay:120,cls:"warn"}];
+async function runBoot(){const bc=document.getElementById("boot-lines");for(const l of bootLines){const e=document.createElement("div");if(l.cls)e.classList.add(l.cls);e.textContent=l.text;bc.appendChild(e);bc.scrollTop=bc.scrollHeight;await sleep(l.delay);}document.getElementById("boot-progress-container").style.display="block";const pf=document.getElementById("boot-progress-fill");for(let p=0;p<=100;p+=6){pf.style.width=p+"%";await sleep(8);}await sleep(150);document.getElementById("boot-screen").classList.add("fade-out");await sleep(400);document.getElementById("main-content").classList.add("visible");document.getElementById("boot-screen").style.display="none";initBg();setInterval(rotateBg,10000);audioEl.volume=0.5;try{await audioEl.play();isPlaying=true;document.getElementById("play-btn").textContent="⏸";}catch(e){}setupAudio();startTypewriter();startCmatrix();fetchLastFm();fetchWeather();}
 function sleep(ms){return new Promise(r=>setTimeout(r,ms));}
 
-/* CLOCK GMT+8 */
-function updateClock(){const now=new Date();const utc=now.getTime()+now.getTimezoneOffset()*60000;const g=new Date(utc+8*3600000);document.getElementById("clock-time").textContent=`${String(g.getHours()).padStart(2,"0")}:${String(g.getMinutes()).padStart(2,"0")}:${String(g.getSeconds()).padStart(2,"0")}`;document.getElementById("clock-date").textContent=`${String(g.getDate()).padStart(2,"0")}/${String(g.getMonth()+1).padStart(2,"0")}/${g.getFullYear()}`;}
+/* CLOCK */
+function updateClock(){const now=new Date(),utc=now.getTime()+now.getTimezoneOffset()*60000,g=new Date(utc+8*3600000);document.getElementById("clock-time").textContent=`${String(g.getHours()).padStart(2,"0")}:${String(g.getMinutes()).padStart(2,"0")}:${String(g.getSeconds()).padStart(2,"0")}`;document.getElementById("clock-date").textContent=`${String(g.getDate()).padStart(2,"0")}/${String(g.getMonth()+1).padStart(2,"0")}/${g.getFullYear()}`;document.getElementById("clock-epoch").textContent=Math.floor(Date.now()/1000);}
 setInterval(updateClock,1000);updateClock();
 
 /* WEATHER */
-async function fetchWeather() {
-    try {
+async function fetchWeather(){try{const r=await fetch("https://wttr.in/Kuala+Lumpur?format=j1");const d=await r.json();const c=d.current_condition[0];document.getElementById("w-temp").textContent=c.temp_C+"°C";document.getElementById("w-humidity").textContent="Humidity: "+c.humidity+"%";document.getElementById("w-wind").textContent="Wind: "+c.windspeedKmph+" km/h";document.getElementById("w-cond").textContent=c.weatherDesc?.[0]?.value||"--";document.getElementById("w-precip").textContent="Precip: "+(c.precipMM||"0")+"mm";}catch(e){}}
+setInterval(fetchWeather,600000);
 
-        const url = "https://api.open-meteo.com/v1/forecast?latitude=3.1390&longitude=101.6869&current=temperature_2m,relative_humidity_2m,wind_speed_10m&forecast_days=1";
-        
-        const r = await fetch(url);
-        if (!r.ok) throw new Error("API Limit or Network Error");
-        
-        const d = await r.json();
-        
-        const cur = d.current;
-        
-        document.getElementById("w-temp").textContent = Math.round(cur.temperature_2m) + "°C";
-        document.getElementById("w-humidity").textContent = "Humidity: " + cur.relative_humidity_2m + "%";
-        document.getElementById("w-wind").textContent = "Wind: " + cur.wind_speed_10m + " km/h";
-        
-    } catch (e) {
-        console.error("Weather error:", e);
-        document.getElementById("w-temp").textContent = "--°C";
-        document.getElementById("w-humidity").textContent = "Humidity: --%";
-    }
-}
-
-fetchWeather();
-
-setInterval(fetchWeather, 600000);
 /* UPTIME */
-const pLoad=Date.now();
-setInterval(()=>{const d=Date.now()-pLoad;document.getElementById("uptime-value").textContent=`${Math.floor(d/3600000)}h ${Math.floor((d%3600000)/60000)}m ${Math.floor((d%60000)/1000)}s`;},1000);
+const pLoad=Date.now();setInterval(()=>{const d=Date.now()-pLoad;document.getElementById("uptime-value").textContent=`${Math.floor(d/3600000)}h ${Math.floor((d%3600000)/60000)}m ${Math.floor((d%60000)/1000)}s`;},1000);
 
-/* TYPEWRITER */
-const cmds=["cat /etc/hostname","pacman -Syu","btop","hyprctl dispatch exec kitty","nvim ~/projects"];
+const cmds=["cat /etc/hostname","pacman -Syu","btop","nvim ~/projects"];
 async function startTypewriter(){const e=document.getElementById("typed-cmd");while(true){for(const c of cmds){e.textContent="";for(const ch of c){e.textContent+=ch;await sleep(50+Math.random()*30);}await sleep(1800);while(e.textContent.length>0){e.textContent=e.textContent.slice(0,-1);await sleep(20);}await sleep(300);}}}
 
-/* ABOUT */
 let aboutOpen=false;
-function toggleAbout(e){if(e)e.stopPropagation();aboutOpen=!aboutOpen;const dd=document.getElementById("about-dropdown");if(aboutOpen){const btn=document.querySelector(".about-toggle");const rect=btn.getBoundingClientRect();dd.style.top=(rect.bottom+6)+"px";dd.style.right=Math.max(8,(window.innerWidth-rect.right))+"px";dd.classList.add("show");}else{dd.classList.remove("show");}}
-document.addEventListener("click",e=>{if(aboutOpen&&!e.target.closest(".about-dropdown")&&!e.target.closest(".about-toggle")){aboutOpen=false;document.getElementById("about-dropdown").classList.remove("show");}});
+function toggleAbout(e){if(e)e.stopPropagation();aboutOpen=!aboutOpen;const dd=document.getElementById("about-dropdown");if(aboutOpen){const btn=document.querySelector(".toggle-btn");const r=btn.getBoundingClientRect();dd.style.top=(r.bottom+6)+"px";dd.style.right=Math.max(8,window.innerWidth-r.right)+"px";dd.classList.add("show");}else dd.classList.remove("show");}
+document.addEventListener("click",e=>{if(aboutOpen&&!e.target.closest(".about-dropdown")&&!e.target.closest(".toggle-btn")){aboutOpen=false;document.getElementById("about-dropdown").classList.remove("show");}});
 
-/* COPY */
-function copyDiscord(){navigator.clipboard.writeText("realmxrza").then(()=>{const t=document.getElementById("copy-toast");t.classList.add("show");setTimeout(()=>t.classList.remove("show"),1800);});}
+let uiHidden=false;
+function toggleUI(){uiHidden=!uiHidden;document.getElementById("main-layout").classList.toggle("ui-hidden",uiHidden);}
 
-/* LIGHTBOX */
-function openLightbox(src,title,artist){const lb=document.getElementById("lightbox");document.getElementById("lightbox-img").src=src;document.getElementById("lb-title").textContent=title||"";document.getElementById("lb-artist").textContent=artist||"";lb.classList.add("show");}
+function copyClip(t){navigator.clipboard.writeText(t).then(()=>{const el=document.getElementById("copy-toast");el.textContent=`Copied "${t}" to clipboard!`;el.classList.add("show");setTimeout(()=>el.classList.remove("show"),1800);});}
+function openLightbox(src,title,artist){document.getElementById("lightbox-img").src=src;document.getElementById("lb-title").textContent=title||"";document.getElementById("lb-artist").textContent=artist||"";document.getElementById("lightbox").classList.add("show");}
 function closeLightbox(){document.getElementById("lightbox").classList.remove("show");}
 
-/* LAST.FM */
-async function fetchLastFm(){
-    try{
-        const r=await fetch(`https://ws.audioscrobbler.com/2.0/?method=user.getrecenttracks&user=realmxrza&api_key=${LASTFM_KEY}&format=json&limit=5`);
-        const d=await r.json();const tracks=d.recenttracks.track;
-        const c=document.getElementById("lastfm-tracks");
-        if(!tracks||!tracks.length){c.innerHTML='<div class="no-activity">No recent tracks</div>';return;}
-        let h="";
-        for(const t of tracks){
-            const isNow=t["@attr"]?.nowplaying==="true";
-            const img=t.image?.find(i=>i.size==="medium")?.["#text"]||"";
-            const name=escapeHtml(t.name);const artist=escapeHtml(t.artist?.["#text"]||"");
-            const coverClick=img?`onclick="event.stopPropagation();openLightbox('${img.replace(/'/g,"\\'")}','${name.replace(/'/g,"\\'")}','${artist.replace(/'/g,"\\'")}')"`:""
-            h+=`<div class="lastfm-track">
-                ${img?`<img class="lastfm-cover clickable" src="${img}" alt="" ${coverClick}/>`:'<div class="lastfm-cover"></div>'}
-                <div class="lastfm-track-info">
-                    <div class="lastfm-track-name">${name}</div>
-                    <div class="lastfm-track-artist">${artist}</div>
-                </div>
-                ${isNow?'<div class="lastfm-now">▶ NOW</div>':''}
-            </div>`;
-        }
-        c.innerHTML=h;
-    }catch(e){console.log("Last.fm err:",e);}
-}
+/* LASTFM */
+async function fetchLastFm(){try{const r=await fetch(`https://ws.audioscrobbler.com/2.0/?method=user.getrecenttracks&user=realmxrza&api_key=${LASTFM_KEY}&format=json&limit=5`);const d=await r.json();const tracks=d.recenttracks.track;const c=document.getElementById("lastfm-tracks");if(!tracks?.length){c.innerHTML='<div class="no-activity">No tracks</div>';return;}let h="";for(const t of tracks){const isNow=t["@attr"]?.nowplaying==="true";const img=t.image?.find(i=>i.size==="medium")?.["#text"]||"";const name=escapeHtml(t.name);const artist=escapeHtml(t.artist?.["#text"]||"");const url=t.url||"#";const imgL=t.image?.find(i=>i.size==="extralarge")?.["#text"]||img;h+=`<a class="lastfm-track" href="${url}" target="_blank">${img?`<img class="lastfm-cover" src="${img}" alt="" onclick="event.preventDefault();event.stopPropagation();openLightbox('${imgL.replace(/'/g,"\\'")}','${name.replace(/'/g,"\\'")}','${artist.replace(/'/g,"\\'")}')" />`:'<div class="lastfm-cover"></div>'}<div class="lastfm-track-info"><div class="lastfm-track-name">${name}</div><div class="lastfm-track-artist">${artist}</div></div>${isNow?'<div class="lastfm-now">▶ NOW</div>':''}</a>`;}c.innerHTML=h;}catch(e){}}
 setInterval(fetchLastFm,60000);
 
 /* AUDIO */
-function setupAudio(){if(isAudioSetup)return;try{isAudioSetup=true;audioCtx=new(window.AudioContext||window.webkitAudioContext)();analyser=audioCtx.createAnalyser();analyser.fftSize=64;sourceNode=audioCtx.createMediaElementSource(audio);sourceNode.connect(analyser);analyser.connect(audioCtx.destination);dataArray=new Uint8Array(analyser.frequencyBinCount);const v=document.getElementById("visualizer");v.innerHTML="";for(let i=0;i<16;i++){const b=document.createElement("div");b.className="vis-bar";b.style.height="2px";v.appendChild(b);}animVis();}catch(e){}}
-function animVis(){if(!analyser)return;requestAnimationFrame(animVis);analyser.getByteFrequencyData(dataArray);const bars=document.querySelectorAll(".vis-bar");const step=Math.max(1,Math.floor(dataArray.length/bars.length));bars.forEach((b,i)=>{b.style.height=Math.max(2,(dataArray[i*step]||0)/255*20)+"px";});}
-function togglePlay(){if(!isAudioSetup)setupAudio();if(audioCtx&&audioCtx.state==="suspended")audioCtx.resume();if(isPlaying){audio.pause();isPlaying=false;document.getElementById("play-btn").textContent="▶";}else{audio.play();isPlaying=true;document.getElementById("play-btn").textContent="⏸";}}
-function seekAudio(v){audio.currentTime=(v/1000)*SONG_DURATION;}
-function setVolume(v){audio.volume=v/100;document.querySelector(".volume-icon").textContent=v==0?"🔇":v<50?"🔉":"🔊";}
-setInterval(()=>{if(!audio.duration&&!audio.currentTime)return;const ct=audio.currentTime,p=(ct/SONG_DURATION)*100;document.getElementById("progress-fill").style.width=Math.min(p,100)+"%";document.getElementById("seek-bar").value=Math.min(p*10,1000);document.getElementById("current-time").textContent=formatTime(ct*1000);},200);
+function setupAudio(){if(isAudioSetup)return;try{isAudioSetup=true;audioCtx=new(window.AudioContext||window.webkitAudioContext)();analyser=audioCtx.createAnalyser();analyser.fftSize=64;sourceNode=audioCtx.createMediaElementSource(audioEl);sourceNode.connect(analyser);analyser.connect(audioCtx.destination);dataArray=new Uint8Array(analyser.frequencyBinCount);const v=document.getElementById("visualizer");v.innerHTML="";for(let i=0;i<14;i++){const b=document.createElement("div");b.className="vis-bar";b.style.height="2px";v.appendChild(b);}animVis();}catch(e){}}
+function animVis(){if(!analyser)return;requestAnimationFrame(animVis);analyser.getByteFrequencyData(dataArray);document.querySelectorAll(".vis-bar").forEach((b,i)=>{b.style.height=Math.max(2,(dataArray[i*Math.max(1,Math.floor(dataArray.length/14))]||0)/255*18)+"px";});}
+function togglePlay(){if(!isAudioSetup)setupAudio();if(audioCtx?.state==="suspended")audioCtx.resume();if(isPlaying){audioEl.pause();isPlaying=false;document.getElementById("play-btn").textContent="▶";}else{audioEl.play();isPlaying=true;document.getElementById("play-btn").textContent="⏸";}}
+function seekAudio(v){if(audioEl.duration)audioEl.currentTime=(v/1000)*audioEl.duration;}
+function setVolume(v){audioEl.volume=v/100;document.querySelector(".volume-icon").textContent=v==0?"🔇":v<50?"🔉":"🔊";}
+setInterval(()=>{if(!audioEl.duration)return;const ct=audioEl.currentTime,dur=audioEl.duration,p=(ct/dur)*100;document.getElementById("progress-fill").style.width=Math.min(p,100)+"%";document.getElementById("seek-bar").value=Math.min(p*10,1000);document.getElementById("current-time").textContent=formatTime(ct*1000);},200);
 function formatTime(ms){const s=Math.floor(ms/1000);return`${Math.floor(s/60)}:${(s%60).toString().padStart(2,"0")}`;}
 function escapeHtml(s){if(!s)return"";const d=document.createElement("div");d.textContent=s;return d.innerHTML;}
 
 /* CMATRIX */
-function startCmatrix(){const canvas=document.getElementById("cmatrix-canvas"),parent=canvas.parentElement,ctx=canvas.getContext("2d");function resize(){canvas.width=parent.clientWidth;canvas.height=parent.clientHeight-20;}resize();window.addEventListener("resize",resize);const chars="アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン0123456789";const fs=10;let cols=Math.floor(canvas.width/fs);let drops=Array(cols).fill(0).map(()=>Math.random()*-20);setInterval(()=>{ctx.fillStyle="rgba(10,2,10,0.12)";ctx.fillRect(0,0,canvas.width,canvas.height);ctx.font=fs+"px 'Share Tech Mono',monospace";const c=Math.floor(canvas.width/fs);if(c!==cols){cols=c;drops=Array(cols).fill(0).map(()=>Math.random()*-20);}for(let i=0;i<drops.length;i++){ctx.fillStyle=Math.random()>0.5?"rgba(255,200,220,0.9)":"rgba(255,107,157,0.5)";ctx.fillText(chars[Math.floor(Math.random()*chars.length)],i*fs,drops[i]*fs);if(drops[i]*fs>canvas.height&&Math.random()>0.975)drops[i]=0;drops[i]++;}},50);}
+function startCmatrix(){const canvas=document.getElementById("cmatrix-canvas"),parent=canvas.parentElement,ctx=canvas.getContext("2d");function resize(){canvas.width=parent.clientWidth;canvas.height=parent.clientHeight-18;}resize();window.addEventListener("resize",resize);const chars="アイウエオカキクケコサシスセソタチツテトナニヌネノ0123456789";const fs=9;let cols=Math.floor(canvas.width/fs);let drops=Array(cols).fill(0).map(()=>Math.random()*-20);setInterval(()=>{ctx.fillStyle="rgba(10,2,10,0.12)";ctx.fillRect(0,0,canvas.width,canvas.height);ctx.font=fs+"px 'Share Tech Mono',monospace";const c=Math.floor(canvas.width/fs);if(c!==cols){cols=c;drops=Array(cols).fill(0).map(()=>Math.random()*-20);}for(let i=0;i<drops.length;i++){ctx.fillStyle=Math.random()>0.5?"rgba(255,200,220,0.9)":"rgba(255,107,157,0.5)";ctx.fillText(chars[Math.floor(Math.random()*chars.length)],i*fs,drops[i]*fs);if(drops[i]*fs>canvas.height&&Math.random()>0.975)drops[i]=0;drops[i]++;}},50);}
 
 /* TILT */
-document.querySelectorAll("[data-tilt]").forEach(tile=>{tile.addEventListener("mousemove",e=>{const r=tile.getBoundingClientRect();const x=e.clientX-r.left,y=e.clientY-r.top;tile.style.transform=`perspective(800px) rotateX(${((y-r.height/2)/(r.height/2))*-2}deg) rotateY(${((x-r.width/2)/(r.width/2))*2}deg) scale(1.01)`;tile.style.setProperty("--mouse-x",((x/r.width)*100)+"%");tile.style.setProperty("--mouse-y",((y/r.height)*100)+"%");});tile.addEventListener("mouseleave",()=>{tile.style.transform="perspective(800px) rotateX(0) rotateY(0) scale(1)";});});
+document.querySelectorAll("[data-tilt]").forEach(tile=>{
+tile.addEventListener("mousemove",e=>{const r=tile.getBoundingClientRect();const x=(e.clientX-r.left)/r.width;const y=(e.clientY-r.top)/r.height;const rx=(y-0.5)*-4;const ry=(x-0.5)*4;tile.style.transform=`perspective(800px) rotateX(${rx}deg) rotateY(${ry}deg) scale(1.008)`;tile.style.setProperty("--mouse-x",(x*100)+"%");tile.style.setProperty("--mouse-y",(y*100)+"%");});
+tile.addEventListener("mouseleave",()=>{tile.style.transform="none";});
+});
 
 /* LANYARD */
-let lanyardWs;
-function connectLanyard(){lanyardWs=new WebSocket("wss://api.lanyard.rest/socket");lanyardWs.onmessage=(event)=>{const d=JSON.parse(event.data);if(d.op===1){lanyardWs.send(JSON.stringify({op:2,d:{subscribe_to_id:DISCORD_ID}}));setInterval(()=>{try{lanyardWs.send(JSON.stringify({op:3}));}catch(e){}},d.d.heartbeat_interval);}if(d.op===0)updatePresence(d.d);};lanyardWs.onclose=()=>setTimeout(connectLanyard,3000);lanyardWs.onerror=()=>lanyardWs.close();}
+function connectLanyard(){const ws=new WebSocket("wss://api.lanyard.rest/socket");ws.onmessage=event=>{const d=JSON.parse(event.data);if(d.op===1){ws.send(JSON.stringify({op:2,d:{subscribe_to_id:DISCORD_ID}}));setInterval(()=>{try{ws.send(JSON.stringify({op:3}));}catch(e){}},d.d.heartbeat_interval);}if(d.op===0)updatePresence(d.d);};ws.onclose=()=>setTimeout(connectLanyard,3000);ws.onerror=()=>ws.close();}
 
 function updatePresence(data){
-    const av=document.getElementById("avatar");
-    if(data.discord_user?.avatar){const ext=data.discord_user.avatar.startsWith("a_")?"gif":"png";av.src=`https://cdn.discordapp.com/avatars/${DISCORD_ID}/${data.discord_user.avatar}.${ext}?size=256`;}
-    const deco=document.getElementById("avatar-decoration");
-    if(data.discord_user?.avatar_decoration_data?.asset){deco.src=`https://cdn.discordapp.com/avatar-decoration-presets/${data.discord_user.avatar_decoration_data.asset}.png?size=160&passthrough=true`;deco.style.display="block";}
-    document.getElementById("display-name").textContent=data.discord_user?.global_name||data.discord_user?.username||"realmxrza";
-    const un=data.discord_user?.username;if(un)document.getElementById("username-tag").textContent=`@${un}`;
-    const st=data.discord_status||"offline";document.getElementById("status-dot").className="status-dot "+st;
-    const lb={online:"Online",idle:"Idle",dnd:"Do Not Disturb",offline:"Offline"};
-    document.getElementById("discord-status-label").textContent=lb[st]||"Offline";
-    document.getElementById("discord-status-neo").textContent=st;
-    const cs=data.activities?.find(a=>a.type===4);const csEl=document.getElementById("custom-status");
-    if(cs){csEl.style.display="flex";const em=document.getElementById("status-emoji");if(cs.emoji?.id)em.innerHTML=`<img src="https://cdn.discordapp.com/emojis/${cs.emoji.id}.${cs.emoji.animated?'gif':'png'}?size=20" width="14" height="14" style="vertical-align:middle;"/>`;else if(cs.emoji?.name)em.textContent=cs.emoji.name;else em.textContent="";document.getElementById("status-text-content").textContent=cs.state||"";}else csEl.style.display="none";
-    currentSpotifyData=data.spotify;
-    renderActivities(data);
+const av=document.getElementById("avatar");if(data.discord_user?.avatar){const ext=data.discord_user.avatar.startsWith("a_")?"gif":"png";av.src=`https://cdn.discordapp.com/avatars/${DISCORD_ID}/${data.discord_user.avatar}.${ext}?size=256`;}
+const deco=document.getElementById("avatar-decoration");if(data.discord_user?.avatar_decoration_data?.asset){deco.src=`https://cdn.discordapp.com/avatar-decoration-presets/${data.discord_user.avatar_decoration_data.asset}.png?size=160&passthrough=true`;deco.style.display="block";}
+document.getElementById("display-name").textContent=data.discord_user?.global_name||data.discord_user?.username||"realmxrza";
+const un=data.discord_user?.username;if(un)document.getElementById("username-tag").textContent=`@${un}`;
+const st=data.discord_status||"offline";document.getElementById("status-dot").className="status-dot "+st;
+document.getElementById("discord-status-label").textContent={online:"Online",idle:"Idle",dnd:"Do Not Disturb",offline:"Offline"}[st]||"Offline";
+document.getElementById("discord-status-neo").textContent=st;
+const cs=data.activities?.find(a=>a.type===4);const csEl=document.getElementById("custom-status");
+if(cs){csEl.style.display="flex";const em=document.getElementById("status-emoji");if(cs.emoji?.id)em.innerHTML=`<img src="https://cdn.discordapp.com/emojis/${cs.emoji.id}.${cs.emoji.animated?'gif':'png'}?size=20" width="13" height="13" style="vertical-align:middle;"/>`;else if(cs.emoji?.name)em.textContent=cs.emoji.name;else em.textContent="";document.getElementById("status-text-content").textContent=cs.state||"";}else csEl.style.display="none";
+renderActivities(data);
 }
 
 function renderActivities(data){
-    const c=document.getElementById("activity-container");
-    const acts=(data.activities||[]).filter(a=>a.type!==4&&a.type!==2);
-    const sp=data.spotify;
-    if(!acts.length&&!sp){c.innerHTML='<div class="no-activity">No current activity</div>';return;}
-    let h="";
-    if(sp){
-        const trackUrl=`https://open.spotify.com/track/${sp.track_id}`;
-        const coverClick=`event.stopPropagation();openLightbox('${(sp.album_art_url||"").replace(/'/g,"\\'")}','${escapeHtml(sp.song).replace(/'/g,"\\'")}','${escapeHtml(sp.artist).replace(/'/g,"\\'")}')`;
-        h+=`<div class="activity-item spotify-clickable" onclick="window.open('${trackUrl}','_blank')">
-            <img class="activity-img clickable" src="${sp.album_art_url}" alt="" onclick="${coverClick}"/>
-            <div class="activity-details">
-                <div class="activity-name" style="color:#1db954;">♫ Spotify</div>
-                <div class="activity-state">${escapeHtml(sp.song)}</div>
-                <div class="activity-detail">by ${escapeHtml(sp.artist)}</div>
-            </div></div>`;
-    }
-    for(const a of acts){
-        let img="";
-        if(a.assets?.large_image){
-            if(a.assets.large_image.startsWith("mp:external/"))img=`https://media.discordapp.net/external/${a.assets.large_image.replace("mp:external/","")}`;
-            else if(a.application_id)img=`https://cdn.discordapp.com/app-assets/${a.application_id}/${a.assets.large_image}.png`;
-        } else if(a.assets?.small_image){
-            if(a.assets.small_image.startsWith("mp:external/"))img=`https://media.discordapp.net/external/${a.assets.small_image.replace("mp:external/","")}`;
-            else if(a.application_id)img=`https://cdn.discordapp.com/app-assets/${a.application_id}/${a.assets.small_image}.png`;
-        }
-        if(!img&&a.application_id){img=`https://cdn.discordapp.com/app-icons/${a.application_id}/${a.assets?.large_image||""}.png`;if(!a.assets?.large_image)img=`https://dcdn.dstn.to/app-icons/${a.application_id}`;}
-        const tn=a.type===0?"Playing":a.type===3?"Watching":"Playing";
-        let el="";if(a.timestamps?.start)el=`${formatTime(Date.now()-a.timestamps.start)} elapsed`;
-        h+=`<div class="activity-item">${img?`<img class="activity-img" src="${img}" alt="" onerror="this.style.display='none'"/>`:`<div class="activity-img" style="display:flex;align-items:center;justify-content:center;font-size:14px;">🎮</div>`}<div class="activity-details"><div class="activity-name">${escapeHtml(tn)} ${escapeHtml(a.name)}</div>${a.details?`<div class="activity-detail">${escapeHtml(a.details)}</div>`:""}${a.state?`<div class="activity-state">${escapeHtml(a.state)}</div>`:""}${el?`<div class="activity-time">${el}</div>`:""}</div></div>`;
-    }
-    c.innerHTML=h;
-}
+const c=document.getElementById("activity-container"),acts=(data.activities||[]).filter(a=>a.type!==4&&a.type!==2),sp=data.spotify;
+if(!acts.length&&!sp){c.innerHTML='<div class="no-activity">No current activity</div>';return;}
+let h="";
+if(sp){const url=`https://open.spotify.com/track/${sp.track_id}`;const art=sp.album_art_url||"";
+h+=`<a class="activity-item clickable" href="${url}" target="_blank"><img class="activity-img zoomable" src="${art}" alt="" onclick="event.preventDefault();event.stopPropagation();openLightbox('${art.replace(/'/g,"\\'")}','${escapeHtml(sp.song).replace(/'/g,"\\'")}','${escapeHtml(sp.artist).replace(/'/g,"\\'")}')" /><div class="activity-details"><div class="activity-name" style="color:#1db954;">♫ Spotify</div><div class="activity-state">${escapeHtml(sp.song)}</div><div class="activity-detail">by ${escapeHtml(sp.artist)}</div></div></a>`;}
+for(const a of acts){let img="";
+if(a.assets?.large_image){if(a.assets.large_image.startsWith("mp:external/"))img=`https://media.discordapp.net/external/${a.assets.large_image.replace("mp:external/","")}`;else if(a.application_id)img=`https://cdn.discordapp.com/app-assets/${a.application_id}/${a.assets.large_image}.png`;}
+if(!img&&a.assets?.small_image&&a.application_id)img=`https://cdn.discordapp.com/app-assets/${a.application_id}/${a.assets.small_image}.png`;
+if(!img&&a.application_id)img=`https://dcdn.dstn.to/app-icons/${a.application_id}.png`;
+const tn=a.type===0?"Playing":a.type===3?"Watching":"Playing";let el="";if(a.timestamps?.start)el=`${formatTime(Date.now()-a.timestamps.start)} elapsed`;
+const imgClick=img?`onclick="event.stopPropagation();openLightbox('${img.replace(/'/g,"\\'")}','${escapeHtml(a.name).replace(/'/g,"\\'")}','${tn}')"`:""
+h+=`<div class="activity-item">${img?`<img class="activity-img zoomable" src="${img}" alt="" ${imgClick} onerror="this.outerHTML='<div class=\\'activity-img\\' style=\\'display:flex;align-items:center;justify-content:center;font-size:13px;\\'>🎮</div>'">`:`<div class="activity-img" style="display:flex;align-items:center;justify-content:center;font-size:13px;">🎮</div>`}<div class="activity-details"><div class="activity-name">${escapeHtml(tn)} ${escapeHtml(a.name)}</div>${a.details?`<div class="activity-detail">${escapeHtml(a.details)}</div>`:""}${a.state?`<div class="activity-state">${escapeHtml(a.state)}</div>`:""}${el?`<div class="activity-time">${el}</div>`:""}</div></div>`;}
+c.innerHTML=h;}
 
 async function fetchRest(){try{const r=await fetch(`https://api.lanyard.rest/v1/users/${DISCORD_ID}`);const j=await r.json();if(j.success)updatePresence(j.data);}catch(e){}}
 document.addEventListener("DOMContentLoaded",()=>{try{connectLanyard();}catch{fetchRest();setInterval(fetchRest,30000);}fetchRest();});
