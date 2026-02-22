@@ -218,50 +218,34 @@ a,button,input[type="range"]{cursor:url("data:image/svg+xml,%3Csvg xmlns='http:/
 @keyframes shimmer{0%{background-position:-200% 0;}100%{background-position:200% 0;}}
 /* MOBILE */
 @media(max-width:768px) {
-    html, body { overflow-y: auto !important; height: auto !important; }
-    
+    html, body { 
+        overflow-y: auto !important; 
+        height: auto !important; 
+    }
     .layout { 
         display: flex !important; 
         flex-direction: column !important; 
         height: auto !important; 
-        padding: 10px;
-        gap: 12px;
-        padding-bottom: 100px; 
+        gap: 15px; 
+        padding-bottom: 100px; /* Space for fixed player */
     }
-
-
     .cmatrix-section { 
-        height: 250px !important;
-        min-height: 250px !important;
-        width: 100% !important;
-        order: 5; 
+        min-height: 300px !important; /* Force height so matrix isn't cut */
+        height: 300px !important;
         position: relative;
+        order: 2; 
     }
-
     .music-player {
         position: fixed !important;
         bottom: 0; left: 0; width: 100%;
         background: rgba(10, 2, 10, 0.98);
-        border-top: 1px solid var(--border);
-        padding: 12px;
+        z-index: 9999;
         margin: 0;
         border-radius: 0;
-        z-index: 10000;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
+        padding: 10px;
     }
-
-    .player-btn {
-        width: 32px;
-        height: 32px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: var(--accent) !important;
-    }
-
-    .visualizer { display: none !important; }
+    .player-info { max-width: 150px; }
+    .visualizer { display: none; }
 }
 @media(max-width:400px){
 .clock-time{font-size:22px;letter-spacing:1px;}
