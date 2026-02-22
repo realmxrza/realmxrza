@@ -382,7 +382,7 @@ function nextTrack() {
     if(isPlaying) audio.play();
 }
 function prevTrack(){currentTrack=(currentTrack-1+playlist.length)%playlist.length;loadTrack(currentTrack);if(isPlaying)audioEl.play();}
-loadTrack(0);
+loadTrack(currentTrack);
 audioEl.addEventListener("ended",nextTrack);
 audioEl.addEventListener("loadedmetadata",()=>{document.getElementById("total-time").textContent=formatTime(audioEl.duration*1000);});
 
