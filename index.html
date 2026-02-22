@@ -169,16 +169,18 @@ a,button,input[type="range"]{cursor:url("data:image/svg+xml,%3Csvg xmlns='http:/
 .player-btn {
     background: none;
     border: 1px solid var(--border);
-    color: var(--accent);
-    width: 24px;
-    height: 24px;
+    color: var(--accent) !important;
+    width: 28px;
+    height: 28px;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 9px;
-    transition: all .2s ease;
-    font-family: 'Arial', sans-serif !important;
+    font-size: 12px;
+    cursor: pointer;
+    font-family: 'JetBrains Mono', monospace !important;
+    line-height: 1;
+    text-shadow: none;
 }
 .player-btn.small{width:20px;height:20px;font-size:7px;}
 .player-btn:hover{background:rgba(255,107,157,0.15);border-color:var(--accent);box-shadow:0 0 8px var(--accent-glow);transform:scale(1.08);}
@@ -216,64 +218,34 @@ a,button,input[type="range"]{cursor:url("data:image/svg+xml,%3Csvg xmlns='http:/
 @keyframes shimmer{0%{background-position:-200% 0;}100%{background-position:200% 0;}}
 /* MOBILE */
 @media(max-width:768px) {
-
     html, body { 
         overflow-y: auto !important; 
         height: auto !important; 
+    }
+    .layout { 
+        display: flex !important; 
+        flex-direction: column !important; 
+        height: auto !important; 
+        gap: 15px; 
+        padding-bottom: 100px; /* Space for fixed player */
+    }
+    .cmatrix-section { 
+        min-height: 300px !important; /* Force height so matrix isn't cut */
+        height: 300px !important;
         position: relative;
-    }
-
-    .layout {
-        display: flex !important;
-        flex-direction: column !important;
-        height: auto !important;
-        padding: 10px;
-        gap: 15px;
-        padding-bottom: 120px; 
-    }
-
-    .music-player {
-        position: fixed !important;
-        bottom: 0;
-        left: 0;
-        width: 100%;
-        height: 70px;
-        z-index: 9999;
-        background: rgba(10, 2, 10, 0.98);
-        border-top: 1px solid var(--border);
-        margin: 0;
-        border-radius: 0;
-        padding: 5px 15px;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-    }
-
-    .player-btn {
-        font-family: 'Arial', sans-serif !important;
-        min-width: 30px;
-        min-height: 30px;
-    }
-
-    .cmatrix-section {
-        min-height: 250px !important;
-        height: 250px;
-        width: 100%;
         order: 2; 
     }
-
-    .clock-widget, .profile-widget, .terminal {
-        width: 100% !important;
-        height: auto !important;
-        min-height: unset;
+    .music-player {
+        position: fixed !important;
+        bottom: 0; left: 0; width: 100%;
+        background: rgba(10, 2, 10, 0.98);
+        z-index: 9999;
+        margin: 0;
+        border-radius: 0;
+        padding: 10px;
     }
-    
-    .terminal {
-        max-height: 350px;
-        overflow-y: auto;
-    }
-
-    .visualizer { display: none !important; }
+    .player-info { max-width: 150px; }
+    .visualizer { display: none; }
 }
 @media(max-width:400px){
 .clock-time{font-size:22px;letter-spacing:1px;}
