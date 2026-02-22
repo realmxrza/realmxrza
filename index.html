@@ -166,7 +166,20 @@ a,button,input[type="range"]{cursor:url("data:image/svg+xml,%3Csvg xmlns='http:/
 /* MUSIC */
 .music-player{grid-column:1/-1;grid-row:3;background:var(--terminal-bg);border:1px solid var(--border);border-radius:6px;padding:5px 10px;display:flex;align-items:center;gap:8px;animation:fadeSlideUp .6s ease both .7s;flex-shrink:0;transition:opacity .5s ease;}
 .player-controls{display:flex;align-items:center;gap:3px;flex-shrink:0;}
-.player-btn{background:none;border:1px solid var(--border);color:var(--accent);width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:9px;transition:all .2s ease;}
+.player-btn {
+    background: none;
+    border: 1px solid var(--border);
+    color: var(--accent);
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 9px;
+    transition: all .2s ease;
+    font-family: 'Arial', sans-serif !important;
+}
 .player-btn.small{width:20px;height:20px;font-size:7px;}
 .player-btn:hover{background:rgba(255,107,157,0.15);border-color:var(--accent);box-shadow:0 0 8px var(--accent-glow);transform:scale(1.08);}
 .player-info{flex-shrink:0;max-width:120px;}
@@ -203,24 +216,17 @@ a,button,input[type="range"]{cursor:url("data:image/svg+xml,%3Csvg xmlns='http:/
 @keyframes shimmer{0%{background-position:-200% 0;}100%{background-position:200% 0;}}
 /* MOBILE */
 @media(max-width:768px){
-html,body{overflow-y:auto;overflow-x:hidden;height:auto;}
-.layout{grid-template-columns:1fr;grid-template-rows:auto auto auto auto auto;height:auto;min-height:100vh;gap:6px;padding:6px;}
-.clock-widget{grid-column:1;grid-row:1;flex-direction:column;text-align:center;gap:6px;padding:8px;}
-.weather-info{border-left:none;border-top:1px solid var(--border);padding-left:0;padding-top:6px;text-align:center;}
-.profile-widget{grid-column:1;grid-row:2;}
-.terminal{grid-column:1;grid-row:3;max-height:320px;}
-.right-panel{grid-column:1;grid-row:4;overflow:visible;}
-.music-player{grid-column:1;grid-row:5;flex-wrap:wrap;gap:5px;padding:8px;}
-.neofetch-ascii{font-size:2.2px;}
-.clock-time{font-size:26px;}
-.about-dropdown{width:calc(100vw - 20px);right:10px!important;}
-.player-progress{min-width:0;flex-basis:100%;order:10;}
-.visualizer{display:none;}
-.activity-card{max-height:160px;}
-.cmatrix-section{min-height:80px;}
-.social-links{gap:5px;}
-.social-link{width:32px;height:32px;}
-.player-info{max-width:80px;}
+    html,body{overflow-y:auto;overflow-x:hidden;height:auto;}
+    .layout{display:flex;flex-direction:column;height:auto;min-height:100vh;gap:6px;padding:6px;}
+    .clock-widget{flex-direction:column;text-align:center;gap:6px;padding:8px;}
+    .weather-info{border-left:none;border-top:1px solid var(--border);padding-left:0;padding-top:6px;text-align:center;}
+    .terminal{max-height:320px;}
+    .right-panel{overflow:visible;}
+    .music-player{position:sticky;bottom:0;z-index:999;background:rgba(10,2,10,0.98);flex-wrap:wrap;gap:5px;padding:8px;width:100%;margin:0;}
+    .cmatrix-section{min-height:150px;}
+    .player-progress{min-width:0;flex-basis:100%;order:10;}
+    .visualizer{display:none;}
+    .player-info{max-width:80px;}
 }
 @media(max-width:400px){
 .clock-time{font-size:22px;letter-spacing:1px;}
@@ -356,7 +362,9 @@ const playlist=[
 {src:"https://raw.githubusercontent.com/realmxrza/realmxrza/main/assets/L'amour%20Toujours.mp3",title:"L'amour Toujours",artist:"Gigi D'Agostino"},
 {src:"https://raw.githubusercontent.com/realmxrza/realmxrza/main/assets/Caramella%20Girls%20-%20Caramelldansen%20HD%20Version%20(Swedish%20Original).mp3",title:"Caramelldansen",artist:"Caramell"}
 ];
-let currentTrack = Math.floor(Math.random() * playlist.length);
+let currentTrack = 0;
+let shuffledIndices = [];
+let shufflePointer = 0;
 const wallpapers=[
 "https://raw.githubusercontent.com/realmxrza/realmxrza/ccc6bbab8e68c7dfcaf02483f39fba14e787f77c/assets/just-a-thoughtful-Lain.png",
 "https://raw.githubusercontent.com/realmxrza/realmxrza/main/assets/mysterious-Lain.png",
@@ -370,22 +378,48 @@ let bgActive="a",bgIdx=Math.floor(Math.random()*wallpapers.length);
 const aud=document.createElement("audio");aud.id="bg-audio";aud.loop=false;aud.preload="auto";aud.crossOrigin="anonymous";document.body.appendChild(aud);
 const audioEl=document.getElementById("bg-audio");
 
-function loadTrack(i){currentTrack=i;audioEl.src=playlist[i].src;document.getElementById("song-title").textContent=playlist[i].title;document.getElementById("song-artist").textContent=playlist[i].artist;document.getElementById("total-time").textContent="--:--";}
-function nextTrack() {
-    let next;
-    do {
-        next = Math.floor(Math.random() * playlist.length);
-    } while (next === currentTrack && playlist.length > 1);
-    
-    currentTrack = next;
-    loadTrack(currentTrack);
-    if(isPlaying) audio.play();
-}
-function prevTrack(){currentTrack=(currentTrack-1+playlist.length)%playlist.length;loadTrack(currentTrack);if(isPlaying)audioEl.play();}
-loadTrack(currentTrack);
-audioEl.addEventListener("ended",nextTrack);
-audioEl.addEventListener("loadedmetadata",()=>{document.getElementById("total-time").textContent=formatTime(audioEl.duration*1000);});
+function initShuffle() {
 
+    shuffledIndices = Array.from({length: playlist.length}, (_, i) => i);
+
+    for (let i = shuffledIndices.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [shuffledIndices[i], shuffledIndices[j]] = [shuffledIndices[j], shuffledIndices[i]];
+    }
+    shufflePointer = 0;
+    currentTrack = shuffledIndices[0];
+}
+
+initShuffle();
+
+function loadTrack(i) {
+    currentTrack = i;
+    audioEl.src = playlist[i].src;
+    document.getElementById("song-title").textContent = playlist[i].title;
+    document.getElementById("song-artist").textContent = playlist[i].artist;
+    document.getElementById("total-time").textContent = "--:--";
+
+    if (isPlaying) {
+        audioEl.play().catch(e => console.error("Playback failed", e));
+    }
+}
+
+function nextTrack() {
+    shufflePointer++;
+
+    if (shufflePointer >= shuffledIndices.length) {
+        initShuffle();
+    }
+    loadTrack(shuffledIndices[shufflePointer]);
+}
+
+function prevTrack() {
+    shufflePointer--;
+    if (shufflePointer < 0) {
+        shufflePointer = shuffledIndices.length - 1;
+    }
+    loadTrack(shuffledIndices[shufflePointer]);
+}
 /* WALLPAPER */
 function initBg(){document.getElementById("bg-a").style.backgroundImage=`url('${wallpapers[bgIdx]}')`;document.getElementById("bg-a").classList.add("active");document.getElementById("bg-a").classList.remove("hidden");}
 function rotateBg(){const nextIdx=(bgIdx+Math.floor(Math.random()*(wallpapers.length-1))+1)%wallpapers.length;const nextLayer=bgActive==="a"?"b":"a";const curLayer=bgActive;document.getElementById("bg-"+nextLayer).style.backgroundImage=`url('${wallpapers[nextIdx]}')`;document.getElementById("bg-"+nextLayer).classList.add("active");document.getElementById("bg-"+nextLayer).classList.remove("hidden");document.getElementById("bg-"+curLayer).classList.add("hidden");document.getElementById("bg-"+curLayer).classList.remove("active");bgActive=nextLayer;bgIdx=nextIdx;}
