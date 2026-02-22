@@ -430,7 +430,41 @@ function rotateBg(){const nextIdx=(bgIdx+Math.floor(Math.random()*(wallpapers.le
 function startExperience(){document.getElementById("click-screen").style.display="none";document.getElementById("boot-screen").style.display="flex";runBoot();}
 
 const bootLines=[{text:"IBM ThinkPad T42 BIOS v3.21",delay:120,cls:"info"},{text:"Intel Pentium M 1.70GHz — 1024MB OK",delay:80},{text:"",delay:30},{text:"GRUB 2.12 — Loading kernel...",delay:120,cls:"info"},{text:"[    0.000000] Linux version 6.12.10-zen1-1-zen",delay:40},{text:"[    0.014200] DMI: IBM ThinkPad T42/2373",delay:30},{text:"",delay:30},{text:":: running early hook [udev]",delay:50,cls:"accent"},{text:"[  OK  ] Started systemd-udevd.service",delay:40,cls:"ok"},{text:"[  OK  ] Started NetworkManager.service",delay:50,cls:"ok"},{text:"[  OK  ] Started PipeWire Audio Service",delay:40,cls:"ok"},{text:"[  OK  ] Reached target Multi-User System",delay:40,cls:"ok"},{text:"",delay:30},{text:":: Loading Hyprland compositor...",delay:100,cls:"accent"},{text:"[  OK  ] Connected to the Wired",delay:60,cls:"ok"},{text:"[  OK  ] Discord presence loaded",delay:60,cls:"ok"},{text:"",delay:30},{text:"Welcome back, realmxrza.",delay:120,cls:"warn"}];
-async function runBoot(){const bc=document.getElementById("boot-lines");for(const l of bootLines){const e=document.createElement("div");if(l.cls)e.classList.add(l.cls);e.textContent=l.text;bc.appendChild(e);bc.scrollTop=bc.scrollHeight;await sleep(l.delay);}document.getElementById("boot-progress-container").style.display="block";const pf=document.getElementById("boot-progress-fill");for(let p=0;p<=100;p+=6){pf.style.width=p+"%";await sleep(8);}await sleep(150);document.getElementById("boot-screen").classList.add("fade-out");await sleep(400);document.getElementById("main-content").classList.add("visible");document.getElementById("boot-screen").style.display="none";initBg();setInterval(rotateBg,10000);audioEl.volume=0.5;try{await audioEl.play();isPlaying=true;document.getElementById("play-btn").textContent="⏸";}catch(e){}setupAudio();startTypewriter();startCmatrix();fetchLastFm();fetchWeather();}
+async function runBoot() {
+    const bc = document.getElementById("boot-lines");
+    for (const l of bootLines) {
+        const e = document.createElement("div");
+        if (l.cls) e.classList.add(l.cls);
+        e.textContent = l.text;
+        bc.appendChild(e);
+        bc.scrollTop = bc.scrollHeight;
+        await sleep(l.delay);
+    }
+    document.getElementById("boot-progress-container").style.display = "block";
+    const pf = document.getElementById("boot-progress-fill");
+    for (let p = 0; p <= 100; p += 6) {
+        pf.style.width = p + "%";
+        await sleep(8);
+    }
+    await sleep(150);
+    document.getElementById("boot-screen").classList.add("fade-out");
+    await sleep(400);
+    document.getElementById("main-content").classList.add("visible");
+    document.getElementById("boot-screen").style.display = "none";
+    initBg();
+    setInterval(rotateBg, 10000);
+    
+    audioEl.volume = 0.5;
+    isPlaying = true; 
+    loadTrack(shuffledIndices[0]); 
+    document.getElementById("play-btn").textContent = "⏸";
+
+    setupAudio();
+    startTypewriter();
+    startCmatrix();
+    fetchLastFm();
+    fetchWeather();
+}
 function sleep(ms){return new Promise(r=>setTimeout(r,ms));}
 
 /* CLOCK */
