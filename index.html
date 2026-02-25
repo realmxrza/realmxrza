@@ -266,11 +266,12 @@ html,body{overflow-y:auto;overflow-x:hidden;height:auto;}
 <div class="panel-overlay" id="p-photos"><div class="panel-bar"><span>~/photos</span><button class="panel-close" onclick="closePanel('p-photos')">×</button></div><div class="panel-body"><div class="photo-empty">No photos yet. Check back later!</div></div></div>
 <div class="panel-overlay" id="p-blog"><div class="panel-bar"><span>~/blog</span><button class="panel-close" onclick="closePanel('p-blog')">×</button></div><div class="panel-body"><div class="blog-entry"><div class="blog-date">2025-02-26</div><div class="blog-title">Welcome to the Wired</div><div class="blog-body">First blog post. This site is my little corner of the internet — built from scratch, Lain themed, because why not. More posts coming soon. Stay connected.</div></div></div></div>
 <div class="panel-overlay" id="p-gh">
-  <div class="panel-bar"><span>~/github-activity</span><button class="panel-close" onclick="closePanel('p-gh')">×</button></div>
-  <div class="panel-body" id="gh-body">
-    <div class="github-container">
-      <img src="https://ghchart.rshah.org/ff6b9d/realmxrza" alt="GitHub Contributions" style="width: 100%; height: auto;" />
-    </div>
+  <div class="panel-bar">
+    <span>~/github-activity</span>
+    <button class="panel-close" onclick="closePanel('p-gh')">×</button>
+  </div>
+  <div class="panel-body" style="display: flex; justify-content: center; align-items: center; padding: 20px;">
+    <img src="https://ghchart.rshah.org/ff6b9d/realmxrza" alt="GitHub Contributions" style="width: 100%; max-width: 600px; height: auto;" />
   </div>
 </div>
 <!-- LIGHTBOX -->
