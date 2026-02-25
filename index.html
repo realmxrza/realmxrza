@@ -499,5 +499,6 @@ if(spData){const el=Date.now()-spData.timestamps.start;const tot=spData.timestam
 async function fetchRest(){try{const r=await fetch(`https://api.lanyard.rest/v1/users/${DID}`);const j=await r.json();if(j.success)updP(j.data);}catch(e){}}
 document.addEventListener("DOMContentLoaded",()=>{try{connLan();}catch{fetchRest();setInterval(fetchRest,30000);}fetchRest();});
 </script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/vanilla-tilt/1.8.1/vanilla-tilt.min.js"></script>
 </body>
 </html>
