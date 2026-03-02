@@ -98,6 +98,18 @@ a,button,input[type="range"]{cursor:url("data:image/svg+xml,%3Csvg xmlns='http:/
 .gh-col{display:flex;flex-direction:column;gap:1px;}
 .gh-cell{width:8px;height:8px;border-radius:1px;background:rgba(255,126,179,0.08);}
 .gh-cell.l1{background:rgba(255,126,179,0.2);}.gh-cell.l2{background:rgba(255,126,179,0.4);}.gh-cell.l3{background:rgba(255,126,179,0.6);}.gh-cell.l4{background:rgba(255,126,179,0.85);}
+.gh-panel-body{display:flex;flex-direction:column;align-items:center;padding:15px;gap:10px;}
+.gh-chart{width:100%;max-width:600px;height:auto;filter:brightness(1.2) contrast(1.1);}
+.gh-legend{display:flex;gap:8px;align-items:center;font-size:10px;color:var(--tdim);}
+.gh-legend-cell{display:inline-block;width:10px;height:10px;border-radius:2px;}
+/* VISITOR */
+.visitor-section{border-left:1px solid var(--border);padding-left:8px;display:flex;align-items:center;}
+.visitor-counter{height:40px;}
+/* SHOW UI */
+.show-ui{position:fixed;top:8px;right:8px;z-index:10000;display:none;background:rgba(255,126,179,0.08);border:1px solid rgba(255,126,179,0.2);color:var(--accent);width:32px;height:32px;border-radius:50%;font-size:14px;font-family:'JetBrains Mono',monospace;font-weight:700;align-items:center;justify-content:center;}
+.show-ui:hover{background:rgba(255,126,179,0.2);border-color:var(--accent);box-shadow:0 0 8px var(--aglow);}
+/* MUSIC NO-TILT */
+.music-stable{backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);}
 /* PHOTOS */
 .photo-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;margin-top:6px;}
 .photo-item{width:100%;aspect-ratio:1;border-radius:4px;object-fit:cover;border:1px solid var(--border);transition:transform .2s;}
@@ -282,19 +294,19 @@ html,body{overflow-y:auto;overflow-x:hidden;height:auto;-webkit-overflow-scrolli
     <span>~/github-activity</span>
     <button class="panel-close" onclick="closePanel('p-gh')">×</button>
   </div>
-  <div class="panel-body" style="display: flex; flex-direction: column; align-items: center; padding: 15px; gap: 10px;">
-    <img src="https://ghchart.rshah.org/ff6b9d/realmxrza" alt="GitHub Contributions" style="width: 100%; max-width: 600px; height: auto; filter: brightness(1.2) contrast(1.1);" />
-    <div style="display:flex;gap:8px;align-items:center;font-size:10px;color:var(--tdim);"><span style="display:inline-block;width:10px;height:10px;background:rgba(255,107,157,0.15);border-radius:2px;"></span>Less<span style="display:inline-block;width:10px;height:10px;background:rgba(255,107,157,0.4);border-radius:2px;"></span><span style="display:inline-block;width:10px;height:10px;background:rgba(255,107,157,0.7);border-radius:2px;"></span><span style="display:inline-block;width:10px;height:10px;background:rgb(255,107,157);border-radius:2px;"></span>More</div>
+  <div class="panel-body gh-panel-body">
+    <img src="https://ghchart.rshah.org/ff6b9d/realmxrza" alt="GitHub Contributions" class="gh-chart" />
+    <div class="gh-legend"><span class="gh-legend-cell" style="background:rgba(255,107,157,0.15);"></span>Less<span class="gh-legend-cell" style="background:rgba(255,107,157,0.4);"></span><span class="gh-legend-cell" style="background:rgba(255,107,157,0.7);"></span><span class="gh-legend-cell" style="background:rgb(255,107,157);"></span>More</div>
   </div>
 </div>
 <!-- LIGHTBOX -->
 <div class="lb" id="lb" onclick="closeLb()"><button class="lb-close" onclick="closeLb()">×</button><img id="lb-img" src="" alt=""/><div class="lb-info"><div class="lt" id="lb-t"></div><div class="la" id="lb-a"></div></div></div>
-<button id="show-ui-btn" onclick="toggleUI()" title="Show UI" style="position:fixed;top:8px;right:8px;z-index:10000;display:none;background:rgba(255,126,179,0.08);border:1px solid rgba(255,126,179,0.2);color:var(--accent);width:32px;height:32px;border-radius:50%;font-size:14px;font-family:'JetBrains Mono',monospace;font-weight:700;align-items:center;justify-content:center;">⊡</button>
+<button id="show-ui-btn" class="show-ui" onclick="toggleUI()" title="Show UI">⊡</button>
 <div id="main-content">
 <div class="bg-layer active" id="bg-a"></div><div class="bg-layer hidden" id="bg-b"></div><div class="bg-overlay"></div>
 <div class="layout" id="lay">
 <!-- CLOCK -->
-<div class="clock-widget tilt-tile shimmer" data-tilt><div class="clock-left"><div class="clock-time" id="ct">00:00:00</div><div class="clock-date" id="cd"></div><div class="clock-tz">GMT+8</div><div class="clock-epoch" id="ce"></div></div><div class="weather-info" id="wi"><div class="w-label">KUALA LUMPUR</div><div class="w-row"><span class="w-icon" id="w-ico">⏳</span><span class="w-temp" id="w-tmp">--°C</span></div><div class="w-cond" id="w-con">Loading...</div><div id="w-hum">Humidity: --%</div><div id="w-wnd">Wind: -- km/h</div><div id="w-pre">Precip: --%</div></div><div style="border-left:1px solid var(--border);padding-left:8px;display:flex;align-items:center;"><img src="https://count.getloli.com/get/@realmxrza?theme=asoul" alt="Visitors" style="height:40px;"/></div></div>
+<div class="clock-widget tilt-tile shimmer" data-tilt><div class="clock-left"><div class="clock-time" id="ct">00:00:00</div><div class="clock-date" id="cd"></div><div class="clock-tz">GMT+8</div><div class="clock-epoch" id="ce"></div></div><div class="weather-info" id="wi"><div class="w-label">KUALA LUMPUR</div><div class="w-row"><span class="w-icon" id="w-ico">⏳</span><span class="w-temp" id="w-tmp">--°C</span></div><div class="w-cond" id="w-con">Loading...</div><div id="w-hum">Humidity: --%</div><div id="w-wnd">Wind: -- km/h</div><div id="w-pre">Precip: --%</div></div><div class="visitor-section"><img src="https://count.getloli.com/get/@realmxrza?theme=asoul" alt="Visitors" class="visitor-counter"/></div></div>
 <!-- PROFILE -->
 <div class="profile-widget tilt-tile" data-tilt>
 <div class="profile-btns"><button class="tbtn" onclick="openPanel('p-about',this)" title="About">i</button><button class="tbtn" onclick="openPanel('p-photos',this)" title="Photos">📷</button><button class="tbtn" onclick="openPanel('p-blog',this)" title="Blog">✎</button><button class="tbtn" onclick="openPanel('p-gh',this)" title="GitHub">◻</button><button class="tbtn" onclick="toggleUI()" title="Hide UI">⊡</button></div>
@@ -350,7 +362,7 @@ html,body{overflow-y:auto;overflow-x:hidden;height:auto;-webkit-overflow-scrolli
 <div class="cmatrix tilt-tile" data-tilt><div class="cmatrix-bar"><div class="tbtn-w c"></div><div class="tbtn-w m"></div><div class="tbtn-w x"></div><span>cmatrix</span></div><canvas id="cmc"></canvas></div>
 </div>
 <!-- MUSIC -->
-<div class="music shimmer" style="backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);">
+<div class="music music-stable shimmer">
 <div class="pc"><button class="pb sm" onclick="prevT()">⏮</button><button class="pb" id="pbtn" onclick="toggleP()">▶</button><button class="pb sm" onclick="nextT()">⏭</button></div>
 <div class="pi"><div class="pt" id="st">Duvet</div><div class="pa" id="sa">Bôa</div></div>
 <div class="pp"><span class="ptm" id="ctm">0:00</span><div class="pbc"><div class="pbr"><div class="pbf" id="pf"></div></div><input type="range" min="0" max="1000" value="0" id="sb" oninput="seekA(this.value)"/></div><span class="ptm" id="ttm">--:--</span></div>
